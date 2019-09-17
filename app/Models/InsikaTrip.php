@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class Trip extends Model
+class InsikaTrip extends Model
 {
     // Allow to assign taxameter trip ids
     public $incrementing = false;

@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS trips;
-CREATE TABLE IF NOT EXISTS trips (
+DROP TABLE IF EXISTS insika_trips;
+CREATE TABLE IF NOT EXISTS insika_trips (
     id int unsigned NOT NULL,
     user_id int unsigned NOT NULL,
     gross_fare decimal(5,2) NOT NULL,
@@ -15,4 +15,4 @@ CREATE TABLE IF NOT EXISTS trips (
     UNIQUE KEY started_ended_unique(started_at, ended_at)
 ) ENGINE InnoDB DEFAULT CHARSET = utf8mb4;
 
-SELECT sum(gross_fare) 'gross revenue', sum(occupied_distance) 'occupied distance' FROM trips;
+SELECT sum(gross_fare) 'gross revenue', sum(occupied_distance) 'occupied distance' FROM insika_trips;

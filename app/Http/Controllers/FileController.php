@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Trip;
+use App\Models\InsikaTrip;
 use Exception;
 use Illuminate\Http\Request;
-use function explode;
-use function response;
-use function storage_path;
-use function str_replace;
 
 /**
  * Class FileController
@@ -37,12 +33,12 @@ class FileController extends Controller
                     'vat'        => (int) $arr[7] ? 19 : 7,
                 ];
                 // return $trip;
-                Trip::updateOrCreate($trip);
+                InsikaTrip::updateOrCreate($trip);
             }
         } catch (Exception $e) {
             return response()->json("Error occurred opening gdpdu export file: {$e->getMessage()}", 500);
         }
-        $count = Trip::all()->count();
+        $count = InsikaTrip::all()->count();
         return response()->json("Export file successfully read, $count trips inserted into table `trips`", 200);
     }
 }
