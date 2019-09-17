@@ -1,1 +1,1 @@
-- Install the latest version of Laravel
+- Update composer.json

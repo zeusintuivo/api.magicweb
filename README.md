@@ -1,2 +1,2 @@
-# mw-api
-RESTful API for SPAs &amp; Apps
+# cab7-api
+Cab7.EU RESTful API

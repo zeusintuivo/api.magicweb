@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ContentFilters</key>
+	<dict/>
+	<key>auto_connect</key>
+	<true/>
+	<key>data</key>
+	<dict>
+		<key>connection</key>
+		<dict>
+			<key>database</key>
+			<string>cab7</string>
+			<key>host</key>
+			<string>localhost</string>
+			<key>kcid</key>
+			<string>6126441955039433095</string>
+			<key>name</key>
+			<string>cab7</string>
+			<key>rdbms_type</key>
+			<string>mysql</string>
+			<key>sslCACertFileLocation</key>
+			<string></string>
+			<key>sslCACertFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>sslCertificateFileLocation</key>
+			<string></string>
+			<key>sslCertificateFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>sslKeyFileLocation</key>
+			<string></string>
+			<key>sslKeyFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>type</key>
+			<string>SPSocketConnection</string>
+			<key>useSSL</key>
+			<integer>0</integer>
+			<key>user</key>
+			<string>root</string>
+		</dict>
+		<key>session</key>
+		<dict>
+			<key>connectionEncoding</key>
+			<string>utf8mb4</string>
+			<key>contentFilter</key>
+			<dict/>
+			<key>contentPageNumber</key>
+			<integer>1</integer>
+			<key>contentSelection</key>
+			<data>
+			YnBsaXN0MDDUAQIDBAUGOTpYJHZlcnNpb25YJG9iamVjdHNZJGFy
+			Y2hpdmVyVCR0b3ASAAGGoK0HCBUWFxgZHSQoLDE2VSRudWxs0wkK
+			CwwQFFdOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzow0OD4ACgAOA
+			BKMREhOABYAGgAiADFR0eXBlVHJvd3NUa2V5c18QJlNlbGVjdGlv
+			bkRldGFpbFR5cGVQcmltYXJ5S2V5ZWREZXRhaWxz0wkKCxobHKCg
+			gAfSHh8gIVokY2xhc3NuYW1lWCRjbGFzc2VzXxATTlNNdXRhYmxl
+			RGljdGlvbmFyeaMgIiNcTlNEaWN0aW9uYXJ5WE5TT2JqZWN00goL
+			JSehJoAJgAvSCykqK1lOUy5zdHJpbmeAClJpZNIeHy0uXxAPTlNN
+			dXRhYmxlU3RyaW5noy0vMFhOU1N0cmluZ1hOU09iamVjdNIeHzIz
+			Xk5TTXV0YWJsZUFycmF5ozI0NVdOU0FycmF5WE5TT2JqZWN00h4f
+			IjeiIjhYTlNPYmplY3RfEA9OU0tleWVkQXJjaGl2ZXLROzxUZGF0
+			YYABAAgAEQAaACMALQAyADcARQBLAFIAWgBlAGwAcAByAHQAdgB6
+			AHwAfgCAAIIAhwCMAJEAugDBAMIAwwDFAMoA1QDeAPQA+AEFAQ4B
+			EwEVARcBGQEeASgBKgEtATIBRAFIAVEBWgFfAW4BcgF6AYMBiAGL
+			AZQBpgGpAa4AAAAAAAACAQAAAAAAAAA9AAAAAAAAAAAAAAAAAAAB
+			sA==
+			</data>
+			<key>contentSortColIsAsc</key>
+			<true/>
+			<key>contentViewport</key>
+			<string>{{0, 0}, {1066, 618}}</string>
+			<key>isToolbarVisible</key>
+			<true/>
+			<key>queries</key>
+			<string>alter table hale_data modify column `begin` datetime null;
+alter table hale_data modify column `end` datetime null;
+alter table hale_data modify column `fare` decimal(5,2) null;
+alter table hale_data modify column `vat` decimal(5,2) null;
+alter table hale_data modify column `distance` decimal(7,2) null;
+alter table hale_data modify column `duration` time null;
+
+alter table hale_data drop column `Comment`;
+alter table hale_data drop column `Created by`;
+alter table hale_data drop column `Created at`;
+
+delete from data_raw where `Trip type/Event` = 'Start of shift';
+delete from data_raw where `Trip type/Event` = 'End of shift';
+
+delete hd from hale_data hd;
+insert into hale_data (`begin`, `end`, `fare`, `vat`, `distance`, `duration`) (select
+	str_to_date(`Begin`, "%m/%d/%Y %h:%i %p") as `begin`,
+	str_to_date(`End`, "%m/%d/%Y %h:%i %p") as `end`,
+	cast(substr(replace(`Fare`, ',', '.'), 2) as decimal(5,2)) as fare,
+	cast(substr(replace(`VAT rate`, ',', '.'), 1, length(`VAT rate`) - 2) as decimal(5,2)) as vat,
+	cast(concat_ws(
+		'.',
+		substr(`Occupied distance`, 1, length(`Occupied distance`)-6),
+		substr(`Occupied distance`, -5, 2)
+	) as decimal(7,2)) as distance,
+	`Duration`
+from data_raw);
+drop table data_raw;
+rename table hale_data to taxameter;
+select sum(fare) from taxameter;
+</string>
+			<key>table</key>
+			<string>receipts</string>
+			<key>view</key>
+			<string>SP_VIEW_CUSTOMQUERY</string>
+			<key>windowVerticalDividerPosition</key>
+			<real>214</real>
+		</dict>
+	</dict>
+	<key>encrypted</key>
+	<false/>
+	<key>format</key>
+	<string>connection</string>
+	<key>queryFavorites</key>
+	<array/>
+	<key>queryHistory</key>
+	<array>
+		<string>select sum(fare) from taxameter</string>
+		<string>rename table hale_data to taxameter</string>
+		<string>select sum(fare) from hale_data</string>
+		<string>drop table `1`</string>
+		<string>drop table 1</string>
+		<string>drop table data_raw</string>
+		<string>insert into hale_data (`begin`, `end`, `fare`, `vat`, `distance`, `duration`) (select
+	str_to_date(`Begin`, "%m/%d/%Y %h:%i %p") as `begin`,
+	str_to_date(`End`, "%m/%d/%Y %h:%i %p") as `end`,
+	cast(substr(replace(`Fare`, ',', '.'), 2) as decimal(5,2)) as fare,
+	cast(substr(replace(`VAT rate`, ',', '.'), 1, length(`VAT rate`) - 2) as decimal(5,2)) as vat,
+	cast(concat_ws(
+		'.',
+		substr(`Occupied distance`, 1, length(`Occupied distance`)-6),
+		substr(`Occupied distance`, -5, 2)
+	) as decimal(7,2)) as distance,
+	`Duration`
+from data_raw)</string>
+		<string>delete hd from hale_data hd</string>
+		<string>select str_to_date(`Begin`, "%m/%d/%Y %h:%i %p"), `Begin` from data_raw</string>
+		<string>select str_to_date(`Begin`, "%m/%d/%Y %h:%i %p") from data_raw</string>
+		<string>select str_to_date(`Begin`, "%m/%d/%Y %h:%i") from data_raw</string>
+		<string>select str_to_date(`Begin`, "%m/%d/%Y %H:%i %p") from data_raw</string>
+		<string>select str_to_date(`Begin`, "%m/%d/%Y %H:%i") from data_raw</string>
+		<string>select str_to_date(`Begin`, "%m/%d/%Y %H%i") from data_raw</string>
+		<string>select str_to_date(`Begin`, "%m/%d/%Y %H%i %p") from data_raw</string>
+		<string>select str_to_date(`Begin`, "%m/%d/%Y %H:%i ") from data_raw</string>
+		<string>select str_to_date(`Begin`, "%m/%d/%Y") from data_raw</string>
+		<string>select str_to_date(`Begin`) from data_raw</string>
+		<string>select str_to_date(`Begin`, '%m/%d%/%Y %H:%m') from data_raw</string>
+		<string>select str_to_date(`Begin`, '%m/%d%/%Y') from data_raw</string>
+	</array>
+	<key>rdbms_type</key>
+	<string>mysql</string>
+	<key>rdbms_version</key>
+	<string>5.7.23</string>
+	<key>version</key>
+	<integer>1</integer>
+</dict>
+</plist>

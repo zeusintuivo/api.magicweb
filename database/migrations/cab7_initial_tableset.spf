@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ContentFilters</key>
+	<dict/>
+	<key>auto_connect</key>
+	<true/>
+	<key>data</key>
+	<dict>
+		<key>connection</key>
+		<dict>
+			<key>database</key>
+			<string>btvev</string>
+			<key>host</key>
+			<string>localhost</string>
+			<key>kcid</key>
+			<string>-3065087875420903311</string>
+			<key>name</key>
+			<string>btvev</string>
+			<key>rdbms_type</key>
+			<string>mysql</string>
+			<key>sslCACertFileLocation</key>
+			<string></string>
+			<key>sslCACertFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>sslCertificateFileLocation</key>
+			<string></string>
+			<key>sslCertificateFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>sslKeyFileLocation</key>
+			<string></string>
+			<key>sslKeyFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>type</key>
+			<string>SPSocketConnection</string>
+			<key>useSSL</key>
+			<integer>0</integer>
+			<key>user</key>
+			<string>root</string>
+		</dict>
+		<key>session</key>
+		<dict>
+			<key>connectionEncoding</key>
+			<string>utf8mb4</string>
+			<key>contentPageNumber</key>
+			<integer>1</integer>
+			<key>contentSelection</key>
+			<data>
+			YnBsaXN0MDDUAQIDBAUGOTpYJHZlcnNpb25YJG9iamVjdHNZJGFy
+			Y2hpdmVyVCR0b3ASAAGGoK0HCBUWFxgZHSQoLDE2VSRudWxs0wkK
+			CwwQFFdOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzow0OD4ACgAOA
+			BKMREhOABYAGgAiADFR0eXBlVHJvd3NUa2V5c18QJlNlbGVjdGlv
+			bkRldGFpbFR5cGVQcmltYXJ5S2V5ZWREZXRhaWxz0wkKCxobHKCg
+			gAfSHh8gIVokY2xhc3NuYW1lWCRjbGFzc2VzXxATTlNNdXRhYmxl
+			RGljdGlvbmFyeaMgIiNcTlNEaWN0aW9uYXJ5WE5TT2JqZWN00goL
+			JSehJoAJgAvSCykqK1lOUy5zdHJpbmeAClJpZNIeHy0uXxAPTlNN
+			dXRhYmxlU3RyaW5noy0vMFhOU1N0cmluZ1hOU09iamVjdNIeHzIz
+			Xk5TTXV0YWJsZUFycmF5ozI0NVdOU0FycmF5WE5TT2JqZWN00h4f
+			IjeiIjhYTlNPYmplY3RfEA9OU0tleWVkQXJjaGl2ZXLROzxUZGF0
+			YYABAAgAEQAaACMALQAyADcARQBLAFIAWgBlAGwAcAByAHQAdgB6
+			AHwAfgCAAIIAhwCMAJEAugDBAMIAwwDFAMoA1QDeAPQA+AEFAQ4B
+			EwEVARcBGQEeASgBKgEtATIBRAFIAVEBWgFfAW4BcgF6AYMBiAGL
+			AZQBpgGpAa4AAAAAAAACAQAAAAAAAAA9AAAAAAAAAAAAAAAAAAAB
+			sA==
+			</data>
+			<key>contentSortColIsAsc</key>
+			<true/>
+			<key>contentViewport</key>
+			<string>{{0, 0}, {1066, 597}}</string>
+			<key>isToolbarVisible</key>
+			<true/>
+			<key>queries</key>
+			<string>CREATE DATABASE cab7 CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci';
+USE cab7;
+create table bank (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table cash (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table customers (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table suppliers (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table products (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table services (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table drivers (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table vehicles (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table vehiclelogs (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table vehiclemakes (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table vehicleplates (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table taxameters (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table taxameterlogs (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table dispatchers (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table authorities (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table mails (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table payments (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table paymentproviders (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table taxes (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table employees (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table income (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table outcome (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table partners (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table users (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table downloads (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table articles (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table pages (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table links (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table roles (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table routes (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table tasks (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table password_resets (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table verify_users (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+</string>
+			<key>table</key>
+			<string>roles</string>
+			<key>view</key>
+			<string>SP_VIEW_CUSTOMQUERY</string>
+			<key>windowVerticalDividerPosition</key>
+			<real>214</real>
+		</dict>
+	</dict>
+	<key>encrypted</key>
+	<false/>
+	<key>format</key>
+	<string>connection</string>
+	<key>queryFavorites</key>
+	<array/>
+	<key>queryHistory</key>
+	<array>
+		<string>SELECT CONCAT( REPEAT('    ', COUNT(parent.name) - 1), node.name) AS name
+FROM roles AS node, roles AS parent
+WHERE node.lft BETWEEN parent.lft AND parent.rgt
+GROUP BY node.name
+ORDER BY node.lft</string>
+		<string>SELECT CONCAT( REPEAT('    ', COUNT(parent.name) - 1), node.name) AS name
+FROM nested_category AS node,
+        roles AS parent
+WHERE node.lft BETWEEN parent.lft AND parent.rgt
+GROUP BY node.name
+ORDER BY node.lft</string>
+		<string>SELECT CONCAT(REPEAT('    ', (COUNT(`parent`.`name`) - 1)), `node`.`name`) AS `name`
+    FROM `roles` AS `node`, `roles` AS `parent`
+    WHERE `node`.`lft` BETWEEN `parent`.`lft` AND `parent`.`rgt`
+    GROUP BY `node`.`name`
+    ORDER BY `node`.`lft`</string>
+		<string>SELECT CONCAT(REPEAT(' ', (COUNT(`parent`.`name`) - 1)), `node`.`name`) AS `name`
+    FROM `roles` AS `node`, `roles` AS `parent`
+    WHERE `node`.`lft` BETWEEN `parent`.`lft` AND `parent`.`rgt`
+    GROUP BY `node`.`name`
+    ORDER BY `node`.`lft`</string>
+		<string>SELECT Child.name, Child.lft, Child.rgt
+FROM roles as Child, roles as Parent
+WHERE
+	Child.lft &gt; Parent.lft
+	AND Child.rgt &lt; Parent.rgt
+	AND Parent.lft = 1  -- Given Parent Node Left Index</string>
+		<string>SELECT Child.name, Child.lft, Child.rgt
+FROM roles as Child, roles as Parent
+WHERE
+	AND Child.lft &gt; Parent.lft
+	AND Child.rgt &lt; Parent.rgt
+	AND Parent.lft = 1  -- Given Parent Node Left Index</string>
+		<string>SELECT DISTINCT Child.name, Child.lft, Child.rgt
+FROM roles as Child, roles as Parent 
+WHERE Parent.lft &lt; Child.lft AND Parent.rgt &gt; Child.rgt  -- associate Child Nodes with ancestors
+GROUP BY Child.name, Child.lft, Child.rgt
+HAVING max(Parent.lft) = 1  -- Subset for those with the given Parent Node as the nearest ancestor</string>
+		<string>SELECT DISTINCT Child.name, Child.lft, Child.rgt
+FROM roles as Child, Tree as Parent 
+WHERE Parent.lft &lt; Child.lft AND Parent.rgt &gt; Child.rgt  -- associate Child Nodes with ancestors
+GROUP BY Child.name, Child.lft, Child.rgt
+HAVING max(Parent.lft) = 1  -- Subset for those with the given Parent Node as the nearest ancestor</string>
+		<string>use btvev</string>
+		<string>create table cash (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table customers (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table suppliers (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table products (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table services (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table drivers (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table vehicles (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table vehiclelogs (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table vehiclemakes (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table vehicleplates (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table taxameters (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table taxameterlogs (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table dispatchers (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table authorities (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table mails (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table payments (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table paymentproviders (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table taxes (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table employees (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table income (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table outcome (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table partners (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table users (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table downloads (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table articles (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table pages (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table links (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table roles (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table routes (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table tasks (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table password_resets (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null);
+create table verify_users (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null)</string>
+		<string>create table bank (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null)</string>
+		<string>create table bank (id int unsigned not null primary key auto_increment, created_at timestamp not null default now(), updated_at timestamp not null default now() on update now(), deleted_at timestamp null default null on delete now())</string>
+		<string>drop table bank</string>
+		<string>create table bank (id int unsigned not null primary key auto_increment)</string>
+		<string>USE cab7</string>
+		<string>create table bank</string>
+		<string>create table bank
+cash
+customers
+suppliers
+products
+services
+drivers
+vehicles
+vehiclelogs
+vehiclemakes
+vehicleplates
+taxameters
+taxameterlogs
+dispatchers
+authorities
+mails
+payments
+paymentproviders
+taxes
+employees
+income
+outcome
+partners
+users
+downloads
+articles
+pages
+links
+roles
+routes
+tasks
+password_resets
+verify_users
+
+CREATE DATABASE cab7 CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci'</string>
+		<string>create table bank ()</string>
+		<string>show databases</string>
+		<string>CREATE DATABASE cab7 CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci'</string>
+	</array>
+	<key>rdbms_type</key>
+	<string>mysql</string>
+	<key>rdbms_version</key>
+	<string>5.7.23</string>
+	<key>version</key>
+	<integer>1</integer>
+</dict>
+</plist>

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ContentFilters</key>
+	<dict/>
+	<key>auto_connect</key>
+	<true/>
+	<key>data</key>
+	<dict>
+		<key>connection</key>
+		<dict>
+			<key>database</key>
+			<string>cab7</string>
+			<key>host</key>
+			<string>localhost</string>
+			<key>kcid</key>
+			<string>-3065087875420903311</string>
+			<key>name</key>
+			<string>btvev</string>
+			<key>rdbms_type</key>
+			<string>mysql</string>
+			<key>sslCACertFileLocation</key>
+			<string></string>
+			<key>sslCACertFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>sslCertificateFileLocation</key>
+			<string></string>
+			<key>sslCertificateFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>sslKeyFileLocation</key>
+			<string></string>
+			<key>sslKeyFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>type</key>
+			<string>SPSocketConnection</string>
+			<key>useSSL</key>
+			<integer>0</integer>
+			<key>user</key>
+			<string>root</string>
+		</dict>
+		<key>session</key>
+		<dict>
+			<key>connectionEncoding</key>
+			<string>utf8mb4</string>
+			<key>contentPageNumber</key>
+			<integer>1</integer>
+			<key>contentSelection</key>
+			<data>
+			YnBsaXN0MDDUAQIDBAUGOTpYJHZlcnNpb25YJG9iamVjdHNZJGFy
+			Y2hpdmVyVCR0b3ASAAGGoK0HCBUWFxgZHSQoLDE2VSRudWxs0wkK
+			CwwQFFdOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzow0OD4ACgAOA
+			BKMREhOABYAGgAiADFR0eXBlVHJvd3NUa2V5c18QJlNlbGVjdGlv
+			bkRldGFpbFR5cGVQcmltYXJ5S2V5ZWREZXRhaWxz0wkKCxobHKCg
+			gAfSHh8gIVokY2xhc3NuYW1lWCRjbGFzc2VzXxATTlNNdXRhYmxl
+			RGljdGlvbmFyeaMgIiNcTlNEaWN0aW9uYXJ5WE5TT2JqZWN00goL
+			JSehJoAJgAvSCykqK1lOUy5zdHJpbmeAClJpZNIeHy0uXxAPTlNN
+			dXRhYmxlU3RyaW5noy0vMFhOU1N0cmluZ1hOU09iamVjdNIeHzIz
+			Xk5TTXV0YWJsZUFycmF5ozI0NVdOU0FycmF5WE5TT2JqZWN00h4f
+			IjeiIjhYTlNPYmplY3RfEA9OU0tleWVkQXJjaGl2ZXLROzxUZGF0
+			YYABAAgAEQAaACMALQAyADcARQBLAFIAWgBlAGwAcAByAHQAdgB6
+			AHwAfgCAAIIAhwCMAJEAugDBAMIAwwDFAMoA1QDeAPQA+AEFAQ4B
+			EwEVARcBGQEeASgBKgEtATIBRAFIAVEBWgFfAW4BcgF6AYMBiAGL
+			AZQBpgGpAa4AAAAAAAACAQAAAAAAAAA9AAAAAAAAAAAAAAAAAAAB
+			sA==
+			</data>
+			<key>contentSortColIsAsc</key>
+			<true/>
+			<key>contentViewport</key>
+			<string>{{0, 0}, {694, 448}}</string>
+			<key>isToolbarVisible</key>
+			<true/>
+			<key>queries</key>
+			<string>alter table transactions modify column id int unsigned not null auto_increment first;
+alter table transactions modify COLUMN amount decimal(7,2) unsigned NOT NULL;
+alter table transactions modify column vat tinyint(2) unsigned NOT NULL DEFAULT '19';
+alter table transactions modify column accounting_type enum ('credit', 'debit', 'transit') not null default 'debit';
+alter table transactions modify column booking_account enum ('cash', 'bank', 'cash --&gt; bank', 'bank --&gt; cash', 'bank --&gt; bank') not null default 'bank';
+alter table transactions modify column booking_category enum (
+	'Einnahme 7%', 'Einnahme 19%', 'GK-Einzahlung', 'Zahlungsgebühr', 'Vermittlung', 'Fehlfahrt',
+	'Treibstoff/Wäsche', 'Wartung/Pflege', 'Betriebsbedarf', 'Bürozubehör', 'Darlehen', 'Steuern',
+	'Haushalt', 'Privateinlage', 'Privatentnahme', 'Privatnutzung', 'Privatzahlung', 'Sonstiges'
+) after booking_account;
+
+insert into transactions (issued_on, amount, added_tax, accounting_type, booking_account, booking_category) (
+select
+-- 	month(begin) as period,
+-- 	count(*) as trips,
+	min(begin) as issued_on,
+	sum(fare) as amount,
+	vat as added_tax,
+	'credit' as accounting_type,
+	'cash' as booking_account,
+	if (`vat` = 7, 'Einnahme 7%', 'Einnahme 19%') as booking_category
+from taxameter_trips
+group by month(begin), vat
+order by month(begin) asc
+);
+
+select (
+	select ifnull(round(sum(amount - amount/1.07), 2), 0.00) as 'Umsatzsteuer 7%' from transactions where vat = 7.00 and accounting_type = 'credit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59'
+) + (
+	select ifnull(round(sum(amount - amount/1.19), 2), 0.00) as 'Umsatzsteuer 19%' from transactions where vat = 19.00 and accounting_type = 'credit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59'
+) - (
+	select ifnull(round(sum(amount - amount/1.07), 2), 0.00) as 'Vorsteuer 7%' from transactions where vat = 7.00 and accounting_type = 'debit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59'
+) - (
+	select ifnull(round(sum(amount - amount/1.19), 2), 0.00) as 'Vorsteuer 19%' from transactions where vat = 19.00 and accounting_type = 'debit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59'
+) as 'Zahllast 1.Quartal 2019';
+
+-- Grundbuch: Geschäftsvorfälle
+create table Journal(
+	id int unsigned not null primary key auto_increment,
+-- Belegnummer
+	beleg_nr int unsigned not null,
+-- Belegnummer
+-- Belegdatum
+-- Betrag
+-- Sollkonto
+-- Habenkonto
+-- Buchungstext
+	created_at timestamp not null default now(),
+	updated_at timestamp not null default now() on update now(),
+	constraint some_unique_key unique(f1, f2, f3)
+);
+
+-- Hauptbuch: { Sachkonten: { Bestandskonten(0,1,2,3): { Aktivkonten, Passivkonten }, Erfolgskonten(4,5,6,7: { Aufwandskonten, Ertragskonten } }
+Standardkontenrahmen SKR 04:
+Kontenklasse	Kontenbereich		Kontenbezeichnung					Beschreibung
+0				0001–0999			Anlagevermögen						Konten für den langfristigen Finanzierungsbedarf des Unternehmens
+1				1000–1999			Umlaufvermögen						Konten für Warenbewegungen, für kurz‐ und mittelfristigen Finanzen 
+																		sowie die aktive Rechnungsabgrenzung
+2				2000–2999			Eigenkapital						Konten für das Eigenkapital, für Kapital‐ und Gewinnrücklagen sowie 
+																		Ergebnisvorträge
+3				3000–3999			Fremdkapital						Konten für sämtliche Verbindlichkeiten sowie für passive 
+																		Rechnungsabgrenzungen
+4				4000–4999			Betriebliche Erträge				Konten für Erträge aus Umsatz, Dienstleistungen, Bestandsveränderungen, 
+																		gewährte Boni &amp; Skonti
+5				5000–5999			Betriebliche Aufwendungen			Konten zum Materialaufwand, Wareneingang, erhaltene Boni &amp; Skonti
+6				6000–6999			Betriebliche Aufwendungen			Konten für betriebsnotwendige Aufwendungen wie z. B. Lohn &amp; Gehalt, 
+																		Abschreibungen, Miete
+7				7000–7999			Weitere Erträge und Aufwendungen	Konten für Erträge aus Beteiligungen, Zinsaufwendungen und Erträge, 
+																		Abschreibungen sowie Gewerbe‐ und Grundsteueraufwand
+8				8000–8999			frei	
+9				9000–9999			Vortragskonten, statistische Konten	Konten für Privateinlagen und -entnahmen, Eröffnungs‐ und 
+																		Schlussbilanzkonto, Korrekturkonten und statistische Konten
+
+-- Nebenbuch: { Personenkonten: { Debitoren/Kunden: {}, Kreditoren/Lieferanten: {} }
+
+Aktiv Konto 	&lt;--&gt; 	Passiv Konto
+Aufwandskonto 	&lt;--&gt; 	Ertragskonto
+mehrt auf soll			mehrt auf haben
+mindert auf haben		mindert auf soll
+saldo auf haben			saldo auf soll
+
+
+</string>
+			<key>table</key>
+			<string>transactions</string>
+			<key>view</key>
+			<string>SP_VIEW_CUSTOMQUERY</string>
+			<key>windowVerticalDividerPosition</key>
+			<real>214</real>
+		</dict>
+	</dict>
+	<key>encrypted</key>
+	<false/>
+	<key>format</key>
+	<string>connection</string>
+	<key>queryFavorites</key>
+	<array/>
+	<key>queryHistory</key>
+	<array>
+		<string>select (
+	select ifnull(round(sum(amount - amount/1.07), 2), 0.00) as 'Umsatzsteuer 7%' from transactions where vat = 7.00 and accounting_type = 'credit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59'
+) + (
+	select ifnull(round(sum(amount - amount/1.19), 2), 0.00) as 'Umsatzsteuer 19%' from transactions where vat = 19.00 and accounting_type = 'credit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59'
+) - (
+	select ifnull(round(sum(amount - amount/1.07), 2), 0.00) as 'Vorsteuer 7%' from transactions where vat = 7.00 and accounting_type = 'debit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59'
+) - (
+	select ifnull(round(sum(amount - amount/1.19), 2), 0.00) as 'Vorsteuer 19%' from transactions where vat = 19.00 and accounting_type = 'debit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59'
+) as 'Zahllast 1.Quartal 2019'</string>
+		<string>select (
+	select ifnull(round(sum(amount - amount/1.07), 2), 0.00) as 'Umsatzsteuer 7%' from transactions where vat = 7.00 and accounting_type = 'credit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59'
+) + (
+	select ifnull(round(sum(amount - amount/1.19), 2), 0.00) as 'Umsatzsteuer 19%' from transactions where vat = 19.00 and accounting_type = 'credit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59'
+) - (
+	select ifnull(round(sum(amount - amount/1.07), 2), 0.00) as 'Vorsteuer 7%' from transactions where vat = 7.00 and accounting_type = 'debit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59'
+) - (
+	select ifnull(round(sum(amount - amount/1.19), 2), 0.00) as 'Vorsteuer 19%' from transactions where vat = 19.00 and accounting_type = 'debit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59'
+)</string>
+		<string>select (
+	select round(sum(amount - amount/1.07), 2) as 'Umsatzsteuer 7%' from transactions where vat = 7.00 and accounting_type = 'credit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59'
+) + (
+	select round(sum(amount - amount/1.19), 2) as 'Umsatzsteuer 19%' from transactions where vat = 19.00 and accounting_type = 'credit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59'
+) - (
+	select round(sum(amount - amount/1.07), 2) as 'Vorsteuer 7%' from transactions where vat = 7.00 and accounting_type = 'debit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59'
+) - (
+	select round(sum(amount - amount/1.19), 2) as 'Vorsteuer 19%' from transactions where vat = 19.00 and accounting_type = 'debit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59'
+)</string>
+		<string>select
+(select round(sum(amount - amount/1.07), 2) as 'Umsatzsteuer 7%' from transactions where vat = 7.00 and accounting_type = 'credit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59')
++
+(select round(sum(amount - amount/1.19), 2) as 'Umsatzsteuer 19%' from transactions where vat = 19.00 and accounting_type = 'credit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59')
+-
+(select round(sum(amount - amount/1.07), 2) as 'Vorsteuer 7%' from transactions where vat = 7.00 and accounting_type = 'debit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59')
+-
+(select round(sum(amount - amount/1.19), 2) as 'Vorsteuer 19%' from transactions where vat = 19.00 and accounting_type = 'debit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59')</string>
+		<string>select round(sum(amount - amount/1.19), 2) as 'Vorsteuer 19%' from transactions where vat = 19.00 and accounting_type = 'debit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59'</string>
+		<string>select round(sum(amount - amount/1.07), 2) as 'Vorsteuer 7%' from transactions where vat = 7.00 and accounting_type = 'debit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59'</string>
+		<string>select round(sum(amount - amount/1.19), 2) as 'Umsatzsteuer 19%' from transactions where vat = 19.00 and accounting_type = 'credit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59'</string>
+		<string>select round(sum(amount - amount/1.07), 2) as 'Umsatzsteuer 7%' from transactions where vat = 7.00 and accounting_type = 'credit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 23:59:59'</string>
+		<string>select round(sum(amount - amount/1.07), 2) as 'Vorsteuer 7%' from transactions where vat = 7.00 and accounting_type = 'debit'</string>
+		<string>select round(sum(amount - amount/1.19), 2) as 'Vorsteuer 19%' from transactions where vat = 19.00 and accounting_type = 'debit'</string>
+		<string>select round(sum(amount - amount/1.07), 2) as 'Umsatzsteuer 7%' from transactions where vat = 7.00 and accounting_type = 'credit' and issued_on between '2019-01-01 00:00:00' and '2019-03-31 00:00:00'</string>
+		<string>select sum(amount) as 'Vorsteuer 19%' from transactions where vat = 19.00 and accounting_type = 'debit'</string>
+		<string>select sum(amount) as 'Vorsteuer 7%' from transactions where vat = 7.00 and accounting_type = 'debit'</string>
+		<string>select round(sum(amount - amount/1.19), 2) as 'Umsatzsteuer 19%' from transactions where vat = 19.00 and accounting_type = 'credit'</string>
+		<string>select round(sum(amount - amount/1.12), 2) as 'Umsatzsteuer 19%' from transactions where vat = 19.00 and accounting_type = 'credit'</string>
+		<string>select round(sum(amount - amount/1.07), 2) as 'Umsatzsteuer 7%' from transactions where vat = 7.00 and accounting_type = 'credit'</string>
+		<string>select sum(amount - amount/1.07) as 'Umsatzsteuer 7%' from transactions where vat = 7.00 and accounting_type = 'credit'</string>
+		<string>select sum(amount) as 'Umsatzsteuer 19%' from transactions where vat = 19.00 and accounting_type = 'credit'</string>
+		<string>-- Vorsteuer 7%
+select sum(amount) from transactions where vat = 7.00 and accounting_type = 'debit'</string>
+		<string>-- Vorsteuer 7%
+select * from transactions where vat = 7.00 and accounting_type = 'debit'</string>
+	</array>
+	<key>rdbms_type</key>
+	<string>mysql</string>
+	<key>rdbms_version</key>
+	<string>5.7.23</string>
+	<key>version</key>
+	<integer>1</integer>
+</dict>
+</plist>
