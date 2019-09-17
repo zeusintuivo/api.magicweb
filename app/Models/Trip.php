@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
-class InsikaTrip extends Model
+class Trip extends Model
 {
     // Allow to assign taxameter trip ids
     public $incrementing = false;
     protected $guarded = [];
+    protected $connection = 'mysql-cab7';
 
     public function user()
     {

@@ -22,7 +22,7 @@ Route::get('/test', function (Request $request) {
 // 2nd test - OK
 Route::get('/user', function (Request $request) {
     return $request->user();
-})->middleware('auth:api');
+})->middleware(['auth:api', 'throttle:20,1']);
 
 // User routes
 Route::get('/fetch/user/details', 'UserController@show')->middleware(['auth:api', 'throttle:20,1']);

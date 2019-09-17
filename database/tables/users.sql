@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS users;
 CREATE TABLE IF NOT EXISTS users (
     id int UNSIGNED NOT NULL AUTO_INCREMENT,
     email varchar(50) NOT NULL DEFAULT '500.Internal@Server.Error',

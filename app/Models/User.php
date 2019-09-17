@@ -10,6 +10,8 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    protected $connection = 'mysql-cab7';
+
     /**
      * The attributes that should be hidden for arrays.
      *
