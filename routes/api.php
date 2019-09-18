@@ -38,6 +38,7 @@ Route::get('/fetch/user/details', 'UserController@show')->middleware(['auth:api'
 
 // Accounting Management System routes
 Route::get('/read/hale/gdpdu/export', 'FileController@readHaleGdpduExport')->middleware(['auth:api', 'throttle:20,1']);
+Route::post('/book/double/entry', 'BookingController@bookDoubleEntry')->middleware(['auth:api', 'throttle:20,1']);
 
 
 
