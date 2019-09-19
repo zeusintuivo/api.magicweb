@@ -24,6 +24,11 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware(['auth:api', 'throttle:20,1']);
 
+// Accounting Management System routes
+Route::get('/fetch/account/charts', 'BookingController@fetchAccountCharts');
+Route::get('/read/hale/gdpdu/export', 'FileController@readHaleGdpduExport')->middleware(['auth:api', 'throttle:20,1']);
+Route::post('/book/double/entry', 'BookingController@bookDoubleEntry')->middleware(['auth:api', 'throttle:20,1']);
+
 // User routes
 Route::get('/fetch/user/details', 'UserController@show')->middleware(['auth:api', 'throttle:20,1']);
 // Route::post('/login', 'Auth\LoginController@loginApi')->middleware('throttle:20,1');
@@ -35,10 +40,6 @@ Route::get('/fetch/user/details', 'UserController@show')->middleware(['auth:api'
 // Route::post('/update/user', 'UserController@update')->middleware(['auth:api', 'throttle:20,1']);
 // Route::post('/delete/user', 'UserController@delete')->middleware(['auth:api', 'throttle:20,1']);
 // Route::get('/delete/user/{token}', 'UserController@forceDeleteFromMail')->middleware('throttle:20,1');
-
-// Accounting Management System routes
-Route::get('/read/hale/gdpdu/export', 'FileController@readHaleGdpduExport')->middleware(['auth:api', 'throttle:20,1']);
-Route::post('/book/double/entry', 'BookingController@bookDoubleEntry')->middleware(['auth:api', 'throttle:20,1']);
 
 
 
