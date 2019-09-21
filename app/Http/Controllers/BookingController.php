@@ -15,8 +15,9 @@ class BookingController extends Controller
     public function fetchAccountCharts(Request $request)
     {
         $validated = $request->validate([
-            'skr' => 'required|string|min:3|max:5'
+            'skr' => 'required|string|size:5',
+            'lang' => 'required|string|size:5',
         ]);
-        return response()->json(AccountChart::all([$validated['skr'], 'name']), 200);
+        return response()->json(AccountChart::all([$validated['skr'], $validated['lang']]), 200);
     }
 }
