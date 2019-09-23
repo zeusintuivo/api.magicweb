@@ -14,8 +14,8 @@ class BookingController extends Controller
     {
         // return response()->json($request, 200);
         $v = $request->validate([
-            'lang'   => 'required|string',
             'skr'    => 'required|string',
+            'lang'   => 'required|string',
             'date'   => 'required|string|size:10',
             'amount' => 'required|string',
             'debit'  => 'required',
@@ -34,6 +34,8 @@ class BookingController extends Controller
         ) {
             $debitEntry->user_id = $request->user()->id;
             $debitEntry->account_chart_id = $debitAccount->id;
+            $debitEntry->skr = $v['skr'];
+            $debitEntry->lang = $v['lang'];
             $debitEntry->date = $v['date'];
             $debitEntry->details = $v['credit']['label'];
             $debitEntry->debit = (float) $v['amount'];
@@ -41,6 +43,8 @@ class BookingController extends Controller
             // return $debitEntry;
             $creditEntry->user_id = $request->user()->id;
             $creditEntry->account_chart_id = $creditAccount->id;
+            $creditEntry->skr = $v['skr'];
+            $creditEntry->lang = $v['lang'];
             $creditEntry->date = $v['date'];
             $creditEntry->details = $v['debit']['label'];
             $creditEntry->credit = (float) $v['amount'];
@@ -57,10 +61,10 @@ class BookingController extends Controller
 
     public function fetchAccountCharts(Request $request)
     {
-        $validated = $request->validate([
+        $v = $request->validate([
             'skr'  => 'required|string|size:5',
             'lang' => 'required|string|size:5',
         ]);
-        return response()->json(AccountChart::all([$validated['skr'], $validated['lang']]), 200);
+        return response()->json(AccountChart::whereNotNull($v['skr'])->whereNotNull($v['lang'])->get([$v['skr'], $v['lang']]), 200);
     }
 }
