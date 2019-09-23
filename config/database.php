@@ -57,21 +57,25 @@ return [
         ],
 
         'mysql-cab7' => [
-            'driver'   => 'mysql',
-            'host'     => env('DB_HOST'),
-            'port'     => env('DB_PORT'),
-            'username' => env('DB_USERNAME'),
-            'password' => env('DB_PASSWORD'),
-            'database' => 'cab7',
+            'driver'    => 'mysql',
+            'host'      => env('DB_HOST'),
+            'port'      => env('DB_PORT'),
+            'username'  => env('DB_USERNAME'),
+            'password'  => env('DB_PASSWORD'),
+            'database'  => 'cab7',
+            'charset'   => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
         ],
 
         'mysql-odzi' => [
-            'driver'   => 'mysql',
-            'host'     => env('DB_HOST'),
-            'port'     => env('DB_PORT'),
-            'username' => env('DB_USERNAME'),
-            'password' => env('DB_PASSWORD'),
-            'database' => 'odzi',
+            'driver'    => 'mysql',
+            'host'      => env('DB_HOST'),
+            'port'      => env('DB_PORT'),
+            'username'  => env('DB_USERNAME'),
+            'password'  => env('DB_PASSWORD'),
+            'database'  => 'odzi',
+            'charset'   => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
         ],
 
         'sqlite' => [

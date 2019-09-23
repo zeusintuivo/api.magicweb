@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS ledger_accounts(
     details varchar(255) NOT NULL COMMENT 'Booking t-account reference',
     debit decimal(7, 2) NULL DEFAULT NULL COMMENT 'Debere',
     credit decimal(7, 2) NULL DEFAULT NULL COMMENT 'Credere',
-    balance decimal(7, 2) NOT NULL COMMENT 'Balance inkl. current entry',
+    balance decimal(7, 2) NULL COMMENT 'Balance inkl. current entry',
     created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at timestamp NULL DEFAULT NULL,

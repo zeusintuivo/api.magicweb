@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class LedgerAccount extends Model
 {
     protected $connection = 'mysql-cab7';
+    protected $guarded = [];
 
     public function user()
     {
