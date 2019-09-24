@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Model\LedgerAccount;
 use App\Models\AccountChart;
+use App\Models\LedgerJournal;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use function date_parse;
 use function response;
 
 class BookingController extends Controller
@@ -16,7 +19,7 @@ class BookingController extends Controller
         $v = $request->validate([
             'skr'    => 'required|string',
             'lang'   => 'required|string',
-            'date'   => 'required|string|size:10',
+            'date'   => 'required|date',
             'amount' => 'required|string',
             'debit'  => 'required',
             'credit' => 'required',
@@ -25,38 +28,53 @@ class BookingController extends Controller
         // return $debitAccount;
         $creditAccount = AccountChart::where($v['skr'], $v['credit']['value'])->where($v['lang'], $v['credit']['label'])->first();
         // return $creditAccount;
+        $date = date_parse($v['date']);
+        $billCount = LedgerJournal::whereDate('date', $v['date'])->get()->count() + 1;
+        $billNumber = "{$date['month']}{$date['day']}{$billCount}";
+        // return response()->json((int) $billNumber, 200);
 
         // Use transaction to ensure completeness
-        $debitEntry = new LedgerAccount();
-        $creditEntry = new LedgerAccount();
-        DB::connection('mysql-cab7')->transaction(function () use (
-            $request, $v, $debitAccount, $creditAccount, $debitEntry, $creditEntry
+        $result = DB::connection('mysql-cab7')->transaction(function () use (
+            $request, $v, $debitAccount, $creditAccount, $billNumber
         ) {
+            $journalEntry = new LedgerJournal();
+            $journalEntry->date = $v['date'];
+            $journalEntry->bill = (int) $billNumber;
+            $journalEntry->amount = (float) $v['amount'];
+            $journalEntry->details = "{$v['credit']['label']} --> {$v['debit']['label']}";
+            $journalEntry->save();
+            // return $journalEntry;
+            $debitEntry = new LedgerAccount();
             $debitEntry->user_id = $request->user()->id;
             $debitEntry->account_chart_id = $debitAccount->id;
+            $debitEntry->ledger_journal_id = $journalEntry->id;
             $debitEntry->skr = $v['skr'];
             $debitEntry->lang = $v['lang'];
             $debitEntry->date = $v['date'];
-            $debitEntry->details = $v['credit']['label'];
+            $debitEntry->refer = $v['credit']['label'];
             $debitEntry->debit = (float) $v['amount'];
             $debitEntry->save();
             // return $debitEntry;
+            $creditEntry = new LedgerAccount();
             $creditEntry->user_id = $request->user()->id;
             $creditEntry->account_chart_id = $creditAccount->id;
+            $creditEntry->ledger_journal_id = $journalEntry->id;
             $creditEntry->skr = $v['skr'];
             $creditEntry->lang = $v['lang'];
             $creditEntry->date = $v['date'];
-            $creditEntry->details = $v['debit']['label'];
+            $creditEntry->refer = $v['debit']['label'];
             $creditEntry->credit = (float) $v['amount'];
             $creditEntry->save();
             // return $creditEntry;
+            return [
+                'success' => "3 entries booked successfully.",
+                'journal' => $journalEntry,
+                'debit'   => $debitEntry,
+                'credit'  => $creditEntry,
+            ];
         });
 
-        return response()->json([
-            'success' => "Two entries successfully booked.",
-            'debit'   => $debitEntry,
-            'credit'  => $creditEntry,
-        ], 200);
+        return response()->json($result, 200);
     }
 
     public function fetchAccountCharts(Request $request)

@@ -27,7 +27,7 @@ Route::get('/user', function (Request $request) {
 // Accounting Management System routes
 Route::get('/fetch/account/charts', 'BookingController@fetchAccountCharts');
 Route::get('/read/hale/gdpdu/export', 'FileController@readHaleGdpduExport')->middleware(['auth:api', 'throttle:20,1']);
-Route::post('/book/double/entry', 'BookingController@bookDoubleEntry')->middleware(['auth:api', 'throttle:20,1']);
+Route::post('/book/double/entry', 'BookingController@bookDoubleEntry')->middleware(['auth:api', 'throttle:50,1']);
 
 // User routes
 Route::get('/fetch/user/details', 'UserController@show')->middleware(['auth:api', 'throttle:20,1']);

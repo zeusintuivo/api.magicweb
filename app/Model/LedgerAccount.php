@@ -3,6 +3,7 @@
 namespace App\Model;
 
 use App\Models\AccountChart;
+use App\Models\LedgerJournal;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,6 +20,11 @@ class LedgerAccount extends Model
     public function accountChart()
     {
         return $this->belongsTo(AccountChart::class);
+    }
+
+    public function ledgerJournal()
+    {
+        return $this->belongsTo(LedgerJournal::class);
     }
 
 }
