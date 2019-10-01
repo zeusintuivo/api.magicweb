@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Cab7;
 
 use App\Models\InsikaTrip;
 use Exception;

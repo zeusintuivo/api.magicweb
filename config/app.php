@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Accounting Managerment System'),
+    'name' => env('APP_NAME', 'MagicWeb.org RESTful API'),
 
     /*
     |--------------------------------------------------------------------------
@@ -52,8 +52,9 @@ return [
     |
     */
 
-    'url_api' => env('APP_URL', 'http://cab7-api.mw/api'),
-    'url_spa' => env('APP_URL', 'http://cab7-spa.mw:3007'),
+    'url_cab7_api' => env('APP_URL', 'http://mw-api.mw'),
+    'url_cab7_spa' => env('APP_URL', 'http://cab7-spa.mw:3007'),
+    'url_dgi_spa' => env('URL_DGI_SPA', 'http://dgi-spa.mw:3008'),
 
     /*
     |--------------------------------------------------------------------------
@@ -66,7 +67,7 @@ return [
     |
     */
 
-    'timezone' => 'Europe/Berlin',
+    'timezone' => 'Europe/Sofia',
 
     /*
     |--------------------------------------------------------------------------

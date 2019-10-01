@@ -36,13 +36,12 @@ return [
     'connections' => [
 
         'mysql-mweb' => [
-            'driver'   => 'mysql',
-            'host'     => env('DB_HOST'),
-            'port'     => env('DB_PORT'),
-            'username' => env('DB_USERNAME'),
-            'password' => env('DB_PASSWORD'),
-            'database' => 'mweb',
-
+            'driver'         => 'mysql',
+            'host'           => env('DB_HOST'),
+            'port'           => env('DB_PORT'),
+            'username'       => env('DB_USERNAME'),
+            'password'       => env('DB_PASSWORD'),
+            'database'       => 'mweb',
             'url'            => env('DATABASE_URL'),
             'unix_socket'    => env('DB_SOCKET', ''),
             'charset'        => 'utf8mb4',
@@ -67,13 +66,13 @@ return [
             'collation' => 'utf8mb4_unicode_ci',
         ],
 
-        'mysql-odzi' => [
+        'mysql-izgrev' => [
             'driver'    => 'mysql',
             'host'      => env('DB_HOST'),
             'port'      => env('DB_PORT'),
             'username'  => env('DB_USERNAME'),
             'password'  => env('DB_PASSWORD'),
-            'database'  => 'odzi',
+            'database'  => 'dg_izgrev',
             'charset'   => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
         ],

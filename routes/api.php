@@ -25,18 +25,19 @@ Route::get('/user', function (Request $request) {
 })->middleware(['auth:api', 'throttle:20,1']);
 
 // Accounting Management System routes
-Route::get('/fetch/account/charts', 'BookingController@fetchAccountCharts');
-Route::get('/read/hale/gdpdu/export', 'FileController@readHaleGdpduExport')->middleware(['auth:api', 'throttle:20,1']);
-Route::post('/book/double/entry', 'BookingController@bookDoubleEntry')->middleware(['auth:api', 'throttle:50,1']);
+Route::get('/fetch/account/charts', 'Cab7\BookingController@fetchAccountCharts');
+Route::get('/read/hale/gdpdu/export', 'Cab7\FileController@readHaleGdpduExport')->middleware(['auth', 'throttle:20,1']);
+Route::post('/book/double/entry', 'Cab7\BookingController@bookDoubleEntry')->middleware(['auth', 'throttle:50,1']);
 
-// User routes
-Route::get('/fetch/user/details', 'UserController@show')->middleware(['auth:api', 'throttle:20,1']);
-// Route::post('/login', 'Auth\LoginController@loginApi')->middleware('throttle:20,1');
-// Route::post('/logout', 'Auth\LoginController@logoutApi')->middleware('throttle:20,1');
-// Route::post('/register', 'Auth\RegisterController@registerApi')->middleware('throttle:20,1');
-// Route::get('/verify/user/{token}', 'Auth\RegisterController@verifyApi')->middleware('throttle:20,1');
-// Route::post('/forgot/password', 'Auth\ForgotController@forgotPassword')->middleware('throttle:20,1');
-// Route::post('/reset/password', 'Auth\ResetController@resetPasswordApi')->middleware('throttle:20,1');
+// Auth user routes
+Route::post('/user/login', 'Izgrev\AuthController@loginUser')->middleware(['guest', 'throttle:20,1']);
+Route::post('/user/register', 'Izgrev\AuthController@registerUser')->middleware(['guest', 'throttle:20,1']);
+Route::post('/user/forgot/password', 'Izgrev\AuthController@forgotPasswordUser')->middleware(['guest', 'throttle:20,1']);
+Route::post('/user/reset/password/{token}', 'Izgrev\AuthController@resetPasswordUser')->middleware(['guest', 'throttle:20,1']);
+Route::get('/user/verify/email/{token}', 'Izgrev\AuthController@verifyEmailUser')->middleware(['guest', 'throttle:20,1']);
+Route::post('/user/logout', 'Izgrev\AuthController@logoutUser')->middleware('throttle:20,1');
+// Other user routes
+Route::get('/fetch/user/details', 'Cab7\UserController@show')->middleware(['auth:api', 'throttle:20,1']);
 // Route::post('/update/user', 'UserController@update')->middleware(['auth:api', 'throttle:20,1']);
 // Route::post('/delete/user', 'UserController@delete')->middleware(['auth:api', 'throttle:20,1']);
 // Route::get('/delete/user/{token}', 'UserController@forceDeleteFromMail')->middleware('throttle:20,1');
