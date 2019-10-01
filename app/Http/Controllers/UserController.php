@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Cab7;
 
+use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 

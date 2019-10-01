@@ -4,12 +4,12 @@ namespace App\Models\Cab7;
 
 use App\Models\AccountChart;
 use App\Models\LedgerJournal;
+use App\Models\Model;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
 
 class LedgerAccount extends Model
 {
-    protected $connection = 'mysql-cab7';
+    protected $table = 'cab7_ledger_accounts';
     protected $guarded = [];
 
     public function user()

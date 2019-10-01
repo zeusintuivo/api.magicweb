@@ -1,6 +1,8 @@
+SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS users;
 CREATE TABLE IF NOT EXISTS users (
     id int UNSIGNED NOT NULL AUTO_INCREMENT,
+    prefix enum('mweb', 'cab7', 'izgrev') NOT NULL DEFAULT 'mweb',
     email varchar(50) NOT NULL DEFAULT '500.Internal@Server.Error',
     first_name varchar(99) NOT NULL DEFAULT 'Server',
     last_name varchar(99) NOT NULL DEFAULT 'Error',
@@ -21,3 +23,4 @@ CREATE TABLE IF NOT EXISTS users (
 
 INSERT INTO users (email, first_name, last_name, api_token) VALUES
 ('vativa4c@gmail.com', 'Tichomir', 'Rangelov', 'ST617AtzyuMct9GTlYhQBGldfEvvzK3aNg0f5Tvxk58J7ODxD01TX9EKRpLw');
+SET FOREIGN_KEY_CHECKS = 1;

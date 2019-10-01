@@ -55,28 +55,6 @@ return [
             ]) : [],
         ],
 
-        'mysql-cab7' => [
-            'driver'    => 'mysql',
-            'host'      => env('DB_HOST'),
-            'port'      => env('DB_PORT'),
-            'username'  => env('DB_USERNAME'),
-            'password'  => env('DB_PASSWORD'),
-            'database'  => 'cab7',
-            'charset'   => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-        ],
-
-        'mysql-izgrev' => [
-            'driver'    => 'mysql',
-            'host'      => env('DB_HOST'),
-            'port'      => env('DB_PORT'),
-            'username'  => env('DB_USERNAME'),
-            'password'  => env('DB_PASSWORD'),
-            'database'  => 'dg_izgrev',
-            'charset'   => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-        ],
-
         'sqlite' => [
             'driver'                  => 'sqlite',
             'url'                     => env('DATABASE_URL'),

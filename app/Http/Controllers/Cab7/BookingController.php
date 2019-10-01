@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Cab7;
 
-use App\Model\LedgerAccount;
-use App\Models\AccountChart;
-use App\Models\LedgerJournal;
-use http\Env\Response;
+use App\Http\Controllers\Controller;
+use App\Models\Cab7\AccountChart;
+use App\Models\Cab7\LedgerAccount;
+use App\Models\Cab7\LedgerJournal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use function date_parse;
@@ -34,7 +34,7 @@ class BookingController extends Controller
         // return response()->json((int) $billNumber, 200);
 
         // Use transaction to ensure completeness
-        $result = DB::connection('mysql-cab7')->transaction(function () use (
+        $result = DB::connection('mysql-mweb')->transaction(function () use (
             $request, $v, $debitAccount, $creditAccount, $billNumber
         ) {
             $journalEntry = new LedgerJournal();

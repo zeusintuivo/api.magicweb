@@ -2,11 +2,10 @@
 
 namespace App\Models\Cab7;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Model;
 
 class LedgerJournal extends Model
 {
-    protected $connection = 'mysql-cab7';
-    protected $table = 'ledger_journal';
+    protected $table = 'cab7_ledger_journal';
     protected $guarded = [];
 }

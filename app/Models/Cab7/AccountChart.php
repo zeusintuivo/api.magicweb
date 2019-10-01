@@ -2,7 +2,9 @@
 
 namespace App\Models\Cab7;
 
+use App\Models\Model;
+
 class AccountChart extends Model
 {
-    protected $connection = 'mysql-cab7';
+    protected $table = 'cab7_account_charts';
 }
