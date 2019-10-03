@@ -10,6 +10,8 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use function response;
+use function trans;
 
 class Handler extends ExceptionHandler
 {
@@ -88,8 +90,9 @@ class Handler extends ExceptionHandler
 
     protected function unauthenticated($request, AuthenticationException $e)
     {
-        return $request->isJson()
-            ? response()->json(trans('auth.unauthenticated'), 401)
-            : redirect()->guest(route('login'));
+        return response()->json(trans('auth.unauthenticated'), 401);
+        // return $request->isJson()
+        //     ? response()->json(trans('auth.unauthenticated'), 401)
+        //     : redirect()->guest(route('login'));
     }
 }

@@ -30,12 +30,12 @@ Route::post('/read/hale/gdpdu/export', 'Cab7\FileController@readHaleGdpduExport'
 Route::post('/book/double/entry', 'Cab7\BookingController@bookDoubleEntry')->middleware(['auth', 'throttle:50,1']);
 
 // Auth user routes - mutual for all projects
-Route::post('/user/login', 'AuthController@loginUser')->middleware(['guest', 'throttle:20,1']);
-Route::post('/user/register', 'AuthController@registerUser')->middleware(['guest', 'throttle:20,1']);
-Route::post('/user/forgot/password', 'AuthController@forgotPasswordUser')->middleware(['guest', 'throttle:20,1']);
-Route::post('/user/reset/password/{token}', 'AuthController@resetPasswordUser')->middleware(['guest', 'throttle:20,1']);
-Route::get('/user/verify/email/{token}', 'AuthController@verifyEmailUser')->middleware(['guest', 'throttle:20,1']);
-Route::post('/user/logout', 'AuthController@logoutUser')->middleware('throttle:20,1');
+Route::post('/login', 'AuthController@login');//->middleware(['guest', 'throttle:20,1']);
+Route::match(['GET', 'POST'], '/logout', 'AuthController@logout')->middleware(['auth', 'throttle:20,1']);
+Route::post('/register', 'AuthController@register')->middleware(['guest', 'throttle:20,1']);
+Route::post('/verify/email', 'AuthController@verifyEmail')->middleware(['guest', 'throttle:20,1']);
+Route::post('/forgot/password', 'AuthController@forgotPassword')->middleware(['guest', 'throttle:20,1']);
+Route::post('/reset/password', 'AuthController@resetPassword')->middleware(['guest', 'throttle:20,1']);
 // Other user routes
 Route::get('/fetch/user/details', 'UserController@show')->middleware(['auth', 'throttle:20,1']);
 // Route::post('/update/user', 'UserController@update')->middleware(['auth:api', 'throttle:20,1']);

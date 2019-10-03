@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql-mweb'),
+    'default' => env('DB_CONNECTION', 'mysql'),
 
     /*
     |--------------------------------------------------------------------------
@@ -35,13 +35,13 @@ return [
 
     'connections' => [
 
-        'mysql-mweb' => [
+        'mysql' => [
             'driver'         => 'mysql',
             'host'           => env('DB_HOST'),
             'port'           => env('DB_PORT'),
+            'database'       => env('DB_DATABASE'),
             'username'       => env('DB_USERNAME'),
             'password'       => env('DB_PASSWORD'),
-            'database'       => 'mweb',
             'url'            => env('DATABASE_URL'),
             'unix_socket'    => env('DB_SOCKET', ''),
             'charset'        => 'utf8mb4',

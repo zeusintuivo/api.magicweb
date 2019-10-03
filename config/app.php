@@ -52,9 +52,7 @@ return [
     |
     */
 
-    'url_cab7_api' => env('APP_URL', 'http://mw-api.mw'),
-    'url_cab7_spa' => env('APP_URL', 'http://cab7-spa.mw:3007'),
-    'url_dgi_spa' => env('URL_DGI_SPA', 'http://dgi-spa.mw:3008'),
+    'url' => env('API_URL'),
 
     /*
     |--------------------------------------------------------------------------
@@ -80,7 +78,7 @@ return [
     |
     */
 
-    'locale' => 'de',
+    'locale' => 'en',
 
     /*
     |--------------------------------------------------------------------------

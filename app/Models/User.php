@@ -11,21 +11,8 @@ class User extends Authenticatable
     use Notifiable;
 
     protected $connection = 'mysql-mweb';
-
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password', 'api_token', 'remember_token',
-    ];
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
+    protected $guarded = ['password', 'remember_token'];
+    protected $hidden = ['password', 'remember_token'];
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];

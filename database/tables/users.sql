@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
     gdpr tinyint(1) UNSIGNED DEFAULT '0',
     news tinyint(1) UNSIGNED DEFAULT '1',
     password varchar(60) NOT NULL DEFAULT '$2y$10$nxJTYhv9W4PxHVR5eKCGr.X9p3cZqtJQvFMW4Z32zI9X0fQBQtiae',
-    api_token varchar(60) DEFAULT NULL,
+    api_token varchar(60) NULL DEFAULT NULL,
     remember_token varchar(60) DEFAULT NULL,
     created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
