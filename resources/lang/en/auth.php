@@ -5,7 +5,7 @@ return [
     "active.opposite" => "Account is currently active.",
     "deactivated" => "Account has been deactivated.",
     "failed" => "These credentials do not match our records.",
-    "logged" => "",
+    "logged" => "You have been signed successfully as :email.",
     "throttle" => "Too many login attempts. Please try again in :seconds seconds.",
     "unauthenticated" => "",
     "verified" => "",

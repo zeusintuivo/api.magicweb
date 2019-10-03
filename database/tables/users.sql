@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
     id int UNSIGNED NOT NULL AUTO_INCREMENT,
     prefix enum('mweb', 'cab7', 'izgrev') NOT NULL DEFAULT 'mweb',
     email varchar(50) NOT NULL DEFAULT '500.Internal@Server.Error',
+    email_sent_at TIMESTAMP NULL DEFAULT NULL,
     first_name varchar(99) NOT NULL DEFAULT 'Server',
     last_name varchar(99) NOT NULL DEFAULT 'Error',
     verified tinyint(1) UNSIGNED DEFAULT '0',

@@ -10,10 +10,9 @@ class User extends Authenticatable
 {
     use Notifiable;
 
-    protected $connection = 'mysql-mweb';
     protected $guarded = ['password', 'remember_token'];
     protected $hidden = ['password', 'remember_token'];
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'email_sent_at' => 'datetime',
     ];
 }
