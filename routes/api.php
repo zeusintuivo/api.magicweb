@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('{locale}')->middleware(['throttle:20,1', 'locale'])->group(function () {
+Route::prefix('{locale}')->group(function () {
 
     // 1st test
     Route::get('/test', function (Request $request) {
@@ -36,12 +36,12 @@ Route::prefix('{locale}')->middleware(['throttle:20,1', 'locale'])->group(functi
     Route::post('/book/double/entry', 'Cab7\BookingController@bookDoubleEntry')->middleware('auth');
 
     // Auth user routes - mutual for all projects
-    Route::post('/login', 'AuthController@login')->middleware('guest');
-    Route::match(['GET', 'POST'], '/logout', 'AuthController@logout')->middleware('auth');
-    Route::post('/register', 'AuthController@register')->middleware('guest');
-    Route::post('/verify/email', 'AuthController@verifyEmail')->middleware('guest');
-    Route::post('/forgot/password', 'AuthController@forgotPassword')->middleware('guest');
-    Route::post('/reset/password', 'AuthController@resetPassword')->middleware('guest');
+    Route::post('/login', 'AuthController@login')->middleware('guest')->name('login');
+    Route::match(['GET', 'POST'], '/logout', 'AuthController@logout')->middleware('auth')->name('logout');
+    Route::post('/register', 'AuthController@register')->middleware('guest')->name('register');
+    Route::post('/verify/email', 'AuthController@verifyEmail')->middleware('guest')->name('verify-email');
+    Route::post('/forgot/password', 'AuthController@forgotPassword')->middleware('guest')->name('forgot-password');
+    Route::post('/reset/password', 'AuthController@resetPassword')->middleware('guest')->name('reset-password');
     // Other user routes
     Route::get('/fetch/user/details', 'UserController@show')->middleware('auth');
     // Route::post('/update/user', 'UserController@update')->middleware('auth:api');

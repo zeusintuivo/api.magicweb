@@ -121,6 +121,13 @@ return [
     "distinct" => "The :attribute field has a duplicate value.",
     "email" => "The :attribute must be a valid email address.",
     "ends_with" => "The :attribute must end with one of the following: :values",
+    "exception" => [
+        "decrypt" => "Invalid token",
+        "token" => [
+            "expired" => "Token expired after :minutes minutes of inactivity.",
+            "not" => ["found" => "Token not found"]
+        ]
+    ],
     "exists" => ":attribute :input not found",
     "file" => "The :attribute must be a file.",
     "filled" => "The :attribute field must have a value.",

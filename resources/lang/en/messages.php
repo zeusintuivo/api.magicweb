@@ -1,8 +1,8 @@
 <?php
 return [
     "attributes" => [
-        "body" => "",
-        "email" => "",
+        "body" => "content",
+        "email" => "email address",
         "name" => "",
         "password" => "",
         "title" => "",
@@ -11,11 +11,12 @@ return [
     "backtotop" => "",
     "btv" => ["history" => ""],
     "dashboard" => "",
+    "email" => ["sent" => "Email has been sent to :email."],
     "logged" => ["in" => "", "out" => ""],
-    "mail" => ["sent" => ""],
     "member" => ["accepted" => "", "created" => "", "urlCreate" => ""],
     "newsletter" => ["subscribe" => "", "unsubscribe" => ""],
     "post" => ["created" => "", "published" => ""],
     "signed" => ["up" => ""],
+    "thanks" => "thanks",
     "users" => ["index" => ""]
 ];

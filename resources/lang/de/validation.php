@@ -121,6 +121,13 @@ return [
     "distinct" => ":attribute beinhaltet einen bereits vorhandenen Wert.",
     "email" => ":attribute muß eine gültige E-Mail-Adresse sein.",
     "ends_with" => "",
+    "exception" => [
+        "decrypt" => "Ungültiger Schlüssel",
+        "token" => [
+            "expired" => "Der Schlüssel ist nach :minutes Minuten nicht mehr gültig.",
+            "not" => ["found" => "Schlüssel nicht gefunden"]
+        ]
+    ],
     "exists" => ":attribute :input nicht gefunden",
     "file" => ":attribute muß eine Datei sein.",
     "filled" => ":attribute muß ausgefüllt sein.",

@@ -38,7 +38,7 @@ return [
         "day" => "Ден",
         "description" => "Описание",
         "dispatcher_name" => "",
-        "email" => "Имейл",
+        "email" => "имейл",
         "excerpt" => "Откъс",
         "fax" => "",
         "first_name" => "Име",
@@ -121,6 +121,13 @@ return [
     "distinct" => "Данните в полето :attribute се дублират.",
     "email" => "Полето :attribute е в невалиден формат.",
     "ends_with" => "",
+    "exception" => [
+        "decrypt" => "Невалиден ключ",
+        "token" => [
+            "expired" => "Ключът губи валидност след :minutes минути.",
+            "not" => ["found" => "Несъществуващ ключ"]
+        ]
+    ],
     "exists" => ":attribute :input не съществува",
     "file" => "The :attribute must be a file.",
     "filled" => "Полето :attribute е задължително.",

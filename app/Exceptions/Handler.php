@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
@@ -20,14 +21,6 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        //
-    ];
-
-    /**
-     * A list of the inputs that are never flashed for validation exceptions.
-     * @var array
-     */
-    protected $dontFlash = [
         //
     ];
 
@@ -81,8 +74,18 @@ class Handler extends ExceptionHandler
             return response()->json($e->errors(), 422);
         }
 
-        if ($e instanceof ValidationRxException) {
-            return response()->json($e->errors(), 422);
+        if ($e instanceof DecryptException) {
+            return response()->json(trans('validation.exception.decrypt'), 422);
+        }
+
+        if ($e instanceof TokenNotFoundException) {
+            return response()->json(trans('validation.exception.token.not.found'), 422);
+        }
+
+        if ($e instanceof TokenExpiredException) {
+            return response()->json(trans('validation.exception.token.expired', [
+                'minutes' => config('auth.passwords.users.expire')
+            ]), 422);
         }
 
         return response()->json($e->getMessage(), 500);
@@ -91,8 +94,5 @@ class Handler extends ExceptionHandler
     protected function unauthenticated($request, AuthenticationException $e)
     {
         return response()->json(trans('auth.unauthenticated'), 401);
-        // return $request->isJson()
-        //     ? response()->json(trans('auth.unauthenticated'), 401)
-        //     : redirect()->guest(route('login'));
     }
 }

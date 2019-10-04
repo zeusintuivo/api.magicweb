@@ -29,7 +29,7 @@ return [
     |
     */
 
-    'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
+    'host' => env('MAIL_HOST'),
 
     /*
     |--------------------------------------------------------------------------
@@ -42,7 +42,7 @@ return [
     |
     */
 
-    'port' => env('MAIL_PORT', 587),
+    'port' => env('MAIL_PORT'),
 
     /*
     |--------------------------------------------------------------------------
@@ -56,8 +56,13 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        'address' => env('MAIL_FROM_ADDRESS'),
+        'name'    => env('MAIL_FROM_NAME', config('app.name')),
+    ],
+
+    'reply_to' => [
+        'address' => env('REPLY_TO_ADDRESS'),
+        'name'    => env('REPLY_TO_NAME', config('app.name')),
     ],
 
     /*
@@ -113,7 +118,7 @@ return [
     */
 
     'markdown' => [
-        'theme' => 'default',
+        'theme' => 'custom',
 
         'paths' => [
             resource_path('views/vendor/mail'),

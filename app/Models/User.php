@@ -2,17 +2,27 @@
 
 namespace App\Models;
 
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models\Traits\UserCanAuthenticate;
+use App\Models\Traits\UserRelationships;
 
-class User extends Authenticatable
+class User extends Model
 {
-    use Notifiable;
+    use UserCanAuthenticate, UserRelationships;
 
     protected $guarded = ['password', 'remember_token'];
     protected $hidden = ['password', 'remember_token'];
     protected $casts = [
         'email_sent_at' => 'datetime',
     ];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+    }
+
+    public function getFullName()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
 }

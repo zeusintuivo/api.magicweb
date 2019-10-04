@@ -1,8 +1,8 @@
 <?php
 return [
     "attributes" => [
-        "body" => "",
-        "email" => "",
+        "body" => "съдържание",
+        "email" => "имейл адрес",
         "name" => "",
         "password" => "",
         "title" => "",
@@ -11,11 +11,12 @@ return [
     "backtotop" => "",
     "btv" => ["history" => ""],
     "dashboard" => "",
+    "email" => ["sent" => "Имейл е изпратен на :email."],
     "logged" => ["in" => "", "out" => ""],
-    "mail" => ["sent" => ""],
     "member" => ["accepted" => "", "created" => "", "urlCreate" => ""],
     "newsletter" => ["subscribe" => "", "unsubscribe" => ""],
     "post" => ["created" => "", "published" => ""],
     "signed" => ["up" => ""],
+    "thanks" => "c благодарности",
     "users" => ["index" => ""]
 ];
