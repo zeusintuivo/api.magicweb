@@ -7,8 +7,6 @@ use App\Http\Resources\UserResource;
 use App\Models\Token;
 use App\Models\User;
 use Illuminate\Http\Request;
-use function compact;
-use function dd;
 
 class AuthController extends Controller
 {
@@ -21,6 +19,14 @@ class AuthController extends Controller
                 'success' => trans('auth.signed.in', compact('email')),
             ],
             'user'   => new UserResource($user->login()),
+        ], 200);
+    }
+
+    public function authCheck(Request $request)
+    {
+        return response()->json([
+            'notify' => [],
+            'user' => new UserResource($request->user())
         ], 200);
     }
 

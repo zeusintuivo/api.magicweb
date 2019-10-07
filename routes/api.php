@@ -43,7 +43,8 @@ Route::prefix('{locale}')->group(function () {
 
     // Auth user routes - mutual for all projects
     Route::post('/login', 'AuthController@login')->middleware('guest')->name('login');
-    Route::match(['GET', 'POST'], '/logout', 'AuthController@logout')->middleware('auth')->name('logout');
+    Route::post('/auth/check', 'AuthController@authCheck')->middleware('auth')->name('auth-check');
+    Route::post('/logout', 'AuthController@logout')->middleware('auth')->name('logout');
     Route::post('/register', 'AuthController@register')->middleware('guest')->name('register');
     Route::post('/resend/verification', 'AuthController@resendVerification')->middleware('guest')->name('resend/verification');
     Route::post('/verify/email', 'AuthController@verifyEmail')->middleware('guest')->name('verify/email');

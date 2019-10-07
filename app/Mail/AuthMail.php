@@ -5,18 +5,11 @@ namespace App\Mail;
 use App\Models\Token;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Http\Request;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use stdClass;
-use function config;
-use function dd;
-use function encrypt;
-use function env;
-use function strtoupper;
-use function trim;
 
 class AuthMail extends Mailable
 {
@@ -34,7 +27,7 @@ class AuthMail extends Mailable
         $token = Token::updateOrCreate([
             'user_id' => $user->id,
         ], [
-            'hash' => encrypt($user->email),
+            'hash' => Hash::make($user->password),
         ]);
         $this->client->baseUrl = trim(env("{$this->client->ident}_URL"), '/');
         $this->client->routeName = Route::currentRouteName();

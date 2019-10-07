@@ -126,7 +126,6 @@ class AuthRequest extends FormRequest
             'min:60',
             'max:255',
             new TokenExists('tokens', 'hash'),
-            new TokenDecrypts(),
             new TokenExpires(),
         ];
     }
