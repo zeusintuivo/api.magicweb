@@ -2,82 +2,123 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\TokenNotFoundException;
 use App\Http\Requests\AuthRequest;
+use App\Http\Resources\UserResource;
 use App\Models\Token;
 use App\Models\User;
 use Illuminate\Http\Request;
+use function compact;
+use function dd;
 
 class AuthController extends Controller
 {
     public function login(AuthRequest $request)
     {
         $user = User::whereEmail($request['email'])->first();
+        $email = $user->email;
         return response()->json([
             'notify' => [
-                'success' => trans('auth.signed.in', ['email' => $user->email]),
+                'success' => trans('auth.signed.in', compact('email')),
             ],
-            'user'   => $user->login($request),
+            'user'   => new UserResource($user->login()),
         ], 200);
     }
 
     public function logout(Request $request)
     {
+        $user = $request->user();
+        $email = $user->email;
         return response()->json([
             'notify' => [
-                'info' => trans('auth.signed.out'),
+                'info' => trans('auth.signed.out', compact('email')),
             ],
-            'user'   => $request->user()->logout,
+            'user'   => new UserResource($user->logout()),
         ], 200);
     }
 
     public function register(AuthRequest $request)
     {
         $user = new User();
+        $email = $request->input('email');
         return response()->json([
             'notify' => [
-                'info' => trans('messages.email.sent', ['email' => $request->input('email')]),
+                'info' => trans('messages.email.sent', compact('email')),
             ],
-            'user'   => $user->register($request),
+            'user'   => new UserResource($user->register()),
+        ], 200);
+    }
+
+    public function resendVerification(AuthRequest $request)
+    {
+        $user = User::whereEmail($request->input('email'))->first();
+        $email = $user->email;
+        return response()->json([
+            'notify' => [
+                'info' => trans('auth.mail.verification.sent', compact('email')),
+            ],
+            'user'   => new UserResource($user->resendVerification()),
         ], 200);
     }
 
     public function verifyEmail(AuthRequest $request)
     {
-        // Find token with hash as ID, and get associated user
-        if (!$token = Token::find($request->input('token'))) {
-            throw new TokenNotFoundException();
-        }
+        $user = Token::find($request->input('token'))->user;
+        $email = $user->email;
         // Verify user, and notify
         return response()->json([
             'notify' => [
-                'success' => trans('auth.verified.on'),
+                'success' => trans('auth.mail.verification.done', compact('email')),
             ],
-            'user'   => $token->user->verifyEmail(),
+            'user'   => new UserResource($user->verifyEmail()),
         ], 200);
     }
 
     public function forgotPassword(AuthRequest $request)
     {
         $user = User::whereEmail($request->input('email'))->first();
+        $email = $user->email;
         return response()->json([
             'notify' => [
-                'info' => trans('messages.email.sent', ['email' => $user->email]),
+                'info' => trans('messages.email.sent', compact('email')),
             ],
-            'user'   => $user->forgotPassword($request),
+            'user'   => new UserResource($user->forgotPassword()),
         ], 200);
     }
 
     public function resetPassword(AuthRequest $request)
     {
-        if (!$token = Token::find($request->input('token'))) {
-            throw new TokenNotFoundException();
-        }
+        $user = Token::find($request->input('token'))->user;
+        $email = $user->email;
         return response()->json([
             'notify' => [
-                'success' => trans('auth.password.changed'),
+                'success' => trans('auth.password.changed', compact('email')),
             ],
-            'user'   => $token->user->resetPassword($request->input('password')),
+            'user'   => new UserResource($user->resetPassword()),
         ], 200);
     }
+
+    public function accountDeleteRequest(Request $request)
+    {
+        $user = $request->user();
+        $email = $user->email;
+        return response()->json([
+            'notify' => [
+                'warning' => trans('messages.email.sent', compact('email')),
+            ],
+            'user'   => new UserResource($user->accountDeleteRequest()),
+        ], 200);
+    }
+
+    public function accountDeleteConfirm(AuthRequest $request)
+    {
+        $user = Token::find($request->input('token'))->user;
+        $email = $user->email;
+        return response()->json([
+            'notify' => [
+                'danger' => trans('auth.account.deleted', compact('email')),
+            ],
+            'user'   => new UserResource($user->accountDeleteConfirm()),
+        ], 200);
+    }
+
 }

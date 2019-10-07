@@ -12,10 +12,12 @@ return [
     "btv" => ["history" => "btv-geschichte"],
     "dashboard" => "Instrumententafel der :Name",
     "email" => ["sent" => "Eine Email wurde an :email gesendet."],
+    "link" => ["below" => "oder nutzen Sie den Link unten:"],
     "logged" => [
         "in" => "Sie sind erfolgreich als :Name angemeldet.",
         "out" => "Sie sind abgemeldet."
     ],
+    "mail" => ["sent" => ["sent" => "Eine Email wurde an :email gesendet."]],
     "member" => [
         "accepted" => "Ihre Mitgliedschaft bei der Berliner Taxivereinigung e.V. wurde entsprochen.",
         "created" => "Ein neues BTV-Mitglied hat sich auf :host beworben.",

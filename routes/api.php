@@ -1,8 +1,10 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
+use function request;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +21,10 @@ Route::prefix('{locale}')->group(function () {
 
     // 1st test
     Route::get('/test', function (Request $request) {
+
+        $user = new User();
+        return $user->accountForceDelete();
+
         return response()->json([
             'request' => $request->toArray(),
             'locale'  => App::getLocale(),
@@ -39,9 +45,12 @@ Route::prefix('{locale}')->group(function () {
     Route::post('/login', 'AuthController@login')->middleware('guest')->name('login');
     Route::match(['GET', 'POST'], '/logout', 'AuthController@logout')->middleware('auth')->name('logout');
     Route::post('/register', 'AuthController@register')->middleware('guest')->name('register');
-    Route::post('/verify/email', 'AuthController@verifyEmail')->middleware('guest')->name('verify-email');
-    Route::post('/forgot/password', 'AuthController@forgotPassword')->middleware('guest')->name('forgot-password');
-    Route::post('/reset/password', 'AuthController@resetPassword')->middleware('guest')->name('reset-password');
+    Route::post('/resend/verification', 'AuthController@resendVerification')->middleware('guest')->name('resend/verification');
+    Route::post('/verify/email', 'AuthController@verifyEmail')->middleware('guest')->name('verify/email');
+    Route::post('/forgot/password', 'AuthController@forgotPassword')->middleware('guest')->name('forgot/password');
+    Route::post('/reset/password', 'AuthController@resetPassword')->middleware('guest')->name('reset/password');
+    Route::post('/account/delete/request', 'AuthController@accountDeleteRequest')->middleware('auth')->name('account/delete/request');
+    Route::post('/account/delete/confirm', 'AuthController@accountDeleteConfirm')->middleware('guest')->name('account/delete/confirm');
     // Other user routes
     Route::get('/fetch/user/details', 'UserController@show')->middleware('auth');
     // Route::post('/update/user', 'UserController@update')->middleware('auth:api');

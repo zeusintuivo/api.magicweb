@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS cab7_insika_trips (
     updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at timestamp NULL DEFAULT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
     UNIQUE KEY started_ended_unique(started_at, ended_at)
 ) ENGINE InnoDB DEFAULT CHARSET = utf8mb4;
 

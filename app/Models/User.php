@@ -4,16 +4,26 @@ namespace App\Models;
 
 use App\Models\Traits\UserCanAuthenticate;
 use App\Models\Traits\UserRelationships;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Model
+class User extends Authenticatable
 {
-    use UserCanAuthenticate, UserRelationships;
+    use SoftDeletes, UserCanAuthenticate, UserRelationships;
 
-    protected $guarded = ['password', 'remember_token'];
-    protected $hidden = ['password', 'remember_token'];
-    protected $casts = [
-        'email_sent_at' => 'datetime',
-    ];
+    /**
+     * The attributes that should be mutated to dates.
+     * @var array
+     */
+    protected $dates = ['last_email_at', 'created_at', 'updated_at', 'deleted_at'];
+
+    /**
+     * The attributes that aren't mass assignable
+     * @var array
+     */
+    protected $guarded = ['id', 'password', 'created_at', 'updated_at', 'deleted_at'];
+
+    protected $hidden = ['password'];
 
     public function __construct(array $attributes = [])
     {

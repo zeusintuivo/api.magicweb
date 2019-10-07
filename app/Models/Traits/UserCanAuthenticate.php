@@ -2,21 +2,22 @@
 
 namespace App\Models\Traits;
 
-use App\Mail\ResetPasswordMail;
-use App\Mail\VerificationMail;
+use App\Mail\AuthMail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use function dd;
+use function date;
 use function hash;
 use function strtoupper;
 
 trait UserCanAuthenticate
 {
-    public function login(Request $request)
+    public function login()
     {
         $this->api_token = Str::random(60);
-        if ($request->input('remember')) {
+        if (request('remember')) {
             $this->remember = 1;
         }
         $this->save();
@@ -31,16 +32,20 @@ trait UserCanAuthenticate
         return $this;
     }
 
-    public function register(Request $request)
+    public function register()
     {
-        $this->client = $request->header('X-API-CLIENT-APP-IDENTIFIER');
-        $this->first_name = $request['first_name'];
-        $this->last_name = $request['last_name'];
-        $this->email = $request['email'];
-        $this->password = hash('sha256', $request['password']);
+        $this->client = request()->header('X-API-CLIENT-APP-IDENTIFIER');
+        $this->first_name = request('first_name');
+        $this->last_name = request('last_name');
+        $this->email = request('email');
+        $this->password = Hash::make(request('password'));
         $this->save();
-        Mail::send(new VerificationMail($this, $request));
-        return $this;
+        return $this->sendAuthMail();
+    }
+
+    public function resendVerification()
+    {
+        return $this->sendAuthMail();
     }
 
     public function verifyEmail()
@@ -52,17 +57,65 @@ trait UserCanAuthenticate
         return $this;
     }
 
-    public function forgotPassword(Request $request)
+    public function forgotPassword()
     {
-        Mail::send(new ResetPasswordMail($this, $request));
-        return $this;
+        return $this->sendAuthMail();
     }
 
-    public function resetPassword(string $password)
+    public function resetPassword()
     {
-        $this->password = hash('sha256', $password);
+        $this->password = Hash::make(request('password'));
         $this->save();
         $this->token->forceDelete();
         return $this;
     }
+
+    public function accountDeleteRequest()
+    {
+        // Send confirmation email
+        return $this->sendAuthMail();
+    }
+
+    public function accountDeleteConfirm()
+    {
+        $this->delete();
+        $this->token->forceDelete();
+        return $this;
+    }
+
+    /**
+     * Should be called only by admins
+     *
+     * @return array
+     */
+    public function accountForceDelete()
+    {
+        return $this->dumpChildTablesOnAccountDelete();
+    }
+
+    protected function sendAuthMail()
+    {
+        Mail::send(new AuthMail($this));
+        $this->last_email_at = date('Y-m-d H:i:s');
+        $this->save();
+        return $this;
+    }
+
+    /**
+     * User ID will be needed
+     *
+     * @return array
+     */
+    protected function dumpChildTablesOnAccountDelete()
+    {
+        $client = request()->header('X-API-CLIENT-APP-IDENTIFIER');
+        $tables = DB::connection('mysql_information_schema')->select("
+            SELECT table_name FROM key_column_usage
+                WHERE table_schema = '{$client}' AND referenced_table_name = 'users' AND referenced_column_name = 'id';
+        ");
+        return $tables;
+        //TODO: Select all with this user associated rows and put them into
+        // deleted/client_user_id_dump.sql file with insert into statements
+    }
+
 }

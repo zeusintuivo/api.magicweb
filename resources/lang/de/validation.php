@@ -98,6 +98,13 @@ return [
         "year" => "",
         "zip" => "Die Postleitzahl"
     ],
+    "auth" => [
+        "email" => [
+            "exists" => "Die Email :email existiert nicht.",
+            "trashed" => "Die Email :email steht nicht zur Verfügung. Bitte kontaktieren Sie den Administrator.",
+            "unique" => "Die Email :email wurde bereits vergeben."
+        ]
+    ],
     "before" => ":attribute muß ein Datum vor dem :date sein.",
     "before_or_equal" => ":attribute muß ein Datum vor dem :date oder gleich dem :date sein.",
     "between" => [
@@ -108,7 +115,7 @@ return [
     ],
     "boolean" => ":attribute muß entweder 'true' oder 'false' sein.",
     "concession" => ["available" => "Die Konzession :concession wurde bereits erteilt."],
-    "confirmed" => ":attribute stimmt nicht überein.",
+    "confirmed" => "Das Feld :attribute stimmt nicht überein.",
     "current_password" => "Falsches Passwort für :email",
     "custom" => ["attribute-name" => ["rule-name" => "custom-message"]],
     "date" => ":attribute muß ein gültiges Datum sein.",
@@ -121,14 +128,8 @@ return [
     "distinct" => ":attribute beinhaltet einen bereits vorhandenen Wert.",
     "email" => ":attribute muß eine gültige E-Mail-Adresse sein.",
     "ends_with" => "",
-    "exception" => [
-        "decrypt" => "Ungültiger Schlüssel",
-        "token" => [
-            "expired" => "Der Schlüssel ist nach :minutes Minuten nicht mehr gültig.",
-            "not" => ["found" => "Schlüssel nicht gefunden"]
-        ]
-    ],
-    "exists" => ":attribute :input nicht gefunden",
+    "exception" => ["decrypt" => "Ungültiger Schlüssel"],
+    "exists" => ":Attribute :input nicht gefunden",
     "file" => ":attribute muß eine Datei sein.",
     "filled" => ":attribute muß ausgefüllt sein.",
     "gdpr" => ":attribute muß akzeptiert werden.",
@@ -181,6 +182,11 @@ return [
     "starts_with" => "",
     "string" => ":attribute muß ein String sein.",
     "timezone" => ":attribute muß eine gültige Zeitzone sein.",
+    "token" => [
+        "decrypts" => "Schlüssel nicht gültig",
+        "exists" => "Schlüssel nicht gefunden",
+        "expires" => "Schlüssel nach :minutes Minuten abgelaufen"
+    ],
     "unique" => ":attribute wurde bereits vergeben.",
     "uploaded" => ":attribute konnte nicht hochgeladen werden.",
     "url" => ":attribute hat ein ungültiges Format.",

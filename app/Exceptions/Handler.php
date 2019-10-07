@@ -74,20 +74,6 @@ class Handler extends ExceptionHandler
             return response()->json($e->errors(), 422);
         }
 
-        if ($e instanceof DecryptException) {
-            return response()->json(trans('validation.exception.decrypt'), 422);
-        }
-
-        if ($e instanceof TokenNotFoundException) {
-            return response()->json(trans('validation.exception.token.not.found'), 422);
-        }
-
-        if ($e instanceof TokenExpiredException) {
-            return response()->json(trans('validation.exception.token.expired', [
-                'minutes' => config('auth.passwords.users.expire')
-            ]), 422);
-        }
-
         return response()->json($e->getMessage(), 500);
     }
 

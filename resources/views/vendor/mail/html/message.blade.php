@@ -1,8 +1,8 @@
 @component('mail::layout')
     {{-- Header --}}
     @slot('header')
-        @component('mail::header', ['url' => $appUrl])
-            {{ $appName }}
+        @component('mail::header', ['url' => $client->baseUrl])
+            {{ $client->brand }}
         @endcomponent
     @endslot
 

@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => env('DB_CONNECTION'),
 
     /*
     |--------------------------------------------------------------------------
@@ -35,7 +35,7 @@ return [
 
     'connections' => [
 
-        'mysql' => [
+        'mysql_mweb' => [
             'driver'         => 'mysql',
             'host'           => env('DB_HOST'),
             'port'           => env('DB_PORT'),
@@ -53,6 +53,15 @@ return [
             'options'        => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
+        ],
+
+        'mysql_information_schema' => [
+            'driver'   => 'mysql',
+            'host'     => env('DB_HOST'),
+            'port'     => env('DB_PORT'),
+            'database' => 'information_schema',
+            'username' => env('DB_USERNAME'),
+            'password' => env('DB_PASSWORD'),
         ],
 
         'sqlite' => [

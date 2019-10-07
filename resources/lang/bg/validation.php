@@ -98,6 +98,13 @@ return [
         "year" => "Година",
         "zip" => ""
     ],
+    "auth" => [
+        "email" => [
+            "exists" => "Имейл :email не съществува.",
+            "trashed" => "Имейл :email не е свободен за регистрация. Моля обърнете се към администратора.",
+            "unique" => "Имейл :email вече съществува."
+        ]
+    ],
     "before" => "Полето :attribute трябва да бъде дата преди :date.",
     "before_or_equal" => "Полето :attribute трябва да бъде дата преди или равна на :date.",
     "between" => [
@@ -108,7 +115,7 @@ return [
     ],
     "boolean" => "Полето :attribute трябва да съдържа Да или Не",
     "concession" => ["available" => ""],
-    "confirmed" => "Полето :attribute не е потвърдено.",
+    "confirmed" => "Полето :attribute не съвпада.",
     "current_password" => "",
     "custom" => ["attribute-name" => ["rule-name" => "custom-message"]],
     "date" => "Полето :attribute не е валидна дата.",
@@ -121,14 +128,8 @@ return [
     "distinct" => "Данните в полето :attribute се дублират.",
     "email" => "Полето :attribute е в невалиден формат.",
     "ends_with" => "",
-    "exception" => [
-        "decrypt" => "Невалиден ключ",
-        "token" => [
-            "expired" => "Ключът губи валидност след :minutes минути.",
-            "not" => ["found" => "Несъществуващ ключ"]
-        ]
-    ],
-    "exists" => ":attribute :input не съществува",
+    "exception" => ["decrypt" => "Невалиден ключ"],
+    "exists" => ":Attribute :input не съществува.",
     "file" => "The :attribute must be a file.",
     "filled" => "Полето :attribute е задължително.",
     "gdpr" => "",
@@ -181,6 +182,11 @@ return [
     "starts_with" => "",
     "string" => "Полето :attribute трябва да бъде знаков низ.",
     "timezone" => "Полето :attribute трябва да съдържа валидна часова зона.",
+    "token" => [
+        "decrypts" => "Невалиден ключ",
+        "exists" => "Ненамерен ключ",
+        "expires" => "Невалиден ключ след :minutes минути"
+    ],
     "unique" => "Полето :attribute вече съществува.",
     "uploaded" => "Неуспешно качване на :attribute.",
     "url" => "Полето :attribute е в невалиден формат.",

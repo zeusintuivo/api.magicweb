@@ -38,7 +38,7 @@ return [
         "day" => "",
         "description" => "",
         "dispatcher_name" => "",
-        "email" => "Email",
+        "email" => "email",
         "excerpt" => "",
         "fax" => "",
         "first_name" => "",
@@ -98,6 +98,13 @@ return [
         "year" => "",
         "zip" => ""
     ],
+    "auth" => [
+        "email" => [
+            "exists" => "Email :email does not exists.",
+            "trashed" => "Email :email is not available. Please contact the administrator.",
+            "unique" => "Email :email has already been taken."
+        ]
+    ],
     "before" => "The :attribute must be a date before :date.",
     "before_or_equal" => "The :attribute must be a date before or equal to :date.",
     "between" => [
@@ -121,14 +128,8 @@ return [
     "distinct" => "The :attribute field has a duplicate value.",
     "email" => "The :attribute must be a valid email address.",
     "ends_with" => "The :attribute must end with one of the following: :values",
-    "exception" => [
-        "decrypt" => "Invalid token",
-        "token" => [
-            "expired" => "Token expired after :minutes minutes of inactivity.",
-            "not" => ["found" => "Token not found"]
-        ]
-    ],
-    "exists" => ":attribute :input not found",
+    "exception" => ["decrypt" => "Invalid token"],
+    "exists" => ":Attribute :input not found",
     "file" => "The :attribute must be a file.",
     "filled" => "The :attribute field must have a value.",
     "gdpr" => "",
@@ -201,6 +202,11 @@ return [
     "starts_with" => "The :attribute must start with one of the following: :values",
     "string" => "The :attribute must be a string.",
     "timezone" => "The :attribute must be a valid zone.",
+    "token" => [
+        "decrypts" => "Invalid token",
+        "exists" => "Token not found",
+        "expires" => "Token expired after :minutes minutes"
+    ],
     "unique" => "The :attribute has already been taken.",
     "uploaded" => "The :attribute failed to upload.",
     "url" => "The :attribute format is invalid.",

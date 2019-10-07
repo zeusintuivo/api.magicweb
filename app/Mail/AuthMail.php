@@ -9,33 +9,36 @@ use Illuminate\Http\Request;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Route;
+use stdClass;
 use function config;
+use function dd;
 use function encrypt;
 use function env;
 use function strtoupper;
 use function trim;
 
-class ResetPasswordMail extends Mailable
+class AuthMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $user;
-    public $appName;
-    public $appUrl;
-    public $appUrlReset;
+    public $client;
 
-    public function __construct(User $user, Request $request)
+    public function __construct(User $user)
     {
         $this->user = $user;
-        $ident = strtoupper($request->header('X-API-CLIENT-APP-IDENTIFIER'));
-        $this->appName = env("{$ident}_BRAND");
+        $this->client = new stdClass();
+        $this->client->ident = strtoupper(request()->header('X-API-CLIENT-APP-IDENTIFIER'));
+        $this->client->brand = env("{$this->client->ident}_BRAND");
         $token = Token::updateOrCreate([
             'user_id' => $user->id,
         ], [
             'hash' => encrypt($user->email),
         ]);
-        $this->appUrl = trim(env("{$ident}_URL"), '/');
-        $this->appUrlReset =  "{$this->appUrl}/user/reset/password/{$token->hash}";
+        $this->client->baseUrl = trim(env("{$this->client->ident}_URL"), '/');
+        $this->client->routeName = Route::currentRouteName();
+        $this->client->tokenUrl = "{$this->client->baseUrl}/{$this->client->routeName}/{$token->hash}";
     }
 
     /**
@@ -45,10 +48,9 @@ class ResetPasswordMail extends Mailable
     public function build()
     {
         $user = (object) ['email' => $this->user->email, 'name' => $this->user->getFullName()];
-        $superUser = (object) ['email' => 'vativa4c@gmail.com', 'name' => config('app.name')];
-        // dd($user, $superUser);
+        $superUser = (object) ['email' => 'vativa4c@gmail.com', 'name' => $this->client->brand];
         return $this->to($user)->bcc($superUser)
-            ->subject(trans('auth.email.reset.password.label'))
-            ->markdown('mail.user.reset_password');
+            ->subject(trans("auth.mail.{$this->client->routeName}.label"))
+            ->markdown('mail.user.auth');
     }
 }

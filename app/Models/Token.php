@@ -15,12 +15,6 @@ class Token extends Model
 
     public function user()
     {
-        // Check time with Carbon
-        $diff = Carbon::now()->diffInMinutes($this->created_at);
-        $range = config('auth.passwords.users.expire');
-        if ($diff > $range) {
-            throw new TokenExpiredException();
-        }
         return $this->belongsTo(User::class);
     }
 }

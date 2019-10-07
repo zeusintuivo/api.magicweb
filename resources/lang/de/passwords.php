@@ -1,6 +1,6 @@
 <?php
 return [
-    "failed" => "Ein unbekannter Fehler ist aufgetreten.",
+    "failed" => "Falsches Passwort",
     "password" => "Passwörter müssen mindestens 6 Zeichen lang sein und bestätigt werden.",
     "reset" => "Das Passwort wurde erfolgreich zurückgesetzt!",
     "sent" => "Email mit Passwortlink wurde gesendet!",
