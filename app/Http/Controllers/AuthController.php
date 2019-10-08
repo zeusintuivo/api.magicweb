@@ -16,7 +16,7 @@ class AuthController extends Controller
         $email = $user->email;
         return response()->json([
             'notify' => [
-                'success' => trans('auth.signed.in', compact('email')),
+                'success' => trans('notify.success.login', compact('email')),
             ],
             'user'   => new UserResource($user->login()),
         ], 200);
@@ -24,8 +24,11 @@ class AuthController extends Controller
 
     public function authCheck(Request $request)
     {
+        $email = $request->user()->email;
         return response()->json([
-            'notify' => [],
+            'notify' => [
+                'info' => trans('notify.info.auth-check', compact('email'))
+            ],
             'user' => new UserResource($request->user())
         ], 200);
     }
@@ -36,19 +39,24 @@ class AuthController extends Controller
         $email = $user->email;
         return response()->json([
             'notify' => [
-                'info' => trans('auth.signed.out', compact('email')),
+                'info' => trans('notify.info.logout', compact('email')),
             ],
             'user'   => new UserResource($user->logout()),
         ], 200);
     }
 
+    /**
+     * @tested phpunit
+     * @param \App\Http\Requests\AuthRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function register(AuthRequest $request)
     {
         $user = new User();
         $email = $request->input('email');
         return response()->json([
             'notify' => [
-                'info' => trans('messages.email.sent', compact('email')),
+                'info' => trans('notify.info.register', compact('email')),
             ],
             'user'   => new UserResource($user->register()),
         ], 200);
@@ -60,7 +68,7 @@ class AuthController extends Controller
         $email = $user->email;
         return response()->json([
             'notify' => [
-                'info' => trans('auth.mail.verification.sent', compact('email')),
+                'info' => trans('notify.info.resend-verification', compact('email')),
             ],
             'user'   => new UserResource($user->resendVerification()),
         ], 200);
@@ -73,7 +81,7 @@ class AuthController extends Controller
         // Verify user, and notify
         return response()->json([
             'notify' => [
-                'success' => trans('auth.mail.verification.done', compact('email')),
+                'success' => trans('notify.success.verify-email', compact('email')),
             ],
             'user'   => new UserResource($user->verifyEmail()),
         ], 200);
@@ -85,7 +93,7 @@ class AuthController extends Controller
         $email = $user->email;
         return response()->json([
             'notify' => [
-                'info' => trans('messages.email.sent', compact('email')),
+                'info' => trans('notify.info.forgot-password', compact('email')),
             ],
             'user'   => new UserResource($user->forgotPassword()),
         ], 200);
@@ -97,7 +105,7 @@ class AuthController extends Controller
         $email = $user->email;
         return response()->json([
             'notify' => [
-                'success' => trans('auth.password.changed', compact('email')),
+                'success' => trans('notify.success.reset-password', compact('email')),
             ],
             'user'   => new UserResource($user->resetPassword()),
         ], 200);
@@ -109,7 +117,7 @@ class AuthController extends Controller
         $email = $user->email;
         return response()->json([
             'notify' => [
-                'warning' => trans('messages.email.sent', compact('email')),
+                'warning' => trans('notify.warning.account-delete-request', compact('email')),
             ],
             'user'   => new UserResource($user->accountDeleteRequest()),
         ], 200);
@@ -121,7 +129,7 @@ class AuthController extends Controller
         $email = $user->email;
         return response()->json([
             'notify' => [
-                'danger' => trans('auth.account.deleted', compact('email')),
+                'danger' => trans('notify.danger.account-delete-confirm', compact('email')),
             ],
             'user'   => new UserResource($user->accountDeleteConfirm()),
         ], 200);

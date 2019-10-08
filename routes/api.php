@@ -2,9 +2,7 @@
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
-use function request;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,10 +23,10 @@ Route::prefix('{locale}')->group(function () {
         $user = new User();
         return $user->accountForceDelete();
 
-        return response()->json([
-            'request' => $request->toArray(),
-            'locale'  => App::getLocale(),
-        ], 200);
+        // return response()->json([
+        //     'request' => $request->toArray(),
+        //     'locale'  => App::getLocale(),
+        // ], 200);
     });
 
     // 2nd test

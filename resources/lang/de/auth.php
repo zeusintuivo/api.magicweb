@@ -1,7 +1,6 @@
 <?php
 return [
     "access_not_granted" => "Zugriff nicht gewährt",
-    "account" => ["deleted" => "Das Konto :email wurde erfolgreich gelöscht."],
     "active" => ["off" => "Das Konto ist derzeit inaktiv.", "on" => "Das Konto ist derzeit aktiv."],
     "deactivated" => "Der Account wurde deaktiviert.",
     "failed" => "Anmeldung fehlgeschlagen",
@@ -22,16 +21,7 @@ return [
             "button" => "Bestätigen Sie die Email",
             "label" => "Emailbestätigung",
             "text" => "Bitte bestätigen Sie Ihre Emailadresse mit Klick auf die Taste unten:"
-        ],
-        "verification" => [
-            "done" => "Die Email :email wurde erfolgreich bestätigt.",
-            "sent" => "Eine Bestätigungsemail wurden an :email versandt."
         ]
-    ],
-    "password" => ["changed" => "Das Passwort für :email wurde erfolgreich zurückgesetzt."],
-    "signed" => [
-        "in" => "Sie wurden als :email erfolgreich angemeldet.",
-        "out" => "Sie wurden abgemeldet."
     ],
     "throttle" => "Zu viele Loginversuche. Versuchen Sie es bitte in :seconds Sekunden nochmal.",
     "unauthenticated" => "Nutzer nicht angemeldet",

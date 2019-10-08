@@ -1,7 +1,6 @@
 <?php
 return [
     "access_not_granted" => "Access not granted",
-    "account" => ["deleted" => "Account :email has been deleted successfully."],
     "active" => [
         "off" => "Account is currently not active.",
         "on" => "Account is currently active."
@@ -25,16 +24,7 @@ return [
             "button" => "Confirm email address",
             "label" => "Email verification",
             "text" => "Please confirm your email address using the button below:"
-        ],
-        "verification" => [
-            "done" => "Email :email has been verified successfully.",
-            "sent" => "Verification email has been sent to :email"
         ]
-    ],
-    "password" => ["changed" => "The Password for :email has been changed successfully."],
-    "signed" => [
-        "in" => "You have been signed in successfully as :email",
-        "out" => "You have been signed out."
     ],
     "throttle" => "Too many login attempts. Please try again in :seconds seconds.",
     "unauthenticated" => "User not signed in",

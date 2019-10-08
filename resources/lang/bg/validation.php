@@ -128,7 +128,6 @@ return [
     "distinct" => "Данните в полето :attribute се дублират.",
     "email" => "Полето :attribute е в невалиден формат.",
     "ends_with" => "",
-    "exception" => ["decrypt" => "Невалиден ключ"],
     "exists" => ":Attribute :input не съществува.",
     "file" => "The :attribute must be a file.",
     "filled" => "Полето :attribute е задължително.",
@@ -182,11 +181,7 @@ return [
     "starts_with" => "",
     "string" => "Полето :attribute трябва да бъде знаков низ.",
     "timezone" => "Полето :attribute трябва да съдържа валидна часова зона.",
-    "token" => [
-        "decrypts" => "Невалиден ключ",
-        "exists" => "Ненамерен ключ",
-        "expires" => "Невалиден ключ след :minutes минути"
-    ],
+    "token" => ["exists" => "Ненамерен ключ", "expires" => "Невалиден ключ след :minutes минути"],
     "unique" => "Полето :attribute вече съществува.",
     "uploaded" => "Неуспешно качване на :attribute.",
     "url" => "Полето :attribute е в невалиден формат.",
