@@ -14,14 +14,14 @@ class AuthTest extends TestCase
      */
     public function test_register()
     {
-        // Globals
+        // Global variables
         $headers = [
             'X-API-TOKEN-ORGANIZATION'    => 'MagicWeb.org EOOD',
             'X-API-CLIENT-APP-IDENTIFIER' => 'izgrev',
         ];
         $baseUrl = env('API_URL') . '/bg';
 
-        // Locals
+        // Local variables
         $email = date('ymdHis') . env('TEST_USER');
         $data = [
             'first_name'            => 'Unit',
@@ -57,7 +57,7 @@ class AuthTest extends TestCase
      */
     public function test_resend_verfification(array $args)
     {
-        // Locals
+        // Local variables
         $email = $args['response']['user']['email'];
         $headers = $args['headers'];
         $baseUrl = $args['baseUrl'];
@@ -82,7 +82,7 @@ class AuthTest extends TestCase
      */
     public function test_verify_email(array $args)
     {
-        // Locals
+        // Local variables
         $userId = $args['response']['user']['id'];
         $email = $args['response']['user']['email'];
         $headers = $args['headers'];
@@ -113,7 +113,7 @@ class AuthTest extends TestCase
      */
     public function test_login(array $args)
     {
-        // Locals
+        // Local variables
         $email = $args['response']['user']['email'];
         $headers = $args['headers'];
         $baseUrl = $args['baseUrl'];
@@ -147,7 +147,7 @@ class AuthTest extends TestCase
      */
     public function test_auth_check(array $args)
     {
-        // Locals
+        // Local variables
         $email = $args['response']['user']['email'];
         $headers = $args['headers'];
         $baseUrl = $args['baseUrl'];
@@ -174,7 +174,7 @@ class AuthTest extends TestCase
      */
     public function test_logout(array $args)
     {
-        // Locals
+        // Local variables
         $email = $args['response']['user']['email'];
         $headers = $args['headers'];
         $baseUrl = $args['baseUrl'];
@@ -203,7 +203,7 @@ class AuthTest extends TestCase
      */
     public function test_forgot_password(array $args)
     {
-        // Locals
+        // Local variables
         $email = $args['response']['user']['email'];
         $headers = $args['headers'];
         $baseUrl = $args['baseUrl'];
@@ -228,7 +228,7 @@ class AuthTest extends TestCase
      */
     public function test_reset_password(array $args)
     {
-        // Locals
+        // Local variables
         $email = $args['response']['user']['email'];
         $userId = $args['response']['user']['id'];
         $headers = $args['headers'];
@@ -260,7 +260,7 @@ class AuthTest extends TestCase
      */
     public function test_login_with_new_password(array $args)
     {
-        // Locals
+        // Local variables
         $email = $args['response']['user']['email'];
         $headers = $args['headers'];
         $baseUrl = $args['baseUrl'];
@@ -294,7 +294,7 @@ class AuthTest extends TestCase
      */
     public function test_account_delete_request(array $args)
     {
-        // Locals
+        // Local variables
         $email = $args['response']['user']['email'];
         $apiToken = $args['response']['user']['api_token'];
         $headers = $args['headers'];
@@ -322,7 +322,7 @@ class AuthTest extends TestCase
      */
     public function test_account_delete_confirm(array $args)
     {
-        // Locals
+        // Local variables
         $email = $args['response']['user']['email'];
         $userId = $args['response']['user']['id'];
         $headers = $args['headers'];

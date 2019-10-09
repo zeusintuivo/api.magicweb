@@ -12,7 +12,7 @@ return [
     "btv" => ["history" => ""],
     "dashboard" => "",
     "email" => ["sent" => "Имейл е изпратен на :email"],
-    "link" => ["below" => "или използвайте линка отдолу:"],
+    "link" => ["below" => "или използвайте следния линк:"],
     "logged" => ["in" => "", "out" => ""],
     "mail" => ["sent" => ["sent" => "Имейл е изпратен на :email"]],
     "member" => ["accepted" => "", "created" => "", "urlCreate" => ""],

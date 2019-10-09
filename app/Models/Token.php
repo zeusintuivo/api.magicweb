@@ -8,10 +8,6 @@ use Carbon\Carbon;
 class Token extends Model
 {
     protected $primaryKey = 'hash';
-    protected $hidden = [];
-    protected $casts = [
-        'hash' => 'string',
-    ];
 
     public function user()
     {

@@ -12,7 +12,7 @@ return [
     "btv" => ["history" => ""],
     "dashboard" => "",
     "email" => ["sent" => "Email has been sent to :email"],
-    "link" => ["below" => "or use the link below:"],
+    "link" => ["below" => "or use the following link:"],
     "logged" => ["in" => "", "out" => ""],
     "mail" => ["sent" => ["sent" => "Email has been sent to :email"]],
     "member" => ["accepted" => "", "created" => "", "urlCreate" => ""],

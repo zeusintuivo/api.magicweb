@@ -6,9 +6,13 @@ return [
     "failed" => "Anmeldung fehlgeschlagen",
     "gdpr" => ["off" => "DSGVO wurde nicht zugestimmt.", "on" => "DSGVO wurde zugestimmt."],
     "mail" => [
-        "account/delete/request" => ["button" => "...", "label" => "...", "text" => "..."],
+        "account/delete/request" => [
+            "button" => "Konto löschen",
+            "label" => "Löschen Ihres Kontos",
+            "text" => "Wir bedauern Ihre Entscheidung zu gehen. Um Ihr Konto und Daten von unserer Platform zu löschen, bitte nutzen Sie die Taste unten:"
+        ],
         "forgot/password" => [
-            "button" => "...",
+            "button" => "Passwort zurücksetzen",
             "label" => "Passwort Zurücksetzen",
             "text" => "Um Ihr Passwort zurückzusetzen, bitte nutzen Sie die Taste unten:"
         ],

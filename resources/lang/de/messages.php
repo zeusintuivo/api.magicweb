@@ -12,7 +12,7 @@ return [
     "btv" => ["history" => "btv-geschichte"],
     "dashboard" => "Instrumententafel der :Name",
     "email" => ["sent" => "Eine Email wurde an :email gesendet."],
-    "link" => ["below" => "oder nutzen Sie den Link unten:"],
+    "link" => ["below" => "oder nutzen Sie den nachfolgenden Link:"],
     "logged" => [
         "in" => "Sie sind erfolgreich als :Name angemeldet.",
         "out" => "Sie sind abgemeldet."

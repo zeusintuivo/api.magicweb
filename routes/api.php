@@ -50,6 +50,9 @@ Route::prefix('{locale}')->group(function () {
     Route::post('/reset/password', 'AuthController@resetPassword')->middleware('guest')->name('reset/password');
     Route::post('/account/delete/request', 'AuthController@accountDeleteRequest')->middleware('auth')->name('account/delete/request');
     Route::post('/account/delete/confirm', 'AuthController@accountDeleteConfirm')->middleware('guest')->name('account/delete/confirm');
+    // Async client validations
+    Route::post('/validate/email/exists', 'AuthController@validateEmailExists')->middleware('guest')->name('validate-email-exists');
+    Route::post('/validate/email/unique', 'AuthController@validateEmailUnique')->middleware('guest')->name('validate-email-unique');
     // Other user routes
     Route::get('/fetch/user/details', 'UserController@show')->middleware('auth');
     // Route::post('/update/user', 'UserController@update')->middleware('auth:api');

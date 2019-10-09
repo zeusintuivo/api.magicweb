@@ -6,7 +6,10 @@ use App\Http\Requests\AuthRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Token;
 use App\Models\User;
+use App\Rules\EmailExists;
+use App\Rules\EmailUnique;
 use Illuminate\Http\Request;
+use function response;
 
 class AuthController extends Controller
 {
@@ -27,9 +30,9 @@ class AuthController extends Controller
         $email = $request->user()->email;
         return response()->json([
             'notify' => [
-                'info' => trans('notify.info.auth-check', compact('email'))
+                'info' => trans('notify.info.auth-check', compact('email')),
             ],
-            'user' => new UserResource($request->user())
+            'user'   => new UserResource($request->user()),
         ], 200);
     }
 
@@ -47,7 +50,9 @@ class AuthController extends Controller
 
     /**
      * @tested phpunit
+     *
      * @param \App\Http\Requests\AuthRequest $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function register(AuthRequest $request)
@@ -133,6 +138,28 @@ class AuthController extends Controller
             ],
             'user'   => new UserResource($user->accountDeleteConfirm()),
         ], 200);
+    }
+
+    public function validateEmailExists(Request $request)
+    {
+        return response()->json($request->validate([
+            'email' => [
+                'required',
+                'email',
+                new EmailExists('users'),
+            ],
+        ]), 200);
+    }
+
+    public function validateEmailUnique(Request $request)
+    {
+        return response()->json($request->validate([
+            'email' => [
+                'required',
+                'email',
+                new EmailUnique('users'),
+            ],
+        ]), 200);
     }
 
 }

@@ -83,12 +83,12 @@ class AuthRequest extends FormRequest
 
     protected function validateFirstName()
     {
-        return 'required_with:last_name|string|min:2';
+        return 'required|string|min:2';
     }
 
     protected function validateLastName()
     {
-        return 'required_with:first_name|string|min:2';
+        return 'required|string|min:2';
     }
 
     protected function validateEmail($form = 'any')

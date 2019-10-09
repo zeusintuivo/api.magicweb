@@ -9,9 +9,13 @@ return [
     "failed" => "These credentials do not match our records.",
     "gdpr" => ["off" => "GDPR has not been accepted.", "on" => "GDPR has been accepted."],
     "mail" => [
-        "account/delete/request" => ["button" => "...", "label" => "...", "text" => "..."],
+        "account/delete/request" => [
+            "button" => "Delete account",
+            "label" => "Account deletion",
+            "text" => "We appologize to see you go. To delete your account and data on our platform, please use the button below:"
+        ],
         "forgot/password" => [
-            "button" => "...",
+            "button" => "Reset password",
             "label" => "Reset Password",
             "text" => "To reset your passwrd, please press the button below:"
         ],

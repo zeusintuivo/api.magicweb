@@ -9,6 +9,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use stdClass;
 
 class AuthMail extends Mailable
@@ -24,14 +25,15 @@ class AuthMail extends Mailable
         $this->client = new stdClass();
         $this->client->ident = strtoupper(request()->header('X-API-CLIENT-APP-IDENTIFIER'));
         $this->client->brand = env("{$this->client->ident}_BRAND");
+        $hash = Str::random(60);
         $token = Token::updateOrCreate([
             'user_id' => $user->id,
         ], [
-            'hash' => Hash::make($user->password),
+            'hash' => $hash,
         ]);
         $this->client->baseUrl = trim(env("{$this->client->ident}_URL"), '/');
         $this->client->routeName = Route::currentRouteName();
-        $this->client->tokenUrl = "{$this->client->baseUrl}/{$this->client->routeName}/{$token->hash}";
+        $this->client->tokenUrl = "{$this->client->baseUrl}/{$this->client->routeName}/{$hash}";
     }
 
     /**
