@@ -78,7 +78,7 @@ trait UserCanAuthenticate
 
     public function accountDeleteConfirm()
     {
-        $this->delete();
+        $this->logout()->delete();
         $this->token->forceDelete();
         return $this;
     }

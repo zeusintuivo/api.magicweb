@@ -16,19 +16,6 @@ use Illuminate\Support\Facades\Route;
 
 class AuthRequest extends FormRequest
 {
-    protected $user;
-
-    protected function setUser(User $user)
-    {
-        $this->user = $user;
-        return $this;
-    }
-
-    public function getUser()
-    {
-        return $this->user;
-    }
-
     /**
      * Determine if the user is authorized to make this request.
      * @return bool
@@ -123,9 +110,8 @@ class AuthRequest extends FormRequest
             'bail',
             'required',
             'string',
-            'min:60',
-            'max:255',
-            new TokenExists('tokens', 'hash'),
+            'size:60',
+            new TokenExists(),
             new TokenExpires(),
         ];
     }

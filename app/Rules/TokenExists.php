@@ -2,14 +2,11 @@
 
 namespace App\Rules;
 
-use App\Models\Token;
+use App\Models\EmailAuthentication;
 use Illuminate\Contracts\Validation\Rule;
-use Illuminate\Validation\Rules\DatabaseRule;
 
 class TokenExists implements Rule
 {
-    use DatabaseRule;
-
     /**
      * Determine if the validation rule passes.
      *
@@ -19,7 +16,7 @@ class TokenExists implements Rule
      */
     public function passes($attribute, $value)
     {
-        return (bool) Token::find($value);
+        return EmailAuthentication::whereToken($value)->exists();
     }
 
     /**

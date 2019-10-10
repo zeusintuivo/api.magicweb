@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AuthRequest;
 use App\Http\Resources\UserResource;
-use App\Models\Token;
+use App\Models\EmailAuthentication;
 use App\Models\User;
 use App\Rules\EmailExists;
 use App\Rules\EmailUnique;
@@ -81,7 +81,7 @@ class AuthController extends Controller
 
     public function verifyEmail(AuthRequest $request)
     {
-        $user = Token::find($request->input('token'))->user;
+        $user = EmailAuthentication::whereToken($request->input('token'))->first()->user;
         $email = $user->email;
         // Verify user, and notify
         return response()->json([
@@ -106,7 +106,7 @@ class AuthController extends Controller
 
     public function resetPassword(AuthRequest $request)
     {
-        $user = Token::find($request->input('token'))->user;
+        $user = EmailAuthentication::whereToken($request->input('token'))->first()->user;
         $email = $user->email;
         return response()->json([
             'notify' => [
@@ -130,7 +130,7 @@ class AuthController extends Controller
 
     public function accountDeleteConfirm(AuthRequest $request)
     {
-        $user = Token::find($request->input('token'))->user;
+        $user = EmailAuthentication::whereToken($request->input('token'))->first()->user;
         $email = $user->email;
         return response()->json([
             'notify' => [

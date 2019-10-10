@@ -2,12 +2,12 @@
 
 namespace App\Models\Traits;
 
-use App\Models\Token;
+use App\Models\EmailAuthentication;
 
 trait UserRelationships
 {
     public function token()
     {
-        return $this->hasOne(Token::class);
+        return $this->hasOne(EmailAuthentication::class);
     }
 }

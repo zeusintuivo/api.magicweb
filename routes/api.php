@@ -58,8 +58,15 @@ Route::prefix('{locale}')->group(function () {
     // Route::post('/update/user', 'UserController@update')->middleware('auth:api');
     // Route::post('/delete/user', 'UserController@delete')->middleware('auth:api');
     // Route::get('/delete/user/{token}', 'UserController@forceDeleteFromMail');
+
 });
 
+// Database administering route group
+Route::prefix('db')->group(function () {
+    Route::get('/create/table/users', 'Db\Tables\Users@createTableUsers');
+    Route::get('/create/table/email/authentication', 'DB\Tables\Users@createTableEmailAuthentication');
+    Route::get('/dump/child/tables', 'DB\Tables\Users@dumpChildTables');
+});
 
 
 

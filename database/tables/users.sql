@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
     gdpr tinyint(1) UNSIGNED DEFAULT '0',
     news tinyint(1) UNSIGNED DEFAULT '1',
     api_token varchar(80) NULL DEFAULT NULL,
-    password varchar(80) NOT NULL DEFAULT '$2y$10$nxJTYhv9W4PxHVR5eKCGr.X9p3cZqtJQvFMW4Z32zI9X0fQBQtiae',
+    password varchar(80) NOT NULL,
     remember tinyint UNSIGNED NULL DEFAULT NULL,
     created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -22,25 +22,16 @@ CREATE TABLE IF NOT EXISTS users (
     UNIQUE KEY unique_api_token(api_token)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
-INSERT INTO users (email, first_name, last_name, api_token) VALUES
-    ('vativa4c@gmail.com', 'Tichomir', 'Rangelov', 'ST617AtzyuMct9GTlYhQBGldfEvvzK3aNg0f5Tvxk58J7ODxD01TX9EKRpLw');
-SET FOREIGN_KEY_CHECKS = 1;
-
-DROP TABLE IF EXISTS tokens;
-CREATE TABLE IF NOT EXISTS tokens (
-    hash varchar(60) NOT NULL UNIQUE,
+DROP TABLE IF EXISTS email_authentications;
+CREATE TABLE IF NOT EXISTS email_authentications (
+    id int unsigned NOT NULL AUTO_INCREMENT,
+    token varchar(60) NOT NULL UNIQUE,
     user_id int UNSIGNED NOT NULL UNIQUE,
     created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at timestamp NULL DEFAULT NULL,
-    PRIMARY KEY (hash),
+    PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
-);
-
-# Dump all referencing child tables on account hard delete
-USE information_schema;
-SELECT table_name FROM key_column_usage
-    WHERE table_schema = 'cab7' AND referenced_table_name = 'users' AND referenced_column_name = 'id';
-USE mweb;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 

@@ -2,9 +2,10 @@
 
 namespace Tests\Endpoints;
 
-use App\Models\Token;
+use App\Models\EmailAuthentication;
 use App\Models\User;
 use Tests\TestCase;
+use function compact;
 
 class AuthTest extends TestCase
 {
@@ -87,9 +88,8 @@ class AuthTest extends TestCase
         $email = $args['response']['user']['email'];
         $headers = $args['headers'];
         $baseUrl = $args['baseUrl'];
-        $data = [
-            'token' => Token::whereUserId($userId)->first()->hash,
-        ];
+        $token = EmailAuthentication::whereUserId($userId)->first()->token;
+        $data = compact('token');
 
         // Make the request to the tested endpoint
         $response = $this->withHeaders($headers)->postJson("{$baseUrl}/verify/email", $data);
@@ -100,7 +100,7 @@ class AuthTest extends TestCase
             ],
             'user'   => [],
         ]);
-        $this->assertNull(Token::whereUserId($userId)->first());
+        $this->assertNull(EmailAuthentication::whereUserId($userId)->first());
     }
 
     /**
@@ -234,7 +234,7 @@ class AuthTest extends TestCase
         $headers = $args['headers'];
         $baseUrl = $args['baseUrl'];
         $data = [
-            'token'                 => Token::whereUserId($userId)->first()->hash,
+            'token'                 => EmailAuthentication::whereUserId($userId)->first()->token,
             'password'              => 'center',
             'password_confirmation' => 'center',
         ];
@@ -328,7 +328,7 @@ class AuthTest extends TestCase
         $headers = $args['headers'];
         $baseUrl = $args['baseUrl'];
         $data = [
-            'token' => Token::whereUserId($userId)->first()->hash,
+            'token' => EmailAuthentication::whereUserId($userId)->first()->token,
         ];
 
         // Make the request to the tested endpoint
@@ -338,7 +338,9 @@ class AuthTest extends TestCase
             'notify' => [
                 'danger' => trans('notify.danger.account-delete-confirm', compact('email')),
             ],
-            'user'   => [],
+            'user'   => [
+                'api_token' => null,
+            ],
         ]);
 
         // Outside of API: remove deleted user from DB

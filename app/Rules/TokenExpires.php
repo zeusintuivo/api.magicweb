@@ -3,7 +3,7 @@
 namespace App\Rules;
 
 use App\Exceptions\TokenExpiredException;
-use App\Models\Token;
+use App\Models\EmailAuthentication;
 use Carbon\Carbon;
 use Illuminate\Contracts\Validation\Rule;
 use function config;
@@ -31,9 +31,16 @@ class TokenExpires implements Rule
      */
     public function passes($attribute, $value)
     {
-        $timestamp = Token::find($value)->updated_at;
-        $diff = Carbon::now()->diffInMinutes($timestamp);
-        return $this->range > $diff;
+        if ($token = EmailAuthentication::whereToken($value)->first()) {
+            $timestamp = $token->updated_at;
+            $diff = Carbon::now()->diffInMinutes($timestamp);
+            if ($expired = $diff > $this->range) {
+                $token->forceDelete();
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     /**

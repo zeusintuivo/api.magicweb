@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Token;
+use App\Models\EmailAuthentication;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -25,15 +25,14 @@ class AuthMail extends Mailable
         $this->client = new stdClass();
         $this->client->ident = strtoupper(request()->header('X-API-CLIENT-APP-IDENTIFIER'));
         $this->client->brand = env("{$this->client->ident}_BRAND");
-        $hash = Str::random(60);
-        $token = Token::updateOrCreate([
+        $token = EmailAuthentication::updateOrCreate([
             'user_id' => $user->id,
         ], [
-            'hash' => $hash,
+            'token' => Str::random(60)
         ]);
         $this->client->baseUrl = trim(env("{$this->client->ident}_URL"), '/');
         $this->client->routeName = Route::currentRouteName();
-        $this->client->tokenUrl = "{$this->client->baseUrl}/{$this->client->routeName}/{$hash}";
+        $this->client->tokenUrl = "{$this->client->baseUrl}/{$this->client->routeName}/{$token->token}";
     }
 
     /**
