@@ -5,7 +5,6 @@ namespace Tests\Endpoints;
 use App\Models\EmailAuthentication;
 use App\Models\User;
 use Tests\TestCase;
-use function compact;
 
 class AuthTest extends TestCase
 {

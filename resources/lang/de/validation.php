@@ -99,6 +99,7 @@ return [
         "zip" => "Die Postleitzahl"
     ],
     "auth" => [
+        "client" => ["ident" => "Der Nutzer gehört nicht zu dieser Anwendung."],
         "email" => [
             "exists" => "Die Email :email existiert nicht.",
             "trashed" => "Die Email :email steht nicht zur Verfügung. Bitte kontaktieren Sie den Administrator.",

@@ -1197,6 +1197,32 @@
                         </children>
                     </folder_node>
                     <folder_node>
+                        <name>error</name>
+                        <children>
+                            <concept_node>
+                                <name>auth-check</name>
+                                <definition_loaded>false</definition_loaded>
+                                <description></description>
+                                <comment></comment>
+                                <default_text></default_text>
+                                <translations>
+                                    <translation>
+                                        <language>bg-BG</language>
+                                        <approved>false</approved>
+                                    </translation>
+                                    <translation>
+                                        <language>de-DE</language>
+                                        <approved>false</approved>
+                                    </translation>
+                                    <translation>
+                                        <language>en-US</language>
+                                        <approved>false</approved>
+                                    </translation>
+                                </translations>
+                            </concept_node>
+                        </children>
+                    </folder_node>
+                    <folder_node>
                         <name>info</name>
                         <children>
                             <concept_node>
@@ -3610,6 +3636,32 @@
                     <folder_node>
                         <name>auth</name>
                         <children>
+                            <folder_node>
+                                <name>client</name>
+                                <children>
+                                    <concept_node>
+                                        <name>ident</name>
+                                        <definition_loaded>false</definition_loaded>
+                                        <description></description>
+                                        <comment></comment>
+                                        <default_text></default_text>
+                                        <translations>
+                                            <translation>
+                                                <language>bg-BG</language>
+                                                <approved>false</approved>
+                                            </translation>
+                                            <translation>
+                                                <language>de-DE</language>
+                                                <approved>false</approved>
+                                            </translation>
+                                            <translation>
+                                                <language>en-US</language>
+                                                <approved>false</approved>
+                                            </translation>
+                                        </translations>
+                                    </concept_node>
+                                </children>
+                            </folder_node>
                             <folder_node>
                                 <name>email</name>
                                 <children>

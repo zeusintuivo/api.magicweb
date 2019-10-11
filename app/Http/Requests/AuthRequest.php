@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Models\User;
 use App\Rules\Active;
+use App\Rules\CheckClientIdent;
 use App\Rules\CheckPasswordFor;
 use App\Rules\EmailExists;
 use App\Rules\EmailUnique;
@@ -40,10 +40,10 @@ class AuthRequest extends FormRequest
                 ];
             case 'register':
                 return [
-                    'first_name'            => $this->validateFirstName(),
-                    'last_name'             => $this->validateLastName(),
-                    'email'                 => $this->validateEmail('register'),
-                    'password'              => $this->validatePassword('register'),
+                    'first_name' => $this->validateFirstName(),
+                    'last_name'  => $this->validateLastName(),
+                    'email'      => $this->validateEmail('register'),
+                    'password'   => $this->validatePassword('register'),
                 ];
             case 'verify/email':
             case 'account/delete/confirm':
@@ -60,8 +60,12 @@ class AuthRequest extends FormRequest
                 ];
             case 'reset/password':
                 return [
-                    'token'                 => $this->validateToken(),
-                    'password'              => $this->validatePassword(),
+                    'token'    => $this->validateToken(),
+                    'password' => $this->validatePassword(),
+                ];
+            case 'account/delete/request':
+                return [
+                    'api_token' => new CheckClientIdent(),
                 ];
             default:
                 return [];

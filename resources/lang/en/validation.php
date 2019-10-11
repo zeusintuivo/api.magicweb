@@ -99,6 +99,7 @@ return [
         "zip" => ""
     ],
     "auth" => [
+        "client" => ["ident" => "User does not belong to this application."],
         "email" => [
             "exists" => "Email :email does not exists.",
             "trashed" => "Email :email is not available. Please contact the administrator.",

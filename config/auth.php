@@ -91,7 +91,7 @@ return [
         'users' => [
             'provider' => 'users',
             'table'    => 'users',
-            'expire'   => 1,
+            'expire'   => 60,
         ],
     ],
 

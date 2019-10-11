@@ -33,6 +33,7 @@ class AuthMail extends Mailable
         $this->client->baseUrl = trim(env("{$this->client->ident}_URL"), '/');
         $this->client->routeName = Route::currentRouteName();
         $this->client->tokenUrl = "{$this->client->baseUrl}/{$this->client->routeName}/{$token->token}";
+        $this->client->buttonColor = $this->client->routeName === 'account/delete/request' ? 'error' : 'primary';
     }
 
     /**

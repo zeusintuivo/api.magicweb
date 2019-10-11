@@ -1,6 +1,7 @@
 <?php
 return [
     "danger" => ["account-delete-confirm" => "Акаунт :email беше успешно изтрит."],
+    "error" => ["auth-check" => "Потребителят не е записан в момента."],
     "info" => [
         "auth-check" => "Потребител :email е в момента записан.",
         "forgot-password" => "Имейл е изпратен на :email",

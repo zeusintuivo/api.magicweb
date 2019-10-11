@@ -3,11 +3,8 @@
 namespace App\Rules;
 
 use App\Models\User;
-use Exception;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
-use function dd;
-use function trans;
 
 class CheckPasswordFor implements Rule
 {
@@ -17,6 +14,7 @@ class CheckPasswordFor implements Rule
      * Create a new rule instance.
      *
      * @param $email string
+     *
      * @return void
      */
     public function __construct(string $email)
@@ -27,8 +25,9 @@ class CheckPasswordFor implements Rule
     /**
      * Determine if the validation rule passes.
      *
-     * @param  string  $attribute
-     * @param  mixed  $value
+     * @param string $attribute
+     * @param mixed $value
+     *
      * @return bool
      */
     public function passes($attribute, $value)
@@ -38,7 +37,6 @@ class CheckPasswordFor implements Rule
 
     /**
      * Get the validation error message.
-     *
      * @return string
      */
     public function message()

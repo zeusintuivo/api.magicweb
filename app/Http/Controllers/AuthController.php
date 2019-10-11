@@ -8,8 +8,8 @@ use App\Models\EmailAuthentication;
 use App\Models\User;
 use App\Rules\EmailExists;
 use App\Rules\EmailUnique;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
-use function response;
 
 class AuthController extends Controller
 {
@@ -27,7 +27,10 @@ class AuthController extends Controller
 
     public function authCheck(Request $request)
     {
-        $email = $request->user()->email;
+        if (!$user = $request->user()) {
+            throw new AuthenticationException(trans('notify.error.auth-check'));
+        }
+        $email = $user->email;
         return response()->json([
             'notify' => [
                 'info' => trans('notify.info.auth-check', compact('email')),
@@ -116,7 +119,7 @@ class AuthController extends Controller
         ], 200);
     }
 
-    public function accountDeleteRequest(Request $request)
+    public function accountDeleteRequest(AuthRequest $request)
     {
         $user = $request->user();
         $email = $user->email;

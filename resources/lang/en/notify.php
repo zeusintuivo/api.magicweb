@@ -1,6 +1,7 @@
 <?php
 return [
     "danger" => ["account-delete-confirm" => "Account :email has been deleted successfully."],
+    "error" => ["auth-check" => "User is currently NOT signed in."],
     "info" => [
         "auth-check" => "User :email is currently signed in.",
         "forgot-password" => "Email has been sent to :email",

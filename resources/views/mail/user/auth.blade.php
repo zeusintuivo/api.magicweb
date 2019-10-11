@@ -3,7 +3,7 @@
 
 {{ trans("auth.mail.{$client->routeName}.text") }}
 
-@component('mail::button', ['url' => $client->tokenUrl])
+@component('mail::button', ['url' => $client->tokenUrl, 'color' => $client->buttonColor])
 {{ trans("auth.mail.{$client->routeName}.button") }}
 @endcomponent
 

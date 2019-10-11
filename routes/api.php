@@ -41,7 +41,7 @@ Route::prefix('{locale}')->group(function () {
 
     // Auth user routes - mutual for all projects
     Route::post('/login', 'AuthController@login')->middleware('guest')->name('login');
-    Route::post('/auth/check', 'AuthController@authCheck')->middleware('auth')->name('auth-check');
+    Route::post('/auth/check', 'AuthController@authCheck')->name('auth-check');
     Route::post('/logout', 'AuthController@logout')->middleware('auth')->name('logout');
     Route::post('/register', 'AuthController@register')->middleware('guest')->name('register');
     Route::post('/resend/verification', 'AuthController@resendVerification')->middleware('guest')->name('resend/verification');
@@ -64,7 +64,7 @@ Route::prefix('{locale}')->group(function () {
 // Database administering route group
 Route::prefix('db')->group(function () {
     Route::get('/create/table/users', 'Db\Tables\Users@createTableUsers');
-    Route::get('/create/table/email/authentication', 'DB\Tables\Users@createTableEmailAuthentication');
+    Route::get('/create/table/email/authentications', 'Db\Tables\Users@createTableEmailAuthentications');
     Route::get('/dump/child/tables', 'DB\Tables\Users@dumpChildTables');
 });
 

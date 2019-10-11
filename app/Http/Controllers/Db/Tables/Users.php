@@ -3,18 +3,18 @@
 namespace App\Http\Controllers\Db\Tables;
 
 use App\Http\Controllers\Controller;
-use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use function response;
 
 class Users extends Controller
 {
     public function createTableUsers()
     {
+        $table = 'users';
         DB::statement("SET FOREIGN_KEY_CHECKS = 0");
-        DB::statement("DROP TABLE IF EXISTS users");
+        DB::statement("DROP TABLE IF EXISTS $table");
         DB::statement("
-            CREATE TABLE IF NOT EXISTS users (
+            CREATE TABLE IF NOT EXISTS $table (
                 id int UNSIGNED NOT NULL AUTO_INCREMENT,
                 client enum ('mweb', 'cab7', 'izgrev') NOT NULL DEFAULT 'mweb',
                 email varchar(50) NOT NULL DEFAULT '500.Internal@Server.Error',
@@ -40,17 +40,18 @@ class Users extends Controller
         DB::insert('
             INSERT INTO users (email, first_name, last_name, verified, active, api_token, password) VALUES (
                 "vativa4c@gmail.com", "Tichomir", "Rangelov", 1, 1,
-                "ST617AtzyuMct9GTlYhQBGldfEvvzK3aNg0f5Tvxk58J7ODxD01TX9EKRpLw",
-                "$2y$10$nxJTYhv9W4PxHVR5eKCGr.X9p3cZqtJQvFMW4Z32zI9X0fQBQtiae"
+                "KjiCloTj7ICvyWiAtUI08513wOKa0AaEO3ZohDNP9mfRs9RuVml1BTeEF0Xk",
+                "$2y$10$rhgxHHWkPhUrvZJZPq04..OPX6e.cuZhgJIhFL.rySm1AXkcOkTUi"
             );
         ');
+        return response()->json("Successfully recreated table {$table}", 200);
     }
 
-    public function createTableEmailAuthentication()
+    public function createTableEmailAuthentications()
     {
-        DB::statement("DROP TABLE IF EXISTS tokens;");
-        DB::statement("DROP TABLE IF EXISTS email_authentications");
-        DB::statement("CREATE TABLE IF NOT EXISTS email_authentications (
+        $table = 'email_authentications';
+        DB::statement("DROP TABLE IF EXISTS $table");
+        DB::statement("CREATE TABLE IF NOT EXISTS $table (
             id int UNSIGNED NOT NULL AUTO_INCREMENT,
             token varchar(60) NOT NULL UNIQUE,
             user_id int UNSIGNED NOT NULL UNIQUE,
@@ -60,6 +61,7 @@ class Users extends Controller
             PRIMARY KEY (id),
             FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
         ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;");
+        return response()->json("Successfully recreated table {$table}", 200);
     }
 
     # Dump all referencing child tables on account hard delete
