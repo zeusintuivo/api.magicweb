@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION'),
+    'default' => 'mysql_mweb',
 
     /*
     |--------------------------------------------------------------------------
@@ -132,7 +132,7 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'phpredis'),
-            'prefix'  => Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_',
+            'prefix'  => Str::slug(env('APP_NAME'), '_') . '_database_',
         ],
 
         'default' => [

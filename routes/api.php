@@ -59,6 +59,11 @@ Route::prefix('{locale}')->group(function () {
     // Route::post('/delete/user', 'UserController@delete')->middleware('auth:api');
     // Route::get('/delete/user/{token}', 'UserController@forceDeleteFromMail');
 
+    // Admin routes
+    Route::prefix('admin')->group(function () {
+        Route::post('/fetch/users', 'AdminController@fetchUsers')->middleware('auth');
+    });
+
 });
 
 // Database administering route group

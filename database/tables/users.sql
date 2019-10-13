@@ -13,7 +13,6 @@ CREATE TABLE IF NOT EXISTS users (
     news tinyint(1) UNSIGNED DEFAULT '1',
     api_token varchar(80) NULL DEFAULT NULL,
     password varchar(80) NOT NULL,
-    remember tinyint UNSIGNED NULL DEFAULT NULL,
     created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at timestamp NULL DEFAULT NULL,

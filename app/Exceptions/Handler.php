@@ -5,14 +5,12 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
-use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
+use Swift_TransportException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use function response;
-use function trans;
 
 class Handler extends ExceptionHandler
 {
@@ -72,6 +70,10 @@ class Handler extends ExceptionHandler
 
         if ($e instanceof ValidationException) {
             return response()->json($e->errors(), 422);
+        }
+
+        if ($e instanceof Swift_TransportException) {
+            return response()->json($e->getMessage(), 471);
         }
 
         return response()->json($e->getMessage(), 500);

@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use stdClass;
+use function config;
+use function strtoupper;
 
 class AuthMail extends Mailable
 {
@@ -24,13 +26,13 @@ class AuthMail extends Mailable
         $this->user = $user;
         $this->client = new stdClass();
         $this->client->ident = strtoupper(request()->header('X-API-CLIENT-APP-IDENTIFIER'));
-        $this->client->brand = env("{$this->client->ident}_BRAND");
+        $this->client->brand = config("client.{$this->client->ident}.brand");
         $token = EmailAuthentication::updateOrCreate([
             'user_id' => $user->id,
         ], [
             'token' => Str::random(60)
         ]);
-        $this->client->baseUrl = trim(env("{$this->client->ident}_URL"), '/');
+        $this->client->baseUrl = trim(env("CLIENT_URL_{$this->client->ident}"), '/');
         $this->client->routeName = Route::currentRouteName();
         $this->client->tokenUrl = "{$this->client->baseUrl}/{$this->client->routeName}/{$token->token}";
         $this->client->buttonColor = $this->client->routeName === 'account/delete/request' ? 'error' : 'primary';
@@ -42,9 +44,10 @@ class AuthMail extends Mailable
      */
     public function build()
     {
-        $user = (object) ['email' => $this->user->email, 'name' => $this->user->getFullName()];
-        $superUser = (object) ['email' => 'vativa4c@gmail.com', 'name' => $this->client->brand];
-        return $this->to($user)->bcc($superUser)
+        return $this->from((object)config("client.{$this->client->ident}.from"))
+            ->to((object)['email' => $this->user->getEmail(), 'name' => $this->user->getFullName()])
+            ->bcc((object)config("client.{$this->client->ident}.reply"))
+            ->replyTo((object)config("client.{$this->client->ident}.reply"))
             ->subject(trans("auth.mail.{$this->client->routeName}.label"))
             ->markdown('mail.user.auth');
     }

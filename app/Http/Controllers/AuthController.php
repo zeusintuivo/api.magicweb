@@ -10,6 +10,7 @@ use App\Rules\EmailExists;
 use App\Rules\EmailUnique;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
+use function trans;
 
 class AuthController extends Controller
 {
@@ -97,7 +98,9 @@ class AuthController extends Controller
 
     public function forgotPassword(AuthRequest $request)
     {
-        $user = User::whereEmail($request->input('email'))->first();
+        if (!$user = User::whereEmail($request->input('email'))->first()) {
+            throw new AuthenticationException(trans('notify.error.auth-check'));
+        }
         $email = $user->email;
         return response()->json([
             'notify' => [
