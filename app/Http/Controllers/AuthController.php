@@ -28,15 +28,13 @@ class AuthController extends Controller
 
     public function authCheck(Request $request)
     {
-        if (!$user = $request->user()) {
-            throw new AuthenticationException(trans('notify.error.auth-check'));
-        }
+        $user = $request->user();
         $email = $user->email;
         return response()->json([
             'notify' => [
                 'info' => trans('notify.info.auth-check', compact('email')),
             ],
-            'user'   => new UserResource($request->user()),
+            'user'   => new UserResource($user),
         ], 200);
     }
 

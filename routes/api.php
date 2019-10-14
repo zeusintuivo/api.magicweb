@@ -41,8 +41,8 @@ Route::prefix('{locale}')->group(function () {
 
     // Auth user routes - mutual for all projects
     Route::post('/login', 'AuthController@login')->middleware('guest')->name('login');
-    Route::post('/auth/check', 'AuthController@authCheck')->name('auth-check');
-    Route::post('/logout', 'AuthController@logout')->middleware('auth')->name('logout');
+    Route::post('/auth/check', 'AuthController@authCheck')->middleware('auth');
+    Route::post('/logout', 'AuthController@logout')->middleware('auth');
     Route::post('/register', 'AuthController@register')->middleware('guest')->name('register');
     Route::post('/resend/verification', 'AuthController@resendVerification')->middleware('guest')->name('resend/verification');
     Route::post('/verify/email', 'AuthController@verifyEmail')->middleware('guest')->name('verify/email');
@@ -51,8 +51,8 @@ Route::prefix('{locale}')->group(function () {
     Route::post('/account/delete/request', 'AuthController@accountDeleteRequest')->middleware('auth')->name('account/delete/request');
     Route::post('/account/delete/confirm', 'AuthController@accountDeleteConfirm')->middleware('guest')->name('account/delete/confirm');
     // Async client validations
-    Route::post('/validate/email/exists', 'AuthController@validateEmailExists')->middleware('guest')->name('validate-email-exists');
-    Route::post('/validate/email/unique', 'AuthController@validateEmailUnique')->middleware('guest')->name('validate-email-unique');
+    Route::post('/validate/email/exists', 'AuthController@validateEmailExists')->middleware('guest');
+    Route::post('/validate/email/unique', 'AuthController@validateEmailUnique')->middleware('guest');
     // Other user routes
     Route::get('/fetch/user/details', 'UserController@show')->middleware('auth');
     // Route::post('/update/user', 'UserController@update')->middleware('auth:api');

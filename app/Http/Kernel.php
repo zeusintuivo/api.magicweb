@@ -2,11 +2,16 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\CheckForMaintenanceMode;
 use App\Http\Middleware\CheckRole;
 use App\Http\Middleware\Logging;
+use App\Http\Middleware\PreflightedRequest;
 use App\Http\Middleware\TokenAuth;
-use Barryvdh\Cors\HandleCors;
+use App\Http\Middleware\TrimStrings;
+use App\Http\Middleware\TrustProxies;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
+use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
 
 class Kernel extends HttpKernel
 {
@@ -16,11 +21,12 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
-        \App\Http\Middleware\CheckForMaintenanceMode::class,
-        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
-        \App\Http\Middleware\TrimStrings::class,
-        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-        \App\Http\Middleware\TrustProxies::class,
+        CheckForMaintenanceMode::class,
+        ValidatePostSize::class,
+        TrimStrings::class,
+        ConvertEmptyStringsToNull::class,
+        PreflightedRequest::class,
+        TrustProxies::class,
     ];
 
     /**
@@ -32,7 +38,6 @@ class Kernel extends HttpKernel
             'throttle:60,1',
             'bindings',
             'locale',
-            HandleCors::class,
             TokenAuth::class,
             Logging::class,
         ],

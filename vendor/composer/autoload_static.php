@@ -121,11 +121,9 @@ class ComposerStaticInit1da8b2d870476f87ab38673aec5c6e97
         'B' => 
         array (
             'BeyondCode\\DumpServer\\' => 22,
-            'Barryvdh\\Cors\\' => 14,
         ),
         'A' => 
         array (
-            'Asm89\\Stack\\' => 12,
             'App\\' => 4,
         ),
     );
@@ -323,14 +321,6 @@ class ComposerStaticInit1da8b2d870476f87ab38673aec5c6e97
         array (
             0 => __DIR__ . '/..' . '/beyondcode/laravel-dump-server/src',
         ),
-        'Barryvdh\\Cors\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/barryvdh/laravel-cors/src',
-        ),
-        'Asm89\\Stack\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/asm89/stack-cors/src/Asm89/Stack',
-        ),
         'App\\' => 
         array (
             0 => __DIR__ . '/../..' . '/app',
@@ -361,17 +351,20 @@ class ComposerStaticInit1da8b2d870476f87ab38673aec5c6e97
     public static $classMap = array (
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
+        'App\\Http\\Controllers\\AdminController' => __DIR__ . '/../..' . '/app/Http/Controllers/AdminController.php',
         'App\\Http\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/AuthController.php',
         'App\\Http\\Controllers\\Cab7\\BookingController' => __DIR__ . '/../..' . '/app/Http/Controllers/Cab7/BookingController.php',
         'App\\Http\\Controllers\\Cab7\\FileController' => __DIR__ . '/../..' . '/app/Http/Controllers/Cab7/FileController.php',
         'App\\Http\\Controllers\\Cab7\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
+        'App\\Http\\Controllers\\Db\\Tables\\Users' => __DIR__ . '/../..' . '/app/Http/Controllers/Db/Tables/Users.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
         'App\\Http\\Middleware\\CheckForMaintenanceMode' => __DIR__ . '/../..' . '/app/Http/Middleware/CheckForMaintenanceMode.php',
         'App\\Http\\Middleware\\CheckRole' => __DIR__ . '/../..' . '/app/Http/Middleware/CheckRole.php',
         'App\\Http\\Middleware\\EncryptCookies' => __DIR__ . '/../..' . '/app/Http/Middleware/EncryptCookies.php',
         'App\\Http\\Middleware\\Logging' => __DIR__ . '/../..' . '/app/Http/Middleware/Logging.php',
+        'App\\Http\\Middleware\\PreflightedRequest' => __DIR__ . '/../..' . '/app/Http/Middleware/PreflightedRequest.php',
         'App\\Http\\Middleware\\RedirectIfAuthenticated' => __DIR__ . '/../..' . '/app/Http/Middleware/RedirectIfAuthenticated.php',
         'App\\Http\\Middleware\\SetLocale' => __DIR__ . '/../..' . '/app/Http/Middleware/SetLocale.php',
         'App\\Http\\Middleware\\TokenAuth' => __DIR__ . '/../..' . '/app/Http/Middleware/TokenAuth.php',
@@ -385,8 +378,8 @@ class ComposerStaticInit1da8b2d870476f87ab38673aec5c6e97
         'App\\Models\\Cab7\\InsikaTrip' => __DIR__ . '/../..' . '/app/Models/Cab7/InsikaTrip.php',
         'App\\Models\\Cab7\\LedgerAccount' => __DIR__ . '/../..' . '/app/Models/Cab7/LedgerAccount.php',
         'App\\Models\\Cab7\\LedgerJournal' => __DIR__ . '/../..' . '/app/Models/Cab7/LedgerJournal.php',
+        'App\\Models\\EmailAuthentication' => __DIR__ . '/../..' . '/app/Models/EmailAuthentication.php',
         'App\\Models\\Model' => __DIR__ . '/../..' . '/app/Models/Model.php',
-        'App\\Models\\Token' => __DIR__ . '/../..' . '/app/Models/Token.php',
         'App\\Models\\Traits\\UserCanAuthenticate' => __DIR__ . '/../..' . '/app/Models/Traits/UserCanAuthenticate.php',
         'App\\Models\\Traits\\UserRelationships' => __DIR__ . '/../..' . '/app/Models/Traits/UserRelationships.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
@@ -396,6 +389,7 @@ class ComposerStaticInit1da8b2d870476f87ab38673aec5c6e97
         'App\\Providers\\EventServiceProvider' => __DIR__ . '/../..' . '/app/Providers/EventServiceProvider.php',
         'App\\Providers\\RouteServiceProvider' => __DIR__ . '/../..' . '/app/Providers/RouteServiceProvider.php',
         'App\\Rules\\Active' => __DIR__ . '/../..' . '/app/Rules/Active.php',
+        'App\\Rules\\CheckClientIdent' => __DIR__ . '/../..' . '/app/Rules/CheckClientIdent.php',
         'App\\Rules\\CheckPasswordFor' => __DIR__ . '/../..' . '/app/Rules/CheckPasswordFor.php',
         'App\\Rules\\EmailExists' => __DIR__ . '/../..' . '/app/Rules/EmailExists.php',
         'App\\Rules\\EmailUnique' => __DIR__ . '/../..' . '/app/Rules/EmailUnique.php',
@@ -403,12 +397,6 @@ class ComposerStaticInit1da8b2d870476f87ab38673aec5c6e97
         'App\\Rules\\TokenExists' => __DIR__ . '/../..' . '/app/Rules/TokenExists.php',
         'App\\Rules\\TokenExpires' => __DIR__ . '/../..' . '/app/Rules/TokenExpires.php',
         'App\\Rules\\Verified' => __DIR__ . '/../..' . '/app/Rules/Verified.php',
-        'Asm89\\Stack\\Cors' => __DIR__ . '/..' . '/asm89/stack-cors/src/Asm89/Stack/Cors.php',
-        'Asm89\\Stack\\CorsService' => __DIR__ . '/..' . '/asm89/stack-cors/src/Asm89/Stack/CorsService.php',
-        'Barryvdh\\Cors\\HandleCors' => __DIR__ . '/..' . '/barryvdh/laravel-cors/src/HandleCors.php',
-        'Barryvdh\\Cors\\HandlePreflight' => __DIR__ . '/..' . '/barryvdh/laravel-cors/src/HandlePreflight.php',
-        'Barryvdh\\Cors\\LumenServiceProvider' => __DIR__ . '/..' . '/barryvdh/laravel-cors/src/LumenServiceProvider.php',
-        'Barryvdh\\Cors\\ServiceProvider' => __DIR__ . '/..' . '/barryvdh/laravel-cors/src/ServiceProvider.php',
         'BeyondCode\\DumpServer\\DumpServerCommand' => __DIR__ . '/..' . '/beyondcode/laravel-dump-server/src/DumpServerCommand.php',
         'BeyondCode\\DumpServer\\DumpServerServiceProvider' => __DIR__ . '/..' . '/beyondcode/laravel-dump-server/src/DumpServerServiceProvider.php',
         'BeyondCode\\DumpServer\\Dumper' => __DIR__ . '/..' . '/beyondcode/laravel-dump-server/src/Dumper.php',
@@ -3274,10 +3262,8 @@ class ComposerStaticInit1da8b2d870476f87ab38673aec5c6e97
         'Symfony\\Polyfill\\Php72\\Php72' => __DIR__ . '/..' . '/symfony/polyfill-php72/Php72.php',
         'Symfony\\Polyfill\\Php73\\Php73' => __DIR__ . '/..' . '/symfony/polyfill-php73/Php73.php',
         'Tests\\CreatesApplication' => __DIR__ . '/../..' . '/tests/CreatesApplication.php',
-        'Tests\\Feature\\AuthTest' => __DIR__ . '/../..' . '/tests/Feature/AuthTest.php',
-        'Tests\\Feature\\ExampleTest' => __DIR__ . '/../..' . '/tests/Feature/ExampleTest.php',
+        'Tests\\Endpoints\\AuthTest' => __DIR__ . '/../..' . '/tests/Endpoints/AuthTest.php',
         'Tests\\TestCase' => __DIR__ . '/../..' . '/tests/TestCase.php',
-        'Tests\\Unit\\ExampleTest' => __DIR__ . '/../..' . '/tests/Unit/ExampleTest.php',
         'TijsVerkoyen\\CssToInlineStyles\\CssToInlineStyles' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/CssToInlineStyles.php',
         'TijsVerkoyen\\CssToInlineStyles\\Css\\Processor' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/Css/Processor.php',
         'TijsVerkoyen\\CssToInlineStyles\\Css\\Property\\Processor' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/Css/Property/Processor.php',

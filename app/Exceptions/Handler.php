@@ -7,6 +7,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Swift_TransportException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
@@ -50,7 +51,7 @@ class Handler extends ExceptionHandler
         }
 
         if ($e instanceof AuthenticationException) {
-            return response()->json(['message' => $e->getMessage(), 'guards' => $e->guards()], 401);
+            return response()->json(trans('notify.error.auth-check'), 401);
         }
 
         if ($e instanceof AuthorizationException) {
@@ -77,10 +78,5 @@ class Handler extends ExceptionHandler
         }
 
         return response()->json($e->getMessage(), 500);
-    }
-
-    protected function unauthenticated($request, AuthenticationException $e)
-    {
-        return response()->json(trans('auth.unauthenticated'), 401);
     }
 }
