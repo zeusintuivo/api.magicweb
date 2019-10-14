@@ -11,5 +11,5 @@
 [<small>{{ $client->tokenUrl }}</small>]({{ $client->tokenUrl }})
 
 {{ ucfirst(trans('messages.thanks')) }},<br>
-{{ trans('app.brand.magicweb') }}
+{{ config("client.{$client->ident}.brand") }}
 @endcomponent
