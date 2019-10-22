@@ -10,7 +10,6 @@ use App\Rules\EmailExists;
 use App\Rules\EmailUnique;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
-use function trans;
 
 class AuthController extends Controller
 {

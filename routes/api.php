@@ -34,11 +34,6 @@ Route::prefix('{locale}')->group(function () {
         return $request->user();
     })->middleware('auth');
 
-    // Accounting Management System routes
-    Route::get('/fetch/account/charts', 'Cab7\BookingController@fetchAccountCharts');
-    Route::post('/read/hale/gdpdu/export', 'Cab7\FileController@readHaleGdpduExport')->middleware('auth');
-    Route::post('/book/double/entry', 'Cab7\BookingController@bookDoubleEntry')->middleware('auth');
-
     // Auth user routes - mutual for all projects
     Route::post('/login', 'AuthController@login')->middleware('guest')->name('login');
     Route::post('/auth/check', 'AuthController@authCheck')->middleware('auth');
@@ -53,15 +48,27 @@ Route::prefix('{locale}')->group(function () {
     // Async client validations
     Route::post('/validate/email/exists', 'AuthController@validateEmailExists')->middleware('guest');
     Route::post('/validate/email/unique', 'AuthController@validateEmailUnique')->middleware('guest');
-    // Other user routes
-    Route::get('/fetch/user/details', 'UserController@show')->middleware('auth');
-    // Route::post('/update/user', 'UserController@update')->middleware('auth:api');
-    // Route::post('/delete/user', 'UserController@delete')->middleware('auth:api');
-    // Route::get('/delete/user/{token}', 'UserController@forceDeleteFromMail');
 
     // Admin routes
     Route::prefix('admin')->group(function () {
         Route::post('/fetch/users', 'AdminController@fetchUsers')->middleware('auth');
+    });
+
+    // Cab7 routes
+    Route::prefix('cab7')->group(function () {
+        // User routes (deprecated)
+        Route::prefix('user')->group(function () {
+            Route::get('/fetch', 'Cab7\UserController@show')->middleware('auth');
+            // Route::post('/update/user', 'UserController@update')->middleware('auth:api');
+            // Route::post('/delete/user', 'UserController@delete')->middleware('auth:api');
+            // Route::get('/delete/user/{token}', 'UserController@forceDeleteFromMail');
+        });
+        // Accounting Management System Resources
+        Route::prefix('amsr')->group(function () {
+            Route::get('/fetch/standard/accounts', 'Cab7\BookingController@fetchStandardAccounts');
+            Route::post('/read/hale/gdpdu/export', 'Cab7\FileController@readHaleGdpduExport')->middleware('auth');
+            Route::post('/book/double/entry', 'Cab7\BookingController@bookDoubleEntry')->middleware('auth');
+        });
     });
 
 });

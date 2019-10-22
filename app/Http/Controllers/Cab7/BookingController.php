@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Cab7;
 
 use App\Http\Controllers\Controller;
-use App\Models\Cab7\AccountChart;
+use App\Models\Cab7\Skr04Account;
 use App\Models\Cab7\LedgerAccount;
 use App\Models\Cab7\LedgerJournal;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use function date_parse;
-use function response;
 
 class BookingController extends Controller
 {
@@ -24,30 +23,31 @@ class BookingController extends Controller
             'debit'  => 'required',
             'credit' => 'required',
         ]);
-        $debitAccount = AccountChart::where($v['skr'], $v['debit']['value'])->where($v['lang'], $v['debit']['label'])->first();
+
+        $debitAccount = Skr04Account::find($v['debit']['value']);
         // return $debitAccount;
-        $creditAccount = AccountChart::where($v['skr'], $v['credit']['value'])->where($v['lang'], $v['credit']['label'])->first();
+        $creditAccount = Skr04Account::find($v['credit']['value']);
         // return $creditAccount;
         $date = date_parse($v['date']);
         $billCount = LedgerJournal::whereDate('date', $v['date'])->get()->count() + 1;
-        $billNumber = "{$date['month']}{$date['day']}{$billCount}";
-        // return response()->json((int) $billNumber, 200);
+        $billNumber = "{$date['year']}-{$date['month']}-{$date['day']}-{$billCount}";
+        // return response()->json($billNumber, 200);
 
         // Use transaction to ensure completeness
-        $result = DB::connection('mysql-mweb')->transaction(function () use (
-            $request, $v, $debitAccount, $creditAccount, $billNumber
-        ) {
+        $result = DB::transaction(function () use ($request, $v, $debitAccount, $creditAccount, $billNumber) {
             $journalEntry = new LedgerJournal();
             $journalEntry->date = $v['date'];
-            $journalEntry->bill = (int) $billNumber;
+            $journalEntry->bill = $billNumber;
             $journalEntry->amount = (float) $v['amount'];
-            $journalEntry->details = "{$v['credit']['label']} --> {$v['debit']['label']}";
+            $giver = "{$v['debit']['value']} {$v['debit']['label']}";
+            $receiver = "{$v['credit']['value']} {$v['credit']['label']}";
+            $journalEntry->details = "{$giver} --> {$receiver}";
             $journalEntry->save();
             // return $journalEntry;
             $debitEntry = new LedgerAccount();
             $debitEntry->user_id = $request->user()->id;
-            $debitEntry->account_chart_id = $debitAccount->id;
-            $debitEntry->ledger_journal_id = $journalEntry->id;
+            $debitEntry->skr04 = $debitAccount->id;
+            $debitEntry->journal_id = $journalEntry->id;
             $debitEntry->skr = $v['skr'];
             $debitEntry->lang = $v['lang'];
             $debitEntry->date = $v['date'];
@@ -57,8 +57,8 @@ class BookingController extends Controller
             // return $debitEntry;
             $creditEntry = new LedgerAccount();
             $creditEntry->user_id = $request->user()->id;
-            $creditEntry->account_chart_id = $creditAccount->id;
-            $creditEntry->ledger_journal_id = $journalEntry->id;
+            $creditEntry->skr04 = $creditAccount->id;
+            $creditEntry->journal_id = $journalEntry->id;
             $creditEntry->skr = $v['skr'];
             $creditEntry->lang = $v['lang'];
             $creditEntry->date = $v['date'];
@@ -67,7 +67,7 @@ class BookingController extends Controller
             $creditEntry->save();
             // return $creditEntry;
             return [
-                'success' => "3 entries booked successfully.",
+                'success' => trans('cab7.booking.notify.success'),
                 'journal' => $journalEntry,
                 'debit'   => $debitEntry,
                 'credit'  => $creditEntry,
@@ -77,12 +77,12 @@ class BookingController extends Controller
         return response()->json($result, 200);
     }
 
-    public function fetchAccountCharts(Request $request)
+    public function fetchStandardAccounts(Request $request)
     {
         $v = $request->validate([
             'skr'  => 'required|string|size:5',
             'lang' => 'required|string|size:5',
         ]);
-        return response()->json(AccountChart::whereNotNull($v['skr'])->whereNotNull($v['lang'])->get([$v['skr'], $v['lang']]), 200);
+        return response()->json(Skr04Account::get(['id', $v['lang']]), 200);
     }
 }

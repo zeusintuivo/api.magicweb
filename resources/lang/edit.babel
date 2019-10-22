@@ -598,6 +598,43 @@
                 <filename></filename>
             </file_node>
             <file_node>
+                <name>cab7</name>
+                <children>
+                    <folder_node>
+                        <name>booking</name>
+                        <children>
+                            <folder_node>
+                                <name>notify</name>
+                                <children>
+                                    <concept_node>
+                                        <name>success</name>
+                                        <definition_loaded>false</definition_loaded>
+                                        <description></description>
+                                        <comment></comment>
+                                        <default_text></default_text>
+                                        <translations>
+                                            <translation>
+                                                <language>bg-BG</language>
+                                                <approved>false</approved>
+                                            </translation>
+                                            <translation>
+                                                <language>de-DE</language>
+                                                <approved>false</approved>
+                                            </translation>
+                                            <translation>
+                                                <language>en-US</language>
+                                                <approved>false</approved>
+                                            </translation>
+                                        </translations>
+                                    </concept_node>
+                                </children>
+                            </folder_node>
+                        </children>
+                    </folder_node>
+                </children>
+                <filename></filename>
+            </file_node>
+            <file_node>
                 <name>messages</name>
                 <children>
                     <folder_node>
@@ -2267,6 +2304,27 @@
                                 </translations>
                             </concept_node>
                             <concept_node>
+                                <name>credit</name>
+                                <definition_loaded>false</definition_loaded>
+                                <description></description>
+                                <comment></comment>
+                                <default_text></default_text>
+                                <translations>
+                                    <translation>
+                                        <language>bg-BG</language>
+                                        <approved>false</approved>
+                                    </translation>
+                                    <translation>
+                                        <language>de-DE</language>
+                                        <approved>false</approved>
+                                    </translation>
+                                    <translation>
+                                        <language>en-US</language>
+                                        <approved>false</approved>
+                                    </translation>
+                                </translations>
+                            </concept_node>
+                            <concept_node>
                                 <name>current_password</name>
                                 <definition_loaded>false</definition_loaded>
                                 <description></description>
@@ -2346,6 +2404,27 @@
                                     </translation>
                                     <translation>
                                         <language>bg-BG</language>
+                                        <approved>false</approved>
+                                    </translation>
+                                </translations>
+                            </concept_node>
+                            <concept_node>
+                                <name>debit</name>
+                                <definition_loaded>false</definition_loaded>
+                                <description></description>
+                                <comment></comment>
+                                <default_text></default_text>
+                                <translations>
+                                    <translation>
+                                        <language>bg-BG</language>
+                                        <approved>false</approved>
+                                    </translation>
+                                    <translation>
+                                        <language>de-DE</language>
+                                        <approved>false</approved>
+                                    </translation>
+                                    <translation>
+                                        <language>en-US</language>
                                         <approved>false</approved>
                                     </translation>
                                 </translations>

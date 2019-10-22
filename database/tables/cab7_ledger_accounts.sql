@@ -1,15 +1,13 @@
 DROP TABLE IF EXISTS tmp_ledger_accounts;
-CREATE TEMPORARY TABLE tmp_ledger_accounts
-    SELECT user_id, account_chart_id, ledger_journal_id, skr, lang, date, refer, debit, credit
-    FROM cab7_ledger_accounts;
+CREATE TEMPORARY TABLE tmp_ledger_accounts SELECT * FROM cab7_ledger_accounts;
 SELECT * FROM tmp_ledger_accounts;
 
 DROP TABLE IF EXISTS cab7_ledger_accounts;-- Be careful!
 CREATE TABLE IF NOT EXISTS cab7_ledger_accounts(
     id int unsigned NOT NULL AUTO_INCREMENT,
     user_id int unsigned NOT NULL COMMENT 'Associated user',
-    account_chart_id int unsigned NOT NULL COMMENT 'Associated account',
-    ledger_journal_id int unsigned NOT NULL COMMENT 'General ledger entry',
+    skr04 int unsigned NOT NULL COMMENT 'Associated SKR04 account',
+    journal_id int unsigned NOT NULL COMMENT 'General ledger entry',
     skr varchar(5) NOT NULL COMMENT 'Code SKR',
     lang varchar(5) NOT NULL COMMENT 'Code lang',
     date date NOT NULL COMMENT 'Day booking belongs to',
@@ -21,10 +19,10 @@ CREATE TABLE IF NOT EXISTS cab7_ledger_accounts(
     deleted_at timestamp NULL DEFAULT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (account_chart_id) REFERENCES cab7_account_charts(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (ledger_journal_id) REFERENCES cab7_ledger_journal(id) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (skr04) REFERENCES cab7_skr04_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (journal_id) REFERENCES cab7_ledger_journal(id) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE InnoDB DEFAULT CHARSET = utf8mb4;
-INSERT INTO cab7_ledger_accounts (user_id, account_chart_id, ledger_journal_id, skr, lang, date, refer, debit, credit)
+INSERT INTO cab7_ledger_accounts (user_id, skr04, ledger_journal_id, skr, lang, date, refer, debit, credit)
     SELECT * FROM tmp_ledger_accounts;
 
 # Trial balance

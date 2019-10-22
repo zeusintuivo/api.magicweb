@@ -2,8 +2,6 @@
 
 namespace App\Models\Cab7;
 
-use App\Models\AccountChart;
-use App\Models\LedgerJournal;
 use App\Models\Model;
 use App\Models\User;
 
@@ -17,12 +15,12 @@ class LedgerAccount extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function accountChart()
+    public function skr04()
     {
-        return $this->belongsTo(AccountChart::class);
+        return $this->belongsTo(Skr04Account::class);
     }
 
-    public function ledgerJournal()
+    public function journal()
     {
         return $this->belongsTo(LedgerJournal::class);
     }
