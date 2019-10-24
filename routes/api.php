@@ -66,6 +66,7 @@ Route::prefix('{locale}')->group(function () {
         // Accounting Management System Resources
         Route::prefix('amsr')->group(function () {
             Route::get('/fetch/standard/accounts', 'Cab7\BookingController@fetchStandardAccounts');
+            Route::post('/fetch/ledger/journal', 'Cab7\BookingController@fetchLedgerJournal')->middleware('auth');
             Route::post('/read/hale/gdpdu/export', 'Cab7\FileController@readHaleGdpduExport')->middleware('auth');
             Route::post('/book/double/entry', 'Cab7\BookingController@bookDoubleEntry')->middleware('auth');
         });

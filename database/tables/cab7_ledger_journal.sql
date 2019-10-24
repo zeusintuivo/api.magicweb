@@ -10,6 +10,6 @@ CREATE TABLE IF NOT EXISTS cab7_ledger_journal (
     updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at timestamp NULL DEFAULT NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY unique_entry (bill)
+    UNIQUE KEY unique_bill_number (bill)
 ) ENGINE InnoDB DEFAULT CHARSET utf8mb4;
 SET FOREIGN_KEY_CHECKS = 1;

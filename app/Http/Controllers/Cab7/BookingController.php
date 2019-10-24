@@ -85,4 +85,9 @@ class BookingController extends Controller
         ]);
         return response()->json(Skr04Account::get(['id', $v['lang']]), 200);
     }
+
+    public function fetchLedgerJournal(Request $request)
+    {
+        return response()->json(LedgerJournal::orderBy('id', 'desc')->get(), 200);
+    }
 }
