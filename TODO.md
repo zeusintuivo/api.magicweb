@@ -1,3 +1,6 @@
-- Test auth api on izgrev client
-- Write tests for all auth endpoints
+# Cab7.eu
+DEAD: (Debit + Expenses + Assets + Drawings) = CLIC: (Credit + Liabilities + Income/sales/revenue + Capital)
 
+# DG-Izgrev.eu
+
+# MagicWeb.org

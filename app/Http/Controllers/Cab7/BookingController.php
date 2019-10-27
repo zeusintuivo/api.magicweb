@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Cab7;
 
+use App\Exceptions\Cab7\TrialBalanceException;
 use App\Http\Controllers\Controller;
-use App\Models\Cab7\Skr04Account;
 use App\Models\Cab7\LedgerAccount;
 use App\Models\Cab7\LedgerJournal;
-use Exception;
+use App\Models\Cab7\Skr04Account;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use function collect;
+use function compact;
 use function number_format;
 
 class BookingController extends Controller
@@ -32,8 +35,8 @@ class BookingController extends Controller
         // return $debitAccount;
         $creditAccount = Skr04Account::find($v['credit']['value']);
         // return $creditAccount;
-        $billCount = LedgerJournal::whereDate('date', $v['date'])->get()->count() + 1;
-        $billNumber = "{$v['date']}-{$billCount}";
+        $billCount = LedgerJournal::whereDate('date', $v['date'])->count() + 1;
+        $sequenceNumber = "{$v['date']}-{$billCount}";
         // return $billCount;
         $debit = $v['debit']['value'];
         $out = 5000 <= $debit && $debit <= 7999;
@@ -58,13 +61,13 @@ class BookingController extends Controller
 
         // Use transaction to ensure completeness
         $result = DB::transaction(function () use (
-            $request, $v, $debitAccount, $creditAccount, $billNumber,
+            $request, $v, $debitAccount, $creditAccount, $sequenceNumber,
             $signedAmount, $vatCode, $debitVatAmount, $creditVatAmount,
             $debitNetAmount, $creditNetAmount, $systemDetails
         ) {
             $journalEntry = new LedgerJournal();
             $journalEntry->date = $v['date'];
-            $journalEntry->bill_number = $billNumber;
+            $journalEntry->sequence_number = $sequenceNumber;
             $journalEntry->amount = $signedAmount;
             $journalEntry->vat_code = $vatCode;
             $journalEntry->client_details = $v['details'];
@@ -119,6 +122,22 @@ class BookingController extends Controller
                 $creditVatEntry->save();
             }
             // return $creditVatEntry;
+
+            // Break execution if trial balance failes
+            $trialBalance = collect(DB::select('
+                SELECT @b := ROUND(@b + s.debit - s.credit, 2) AS balance
+                FROM (SELECT @b := 0.00) AS excel, cab7_ledger_accounts AS s ORDER BY id;
+            '))->last()->balance;
+            // return $trialBalance;
+            Validator::make([
+                'trial_balance' => $trialBalance,
+            ], [
+                'trial_balance' => 'in:0',
+            ], [
+                'in' => trans('cab7.validation.error.trial_balance', compact('trialBalance')),
+            ])->validate();
+
+            // Notify success, and pass all 4 entries to client
             return [
                 'success'    => trans('cab7.booking.notify.success', ['number' => 'all']),
                 'journal'    => $journalEntry,
@@ -143,7 +162,7 @@ class BookingController extends Controller
 
     public function fetchLedgerJournal(Request $request)
     {
-        return response()->json(LedgerJournal::orderBy('id', 'desc')->get(), 200);
+        return response()->json(LedgerJournal::orderBy('date', 'desc')->get(), 200);
     }
 
     public function fetchBookingDetails(Request $request)

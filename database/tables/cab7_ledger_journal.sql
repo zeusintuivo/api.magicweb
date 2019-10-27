@@ -3,7 +3,8 @@ DROP TABLE IF EXISTS cab7_ledger_journal;-- Be careful with this!
 CREATE TABLE IF NOT EXISTS cab7_ledger_journal (
     id int unsigned NOT NULL AUTO_INCREMENT,
     date date NOT NULL COMMENT 'Date of booking',
-    bill_number varchar(15) NOT NULL UNIQUE,
+    bill_number varchar(99) NULL DEFAULT NULL UNIQUE,
+    sequence_number varchar(15) NOT NULL UNIQUE,
     amount varchar(9) NOT NULL COMMENT 'Not editable booking amount as string',
     vat_code tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT '0% [0], 7% [8], 19% [9]',
     client_details varchar(255) NOT NULL COMMENT 'User comment about current booking entry',

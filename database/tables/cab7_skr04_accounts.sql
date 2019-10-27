@@ -19,7 +19,7 @@ INSERT INTO cab7_skr04_accounts (id, en_GB, de_DE, pid, vat_code, private) VALUE
 (400, 'Technical equipment and machinery', 'Technische Anlagen und Maschinen', 0, 0, 0),
 (420, 'Technical equipment', 'Technische Anlagen', 0, 0, 0),
 (440, 'Machinery', 'Maschinen', 0, 0, 0),
-(1200, 'Trade receivables', 'Forderungen aus Lieferungen und Leistungen', 0, 0, 1),
+(1200, 'Trade receivables', 'Forderungen aus Lieferungen und Leistungen', 0, 0, 0),# TODO: set to private!
 (1401, 'Deductible input tax, 7%', 'Abziehbare Vorsteuer 7%', 0, 8, 1),
 (1406, 'Deductible input tax, 19%', 'Abziehbare Vorsteuer 19%', 0, 9, 1),
 (1550, 'Cheques', 'Schecks', 0, 0, 0),
