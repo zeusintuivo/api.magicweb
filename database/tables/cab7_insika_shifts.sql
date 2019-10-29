@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS cab7_insika_shifts (
     user_id int unsigned NOT NULL,
     began_at datetime NOT NULL,
     ended_at datetime NOT NULL,
-    length varchar(8) NOT NULL,
+    duration time NOT NULL,
     driver varchar(99) NOT NULL,
     vehicle varchar(9) NOT NULL,
     charge_total decimal(7,2) NOT NULL,
@@ -22,5 +22,4 @@ CREATE TABLE IF NOT EXISTS cab7_insika_shifts (
     UNIQUE KEY unique_shift(began_at, ended_at, vehicle)
 ) ENGINE InnoDB DEFAULT CHARSET = utf8mb4;
 
-SELECT sum(charge_total), sum(km_total) FROM cab7_insika_shifts;
-
+# SELECT sum(charge_total), sum(km_total) FROM cab7_insika_shifts;
