@@ -19,7 +19,7 @@ INSERT INTO cab7_skr04_accounts (id, en_GB, de_DE, pid, vat_code, private) VALUE
 (400, 'Technical equipment and machinery', 'Technische Anlagen und Maschinen', 0, 0, 0),
 (420, 'Technical equipment', 'Technische Anlagen', 0, 0, 0),
 (440, 'Machinery', 'Maschinen', 0, 0, 0),
-(1200, 'Trade receivables', 'Forderungen aus Lieferungen und Leistungen', 0, 0, 0),# TODO: set to private!
+(1200, 'Trade receivables', 'Forderungen aus Lieferungen und Leistungen', 0, 0, 1),
 (1401, 'Deductible input tax, 7%', 'Abziehbare Vorsteuer 7%', 0, 8, 1),
 (1406, 'Deductible input tax, 19%', 'Abziehbare Vorsteuer 19%', 0, 9, 1),
 (1550, 'Cheques', 'Schecks', 0, 0, 0),
@@ -31,7 +31,7 @@ INSERT INTO cab7_skr04_accounts (id, en_GB, de_DE, pid, vat_code, private) VALUE
 (3100, 'Non-convertible bonds', 'Anleihen', 0, 0, 0),
 (3150, 'Liabilities to banks', 'Verbindlichkeiten gegenüber Kreditinstituten', 0, 0, 0),
 (3250, 'Payments received on account of orders', 'Erhaltene Anzahlungen auf Bestellungen', 0, 0, 0),
-(3300, 'Trade payables', 'Verbindlichkeiten aus Lieferungen und Leistungen', 0, 0, 0),# TODO: set to private!
+(3300, 'Trade payables', 'Verbindlichkeiten aus Lieferungen und Leistungen', 0, 0, 1),
 (3500, 'Other liabilities', 'Sonstige Verbindlichkeiten', 0, 0, 0),
 (3501, 'Other liabilities - due within 1 year', 'Sonstige Verbindlichkeiten - Restlaufzeit bis 1 Jahr', 0, 0, 0),
 (3504, 'Other liabilities - due between 1 and 5 years', 'Sonstige Verbindlichkeiten - Restlaufzeit 1 bis 5 Jahre', 0, 0, 0),

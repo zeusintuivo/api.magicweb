@@ -1,6 +1,7 @@
 # Subaccounts :: Personenkonten
 SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS cab7_personal_accounts;
+SET FOREIGN_KEY_CHECKS = 1;
 CREATE TABLE IF NOT EXISTS cab7_personal_accounts (
     id int UNSIGNED NOT NULL,
     skr04 int unsigned NOT NULL,
@@ -18,5 +19,3 @@ INSERT INTO cab7_personal_accounts (id, skr04, name, kind) VALUES (10001, 1200, 
 
 # Creditors (suppliers) :: Lieferantenkonten :: 70000 - 99999 :: parent: #3300
 INSERT INTO cab7_personal_accounts (id, skr04, name, kind) VALUES (70001, 3300, 'Apple Computers Inc.', 'creditor');
-
-SET FOREIGN_KEY_CHECKS = 1;

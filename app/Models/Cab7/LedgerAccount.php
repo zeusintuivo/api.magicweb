@@ -8,11 +8,11 @@ use App\Models\User;
 class LedgerAccount extends Model
 {
     protected $table = 'cab7_ledger_accounts';
-    protected $guarded = [];
+    protected $guarded = ['created_at', 'updated_at', 'deleted_at'];
 
-    public function user()
+    public function journal()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(LedgerJournal::class);
     }
 
     public function skr04()
@@ -20,9 +20,9 @@ class LedgerAccount extends Model
         return $this->belongsTo(Skr04Account::class);
     }
 
-    public function journal()
+    public function skr04_ref()
     {
-        return $this->belongsTo(LedgerJournal::class);
+        return $this->belongsTo(Skr04Account::class);
     }
 
 }

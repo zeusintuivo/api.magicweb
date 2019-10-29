@@ -3,11 +3,12 @@
 namespace App\Models\Cab7;
 
 use App\Models\Model;
-use App\Models\User;
 
-class LedgerJournal extends Model
+class InsikaShift extends Model
 {
-    protected $table = 'cab7_ledger_journal';
+    // Allow to assign taxameter trip ids
+    public $incrementing = false;
+    protected $table = 'cab7_insika_shifts';
     protected $guarded = ['created_at', 'updated_at', 'deleted_at'];
 
     public function user()

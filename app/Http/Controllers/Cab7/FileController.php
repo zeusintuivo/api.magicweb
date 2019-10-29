@@ -37,6 +37,7 @@ class FileController extends Controller
                 // return $trip;
                 InsikaTrip::updateOrCreate($trip);
             }
+            fclose($handle);
         } catch (Exception $e) {
             return response()->json("Error occurred opening gdpdu export file: {$e->getMessage()}", 500);
         }

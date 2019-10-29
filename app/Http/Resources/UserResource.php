@@ -18,15 +18,16 @@ class UserResource extends Resource
     public function toArray($request)
     {
         return [
-            'id'           => $this->id,
-            'email'        => $this->email,
-            'api_token'    => $this->api_token,
-            'first_name'   => $this->first_name,
-            'last_name'    => $this->last_name,
-            'verified'     => $this->verified,
-            'active'       => $this->active,
-            'gdpr'         => $this->gdpr,
-            'news'         => $this->news,
+            'id'         => $this->id,
+            'email'      => $this->email,
+            'api_token'  => $this->api_token,
+            'first_name' => $this->first_name,
+            'last_name'  => $this->last_name,
+            'full_name'  => "{$this->first_name} {$this->last_name}",
+            'verified'   => $this->verified,
+            'active'     => $this->active,
+            'gdpr'       => $this->gdpr,
+            'news'       => $this->news,
         ];
     }
 
