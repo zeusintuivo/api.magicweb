@@ -22,12 +22,14 @@ INSERT INTO cab7_skr04_accounts (id, en_GB, de_DE, pid, vat_code, private) VALUE
 (1200, 'Trade receivables', 'Forderungen aus Lieferungen und Leistungen', 0, 0, 1),
 (1401, 'Deductible input tax, 7%', 'Abziehbare Vorsteuer 7%', 0, 8, 1),
 (1406, 'Deductible input tax, 19%', 'Abziehbare Vorsteuer 19%', 0, 9, 1),
+(1460, 'Cash in transit', 'Geldtransit', 0, 0, 0),
 (1550, 'Cheques', 'Schecks', 0, 0, 0),
 (1600, 'Cash', 'Kasse', 0, 0, 0),
 (1800, 'Bank', 'Bank', 0, 0, 0),
 (2000, 'Fixed capital', 'Festkapital', 0, 0, 0),
 (2020, 'Partner loans', 'Fremdkapital', 0, 0, 0),
 (2100, 'Private withdrawals', 'Privatentnahmen allgemein', 0, 0, 0),
+(2280, 'Extraordinary expenses', 'Außergewöhnliche Belastungen', 0, 0, 0),
 (3100, 'Non-convertible bonds', 'Anleihen', 0, 0, 0),
 (3150, 'Liabilities to banks', 'Verbindlichkeiten gegenüber Kreditinstituten', 0, 0, 0),
 (3250, 'Payments received on account of orders', 'Erhaltene Anzahlungen auf Bestellungen', 0, 0, 0),
@@ -63,6 +65,8 @@ INSERT INTO cab7_skr04_accounts (id, en_GB, de_DE, pid, vat_code, private) VALUE
 (6260, 'Immediate write-off of lowvalue assets', 'Sofortabschreibungen geringwertiger Wirtschaftsgüter', 0, 0, 0),
 (6300, 'Other operating expenses', 'Sonstige betriebliche Aufwendungen', 0, 0, 0),
 (6305, 'Occupancy costs', 'Raumkosten', 0, 0, 0),
+(6430, 'Other levies', 'Sonstige Abgaben', 0, 0, 0),
+(6800, 'Postage', 'Porto', 0, 0, 0),
 (6815, 'Office supplies', 'Bürobedarf', 0, 0, 0),
 (7300, 'Interest and similar expenses', 'Zinsen und ähnliche Aufwendungen', 0, 0, 0);
 

@@ -9,6 +9,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
+use const STR_PAD_LEFT;
 
 class BookingRequest extends FormRequest
 {
@@ -28,7 +29,7 @@ class BookingRequest extends FormRequest
     public function rules()
     {
         switch (Route::currentRouteName()) {
-            case 'book/bill':
+            case 'book/double/entry':
                 return [
                     'skr'             => 'required|string|size:5',
                     'lang'            => 'required|string|size:5',
@@ -52,7 +53,7 @@ class BookingRequest extends FormRequest
         // return $debitAccount;
         $creditAccount = Skr04Account::find($v['credit']['value']);
         // return $creditAccount;
-        $signedAmount = $this->sign($v['debit']['value']) . number_format($v['amount'], 2, ',', '.');
+        $signedAmount = $this->sign($v['debit'], $v['credit']) . number_format($v['amount'], 2, ',', '.');
         // return $signedAmount;
         $vatCode = $debitAccount->vat_code ?: $creditAccount->vat_code;
         $vatCodes = [0 => 0.00, 8 => 0.07, 9 => 0.19];
@@ -77,18 +78,20 @@ class BookingRequest extends FormRequest
             $debitNetAmount, $debitVatAmount, $creditNetAmount, $creditVatAmount,
             $systemDetails
         ) {
-            if (!$journalEntry = LedgerJournal::whereBillOwnNumber($v['bill_own_number'])->first()) {
+            if (!$journalEntry = LedgerJournal::whereBillOwnNumber(@$v['bill_own_number'])->first()) {
                 $billCount = LedgerJournal::whereDate('date', $v['date'])->count() + 1;
-                $journalEntry = LedgerJournal::create([
-                    'bill_own_number' => $v['bill_own_number'],
-                    'sequence_number' => "{$v['date']}-{$billCount}",
-                    'user_id'         => $this->user()->id,
-                    'date'            => $v['date'],
-                    'amount'          => $signedAmount,
-                    'vat_code'        => $vatCode,
-                    'client_details'  => $v['details']['label'],
-                    'system_details'  => $systemDetails,
-                ]);
+                $sequenceNumber = "{$v['date']}-{$billCount}";
+                $journalEntry = new LedgerJournal();
+                if (@$v['id']) $journalEntry->id = (int) $v['id'];
+                $journalEntry->bill_own_number = @$v['bill_own_number'] ?: $sequenceNumber;
+                $journalEntry->sequence_number = $sequenceNumber;
+                $journalEntry->user_id = $this->user()->id;
+                $journalEntry->date = $v['date'];
+                $journalEntry->amount = $signedAmount;
+                $journalEntry->vat_code = $vatCode;
+                $journalEntry->client_details = $v['details']['label'];
+                $journalEntry->system_details = $systemDetails;
+                $journalEntry->save();
             }
             // return $journalEntry;
             if (!$debitEntry = LedgerAccount::whereJournalId($journalEntry->id)->whereSkr04($debitAccount->id)->first()) {
@@ -145,7 +148,7 @@ class BookingRequest extends FormRequest
             '))->last()->balance;
             // return $trialBalance;
             Validator::make([
-                'trial_balance' => $trialBalance,
+                'trial_balance' => (int) $trialBalance,
             ], [
                 'trial_balance' => 'in:0',
             ], [
@@ -164,10 +167,22 @@ class BookingRequest extends FormRequest
         });
     }
 
-    private function sign(int $skrDebit)
+    private function sign(array $debit, array $credit)
     {
-        $out = (5000 <= $skrDebit) && ($skrDebit <= 6999) || in_array($skrDebit, [2100]);
-        return $out ? '-' : '+';
+        // This cases are proofed
+        $debitValue = (int) $debit['value'];
+        if ((5000 <= $debitValue) && ($debitValue <= 6999)) return '-';
+        if (in_array($debitValue, [2100])) return '-';
+
+        // This logic is still under question?
+        $debitGroup = (int) str_pad($debit['value'], 4, '0', STR_PAD_LEFT)[0];
+        $creditGroup = (int) str_pad($credit['value'], 4, '0', STR_PAD_LEFT)[0];
+        if ($debitGroup - $creditGroup < 0) return '+';
+        if ($debitGroup - $creditGroup > 0) return '-';
+        if ($debitGroup - $creditGroup == 0) return '';
+
+        // No sign in common
+        return '';
     }
 
 }

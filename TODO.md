@@ -1,3 +1,4 @@
+- dump regularly with cron job (locally for now)
 # Cab7.eu
 DEAD: (Debit + Expenses + Assets + Drawings) = CLIC: (Credit + Liabilities + Income/sales/revenue + Capital)
 - book shifts

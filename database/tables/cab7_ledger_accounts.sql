@@ -2,9 +2,9 @@
 # CREATE TEMPORARY TABLE tmp_ledger_accounts SELECT * FROM cab7_ledger_accounts;
 # SELECT * FROM tmp_ledger_accounts;
 
-SET FOREIGN_KEY_CHECKS = 0;
-DROP TABLE IF EXISTS cab7_ledger_accounts;-- be careful!
-SET FOREIGN_KEY_CHECKS = 1;
+# SET FOREIGN_KEY_CHECKS = 0;
+# DROP TABLE IF EXISTS cab7_ledger_accounts;-- be careful!
+# SET FOREIGN_KEY_CHECKS = 1;
 CREATE TABLE IF NOT EXISTS cab7_ledger_accounts(
     id int unsigned NOT NULL AUTO_INCREMENT,
     journal_id int unsigned NOT NULL COMMENT 'Associated general ledger entry',
