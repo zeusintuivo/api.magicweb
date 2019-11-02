@@ -9,6 +9,8 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
+use function in_array;
+use function number_format;
 use const STR_PAD_LEFT;
 
 class BookingRequest extends FormRequest
@@ -31,16 +33,16 @@ class BookingRequest extends FormRequest
         switch (Route::currentRouteName()) {
             case 'book/double/entry':
                 return [
-                    'skr'             => 'required|string|size:5',
-                    'lang'            => 'required|string|size:5',
-                    'date'            => 'required|date',
-                    'amount'          => 'required|string',
-                    'debit.label'     => 'required|string',
-                    'debit.value'     => 'required|integer',
-                    'credit.label'    => 'required|string',
-                    'credit.value'    => 'required|integer',
-                    'details.label'   => 'required|string|max:255',
-                    'bill_own_number' => 'nullable|string',
+                    'skr'                  => 'required|string|size:5',
+                    'lang'                 => 'required|string|size:5',
+                    'date'                 => 'required|date',
+                    'amount'               => 'required|string',
+                    'debit.label'          => 'required|string',
+                    'debit.value'          => 'required|integer',
+                    'credit.label'         => 'required|string',
+                    'credit.value'         => 'required|integer',
+                    'details.label'        => 'required|string|max:255',
+                    'original_bill_number' => 'nullable|string',
                 ];
             default:
                 return ['file_name' => 'required|string'];
@@ -56,16 +58,16 @@ class BookingRequest extends FormRequest
         $signedAmount = $this->sign($v['debit'], $v['credit']) . number_format($v['amount'], 2, ',', '.');
         // return $signedAmount;
         $vatCode = $debitAccount->vat_code ?: $creditAccount->vat_code;
-        $vatCodes = [0 => 0.00, 8 => 0.07, 9 => 0.19];
+        $vatDividers = [0 => 1.00, 8 => 1.07, 9 => 1.19];
         // dd($vatCodes[9]);
-        $debitVatAmount = round($vatCodes[$debitAccount->vat_code] * $v['amount'], 2);
-        $debitVatAmountStr = number_format($debitVatAmount, 2, ',', '.');
-        $debitNetAmount = $v['amount'] - $debitVatAmount;
+        $debitNetAmount = round($v['amount'] / $vatDividers[$debitAccount->vat_code], 2);
         $debitNetAmountStr = number_format($debitNetAmount, 2, ',', '.');
-        $creditVatAmount = round($vatCodes[$creditAccount->vat_code] * $v['amount'], 2);
-        $creditVatAmountStr = number_format($creditVatAmount, 2, ',', '.');
-        $creditNetAmount = $v['amount'] - $creditVatAmount;
+        $debitVatAmount = $v['amount'] - $debitNetAmount;
+        $debitVatAmountStr = number_format($debitVatAmount, 2, ',', '.');
+        $creditNetAmount = round($v['amount'] / $vatDividers[$creditAccount->vat_code], 2);
         $creditNetAmountStr = number_format($creditNetAmount, 2, ',', '.');
+        $creditVatAmount = $v['amount'] - $creditNetAmount;
+        $creditVatAmountStr = number_format($creditVatAmount, 2, ',', '.');
         // dd($debitVatAmount, $creditVatAmount, round(1.3554, 2));
         $debitDetails = $debitVatAmount ? " [EUR {$debitNetAmountStr}], {$debitAccount->pid} [EUR {$debitVatAmountStr}]" : " [EUR {$debitNetAmountStr}]";
         $creditDetails = $creditVatAmount ? " [EUR {$creditNetAmountStr}], {$creditAccount->pid} [EUR {$creditVatAmountStr}]" : " [EUR {$creditNetAmountStr}]";
@@ -78,13 +80,13 @@ class BookingRequest extends FormRequest
             $debitNetAmount, $debitVatAmount, $creditNetAmount, $creditVatAmount,
             $systemDetails
         ) {
-            if (!$journalEntry = LedgerJournal::whereBillOwnNumber(@$v['bill_own_number'])->first()) {
+            if (!$journalEntry = LedgerJournal::whereOriginalBillNumber(@$v['original_bill_number'])->first()) {
                 $billCount = LedgerJournal::whereDate('date', $v['date'])->count() + 1;
-                $sequenceNumber = "{$v['date']}-{$billCount}";
+                $internalBillNumber = "{$v['date']}-{$billCount}";
                 $journalEntry = new LedgerJournal();
                 if (@$v['id']) $journalEntry->id = (int) $v['id'];
-                $journalEntry->bill_own_number = @$v['bill_own_number'] ?: $sequenceNumber;
-                $journalEntry->sequence_number = $sequenceNumber;
+                $journalEntry->original_bill_number = @$v['original_bill_number'] ?: $internalBillNumber;
+                $journalEntry->internal_bill_number = $internalBillNumber;
                 $journalEntry->user_id = $this->user()->id;
                 $journalEntry->date = $v['date'];
                 $journalEntry->amount = $signedAmount;
@@ -167,21 +169,21 @@ class BookingRequest extends FormRequest
         });
     }
 
+    /**
+     * DEAD: (Debit + Expenses + Assets + Drawings) = CLIC: (Credit + Liabilities + Income/sales/revenue + Capital)
+     *
+     * @param array $debit
+     * @param array $credit
+     *
+     * @return string
+     */
     private function sign(array $debit, array $credit)
     {
-        // This cases are proofed
         $debitValue = (int) $debit['value'];
-        if ((5000 <= $debitValue) && ($debitValue <= 6999)) return '-';
-        if (in_array($debitValue, [2100])) return '-';
-
-        // This logic is still under question?
-        $debitGroup = (int) str_pad($debit['value'], 4, '0', STR_PAD_LEFT)[0];
-        $creditGroup = (int) str_pad($credit['value'], 4, '0', STR_PAD_LEFT)[0];
-        if ($debitGroup - $creditGroup < 0) return '+';
-        if ($debitGroup - $creditGroup > 0) return '-';
-        if ($debitGroup - $creditGroup == 0) return '';
-
-        // No sign in common
+        $creditValue = (int) $credit['value'];
+        $payments = [1600, 1800];
+        if (in_array($debitValue, $payments)) return '+';
+        if (in_array($creditValue, $payments)) return '-';
         return '';
     }
 
