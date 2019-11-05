@@ -9,8 +9,10 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
+use function date_parse;
 use function in_array;
 use function number_format;
+use function str_pad;
 use const STR_PAD_LEFT;
 
 class BookingRequest extends FormRequest
@@ -81,8 +83,12 @@ class BookingRequest extends FormRequest
             $systemDetails
         ) {
             if (!$journalEntry = LedgerJournal::whereOriginalBillNumber(@$v['original_bill_number'])->first()) {
-                $billCount = LedgerJournal::whereDate('date', $v['date'])->count() + 1;
-                $internalBillNumber = "{$v['date']}-{$billCount}";
+                $dayCounter = $this->_pad(LedgerJournal::whereDate('date', $v['date'])->count() + 1);
+                $dateArr = date_parse($v['date']);
+                $year = $dateArr['year'];
+                $month = $this->_pad( $dateArr['month']);
+                $day = $this->_pad($dateArr['day']);
+                $internalBillNumber = "$year-$month$day$dayCounter";
                 $journalEntry = new LedgerJournal();
                 if (@$v['id']) $journalEntry->id = (int) $v['id'];
                 $journalEntry->original_bill_number = @$v['original_bill_number'] ?: $internalBillNumber;
@@ -169,6 +175,11 @@ class BookingRequest extends FormRequest
         });
     }
 
+    private function _pad(string $input, int $padLength = 2, $padString = '00', string $padType = STR_PAD_LEFT)
+    {
+        return str_pad($input, $padLength, $padString, $padType);
+    }
+
     /**
      * DEAD: (Debit + Expenses + Assets + Drawings) = CLIC: (Credit + Liabilities + Income/sales/revenue + Capital)
      *
@@ -181,7 +192,8 @@ class BookingRequest extends FormRequest
     {
         $debitValue = (int) $debit['value'];
         $creditValue = (int) $credit['value'];
-        $payments = [1600, 1800];
+        $payments = [1600, 1800, 2180];
+        if (in_array($debitValue, $payments) && in_array($creditValue, $payments)) return '';
         if (in_array($debitValue, $payments)) return '+';
         if (in_array($creditValue, $payments)) return '-';
         return '';
