@@ -26,7 +26,22 @@ CREATE TABLE IF NOT EXISTS cab7_ledger_accounts(
 #     SELECT * FROM tmp_ledger_accounts;
 
 # Trial balance
-# SELECT date, skr04, skr04_ref, debit, credit, @b := ROUND(@b + s.debit - s.credit, 2) AS balance
+# SELECT @b := ROUND(@b + s.debit - s.credit, 2) AS balance
 # FROM (SELECT @b := 0.00) AS excel, cab7_ledger_accounts AS s
-# WHERE skr04 IN (4400, 3806)
 # ORDER BY id;
+
+CREATE OR REPLACE VIEW cab7_ledger_accounts_balance AS
+SELECT skr04, round(sum(debit) - sum(credit), 2) balance, pid, vat_code, private, de_DE, en_GB
+FROM cab7_ledger_accounts parent, cab7_skr04_accounts node
+WHERE parent.skr04 = node.id
+GROUP BY skr04
+ORDER BY skr04;
+
+
+
+
+
+
+
+
+
