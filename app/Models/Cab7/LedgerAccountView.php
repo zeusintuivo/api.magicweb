@@ -4,7 +4,7 @@ namespace App\Models\Cab7;
 
 use Illuminate\Database\Eloquent\Model;
 
-class LedgerAccountBalance extends Model
+class LedgerAccountView extends Model
 {
     protected $table = 'cab7_ledger_accounts_balance';
     protected $casts = [

@@ -1,15 +1,15 @@
-# DROP TABLE IF EXISTS tmp_ledger_accounts;
-# CREATE TEMPORARY TABLE tmp_ledger_accounts SELECT * FROM cab7_ledger_accounts;
+DROP TABLE IF EXISTS tmp_ledger_accounts;
+CREATE TEMPORARY TABLE tmp_ledger_accounts SELECT * FROM cab7_ledger_accounts;
 # SELECT * FROM tmp_ledger_accounts;
 
-# SET FOREIGN_KEY_CHECKS = 0;
-# DROP TABLE IF EXISTS cab7_ledger_accounts;-- be careful!
-# SET FOREIGN_KEY_CHECKS = 1;
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS cab7_ledger_accounts;-- be careful!
+SET FOREIGN_KEY_CHECKS = 1;
 CREATE TABLE IF NOT EXISTS cab7_ledger_accounts(
     id int unsigned NOT NULL AUTO_INCREMENT,
     journal_id int unsigned NOT NULL COMMENT 'Associated general ledger entry',
-    skr04 int unsigned NOT NULL COMMENT 'Associated SKR04 account',
-    skr04_ref int unsigned NOT NULL COMMENT 'Associated SKR04 offset account',
+    skr04_id int unsigned NOT NULL COMMENT 'Associated SKR04 account',
+    skr04_ref_id int unsigned NOT NULL COMMENT 'Associated SKR04 offset account',
     date date NOT NULL COMMENT 'Day booking belongs to',
     debit decimal(7, 2) NOT NULL DEFAULT 0.00 COMMENT 'Debere',
     credit decimal(7, 2) NOT NULL DEFAULT 0.00 COMMENT 'Credere',
@@ -18,25 +18,27 @@ CREATE TABLE IF NOT EXISTS cab7_ledger_accounts(
     deleted_at timestamp NULL DEFAULT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (journal_id) REFERENCES cab7_ledger_journal(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (skr04) REFERENCES cab7_skr04_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (skr04_ref) REFERENCES cab7_skr04_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (skr04_id) REFERENCES cab7_skr04_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (skr04_ref_id) REFERENCES cab7_skr04_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE InnoDB DEFAULT CHARSET = utf8mb4;
 
-# INSERT INTO cab7_ledger_accounts (skr04, skr04_ref, journal_id, date, debit, credit)
-#     SELECT * FROM tmp_ledger_accounts;
+INSERT INTO cab7_ledger_accounts SELECT * FROM tmp_ledger_accounts;
 
 # Trial balance
 # SELECT @b := ROUND(@b + s.debit - s.credit, 2) AS balance
 # FROM (SELECT @b := 0.00) AS excel, cab7_ledger_accounts AS s
 # ORDER BY id;
 
+# Ledger accounts' balance
 CREATE OR REPLACE VIEW cab7_ledger_accounts_balance AS
-SELECT skr04, round(sum(debit) - sum(credit), 2) balance, pid, vat_code, private, de_DE, en_GB
+SELECT skr04_id, round(sum(debit) - sum(credit), 2) balance, pid, vat_code, private, de_DE, en_GB
 FROM cab7_ledger_accounts parent, cab7_skr04_accounts node
-WHERE parent.skr04 = node.id
-GROUP BY skr04
-ORDER BY skr04;
+WHERE parent.skr04_id = node.id
+GROUP BY skr04_id
+ORDER BY skr04_id;
 
+# Cash book
+SELECT * FROM cab7_ledger_accounts WHERE skr04_id = 1600 ORDER BY date DESC;
 
 
 
