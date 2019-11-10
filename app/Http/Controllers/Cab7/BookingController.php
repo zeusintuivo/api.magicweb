@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Cab7\BookingRequest;
 use App\Http\Resources\Cab7\CashBookResource;
 use App\Http\Resources\Cab7\DriverLogResource;
-use App\Models\Cab7\InsikaShift;
 use App\Models\Cab7\LedgerAccount;
 use App\Models\Cab7\LedgerAccountView;
 use App\Models\Cab7\LedgerJournal;
@@ -31,13 +30,12 @@ class BookingController extends Controller
 
     public function fetchCashBook(Request $request)
     {
-        $rows = LedgerAccount::where('skr04_id', 1600)->orderBy('date', 'desc')->get();
+        $rows = LedgerAccount::where('skr04_id', 1600)->with(['journal', 'skr04RefAccount'])->orderBy('date', 'desc')->get();
         return response()->json(CashBookResource::collection($rows), 200);
     }
 
     public function fetchDriverLog(Request $request)
     {
-        $shifts = InsikaShift::orderBy('began_at', 'desc')->get();
         $shifts = collect(DB::select("
             SELECT * FROM (
                 SELECT id, began_at, ended_at, driver, vehicle, km_total, @c := ROUND(@c + km_total, 2) AS mileage, trip_count, created_at, updated_at, deleted_at
