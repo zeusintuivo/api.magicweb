@@ -73,6 +73,7 @@ Route::prefix('{locale}')->group(function () {
             Route::post('/fetch/driver/log', 'Cab7\BookingController@fetchDriverLog')->middleware('auth');
             Route::post('/read/hale/gdpdu/export', 'Cab7\FileController@readHaleGdpduExport')->middleware('auth');
             Route::post('/book/double/entry', 'Cab7\BookingController@bookDoubleEntry')->middleware('auth')->name('book/double/entry');
+            Route::post('/delete/double/entry', 'Cab7\BookingController@deleteDoubleEntry')->middleware('auth')->name('delete/double/entry');
             // Hale DatenCenter
             Route::prefix('hdc')->group(function () {
                 Route::post('/read/shifts', 'Cab7\HaleDatenCenterController@readShifts')->middleware('auth')->name('hdc/read/shifts');

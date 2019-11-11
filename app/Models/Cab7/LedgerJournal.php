@@ -14,4 +14,9 @@ class LedgerJournal extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function ledgerAccounts()
+    {
+        return $this->hasMany(LedgerAccount::class, 'journal_id');
+    }
 }

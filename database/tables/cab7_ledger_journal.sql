@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS cab7_ledger_journal (
     id int unsigned NOT NULL AUTO_INCREMENT,
     user_id int unsigned NOT NULL COMMENT 'Associated user',
     date date NOT NULL COMMENT 'Date of booking',
-    original_bill_number varchar(99) NOT NULL UNIQUE,
+    original_bill_number varchar(99) NULL DEFAULT NULL,
     internal_bill_number varchar(19) NOT NULL UNIQUE,
     amount varchar(11) NOT NULL COMMENT 'Not editable booking amount as string',
     vat_code tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT '0% [0], 7% [8], 19% [9]',

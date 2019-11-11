@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Cab7\BookingRequest;
 use App\Http\Resources\Cab7\CashBookResource;
 use App\Http\Resources\Cab7\DriverLogResource;
+use App\Http\Resources\Cab7\LedgerJournalResource;
 use App\Models\Cab7\LedgerAccount;
 use App\Models\Cab7\LedgerAccountView;
 use App\Models\Cab7\LedgerJournal;
@@ -19,7 +20,8 @@ class BookingController extends Controller
 {
     public function fetchLedgerJournal(Request $request)
     {
-        return response()->json(LedgerJournal::orderBy('id', 'desc')->get(), 200);
+        $entries = LedgerJournal::with(['ledgerAccounts'])->orderBy('id', 'desc')->get();
+        return response()->json(LedgerJournalResource::collection($entries), 200);
     }
 
     public function fetchLedgerAccounts(Request $request)
@@ -49,6 +51,14 @@ class BookingController extends Controller
     public function bookDoubleEntry(BookingRequest $request)
     {
         return response()->json($request->bookDoubleEntry($request->validated()), 200);
+    }
+
+    public function deleteDoubleEntry(Request $request)
+    {
+        if ($entry = LedgerJournal::find($request->id)) {
+            $entry->forceDelete();
+        }
+        return response()->json($entry, 200);
     }
 
     public function fetchStandardAccounts(Request $request)

@@ -9,11 +9,6 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
-use function date_parse;
-use function in_array;
-use function number_format;
-use function str_pad;
-use const STR_PAD_LEFT;
 
 class BookingRequest extends FormRequest
 {
@@ -35,6 +30,7 @@ class BookingRequest extends FormRequest
         switch (Route::currentRouteName()) {
             case 'book/double/entry':
                 return [
+                    'id'                   => 'nullable|integer',
                     'skr'                  => 'required|string|size:5',
                     'lang'                 => 'required|string|size:5',
                     'date'                 => 'required|date',
@@ -53,6 +49,9 @@ class BookingRequest extends FormRequest
 
     public function bookDoubleEntry(array $v)
     {
+        if ($record = LedgerJournal::find($v['id'])) {
+            $record->forceDelete();
+        }
         $debitAccount = Skr04Account::find($v['debit']['value']);
         // return $debitAccount;
         $creditAccount = Skr04Account::find($v['credit']['value']);
@@ -86,12 +85,12 @@ class BookingRequest extends FormRequest
                 $dayCounter = $this->_pad(LedgerJournal::whereDate('date', $v['date'])->count() + 1);
                 $dateArr = date_parse($v['date']);
                 $year = $dateArr['year'];
-                $month = $this->_pad( $dateArr['month']);
+                $month = $this->_pad($dateArr['month']);
                 $day = $this->_pad($dateArr['day']);
                 $internalBillNumber = "$year-$month$day$dayCounter";
                 $journalEntry = new LedgerJournal();
                 if (@$v['id']) $journalEntry->id = (int) $v['id'];
-                $journalEntry->original_bill_number = @$v['original_bill_number'] ?: $internalBillNumber;
+                $journalEntry->original_bill_number = @$v['original_bill_number'];
                 $journalEntry->internal_bill_number = $internalBillNumber;
                 $journalEntry->user_id = $this->user()->id;
                 $journalEntry->date = $v['date'];
@@ -102,48 +101,48 @@ class BookingRequest extends FormRequest
                 $journalEntry->save();
             }
             // return $journalEntry;
-            if (!$debitEntry = LedgerAccount::whereJournalId($journalEntry->id)->whereSkr04($debitAccount->id)->first()) {
+            if (!$debitEntry = LedgerAccount::whereJournalId($journalEntry->id)->whereSkr04Id($debitAccount->id)->first()) {
                 $debitEntry = LedgerAccount::create([
-                    'journal_id' => $journalEntry->id,
-                    'skr04'      => $debitAccount->id,
-                    'date'       => $v['date'],
-                    'skr04_ref'  => $creditAccount->id,
-                    'debit'      => $debitNetAmount,
+                    'journal_id'   => $journalEntry->id,
+                    'skr04_id'     => $debitAccount->id,
+                    'date'         => $v['date'],
+                    'skr04_ref_id' => $creditAccount->id,
+                    'debit'        => $debitNetAmount,
                 ]);
             }
             // return $debitEntry;
             $debitVatEntry = null;
             if ($debitVatAmount) {
-                if (!$debitVatEntry = LedgerAccount::whereJournalId($journalEntry->id)->whereSkr04($debitAccount->pid)->first()) {
+                if (!$debitVatEntry = LedgerAccount::whereJournalId($journalEntry->id)->whereSkr04Id($debitAccount->pid)->first()) {
                     $debitVatEntry = LedgerAccount::create([
-                        'journal_id' => $journalEntry->id,
-                        'skr04'      => $debitAccount->pid,
-                        'date'       => $v['date'],
-                        'skr04_ref'  => $creditAccount->id,
-                        'debit'      => $debitVatAmount,
+                        'journal_id'   => $journalEntry->id,
+                        'skr04_id'     => $debitAccount->pid,
+                        'date'         => $v['date'],
+                        'skr04_ref_id' => $creditAccount->id,
+                        'debit'        => $debitVatAmount,
                     ]);
                 }
             }
             // return $debitVatEntry;
-            if (!$creditEntry = LedgerAccount::whereJournalId($journalEntry->id)->whereSkr04($creditAccount->id)->first()) {
+            if (!$creditEntry = LedgerAccount::whereJournalId($journalEntry->id)->whereSkr04Id($creditAccount->id)->first()) {
                 $creditEntry = LedgerAccount::create([
-                    'journal_id' => $journalEntry->id,
-                    'skr04'      => $creditAccount->id,
-                    'date'       => $v['date'],
-                    'skr04_ref'  => $debitAccount->id,
-                    'credit'     => $creditNetAmount,
+                    'journal_id'   => $journalEntry->id,
+                    'skr04_id'     => $creditAccount->id,
+                    'date'         => $v['date'],
+                    'skr04_ref_id' => $debitAccount->id,
+                    'credit'       => $creditNetAmount,
                 ]);
             }
             // return $creditEntry;
             $creditVatEntry = null;
             if ($creditVatAmount) {
-                if (!$creditVatEntry = LedgerAccount::whereJournalId($journalEntry->id)->whereSkr04($creditAccount->pid)->first()) {
+                if (!$creditVatEntry = LedgerAccount::whereJournalId($journalEntry->id)->whereSkr04Id($creditAccount->pid)->first()) {
                     $creditVatEntry = LedgerAccount::create([
-                        'journal_id' => $journalEntry->id,
-                        'skr04'      => $creditAccount->pid,
-                        'date'       => $v['date'],
-                        'skr04_ref'  => $debitAccount->id,
-                        'credit'     => $creditVatAmount,
+                        'journal_id'   => $journalEntry->id,
+                        'skr04_id'     => $creditAccount->pid,
+                        'date'         => $v['date'],
+                        'skr04_ref_id' => $debitAccount->id,
+                        'credit'       => $creditVatAmount,
                     ]);
                 }
             }
