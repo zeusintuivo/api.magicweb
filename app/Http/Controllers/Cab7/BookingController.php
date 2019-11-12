@@ -18,6 +18,16 @@ use function response;
 
 class BookingController extends Controller
 {
+    public function bookDoubleEntry(BookingRequest $request)
+    {
+        return response()->json($request->bookDoubleEntry($request->validated()), 200);
+    }
+
+    public function deleteDoubleEntry(BookingRequest $request)
+    {
+        return response()->json(LedgerJournal::destroy($request['id']), 200);
+    }
+
     public function fetchLedgerJournal(Request $request)
     {
         $entries = LedgerJournal::with(['ledgerAccounts'])->orderBy('id', 'desc')->get();
@@ -46,19 +56,6 @@ class BookingController extends Controller
             ORDER BY began_at DESC;
         "));
         return response()->json(DriverLogResource::collection($shifts), 200);
-    }
-
-    public function bookDoubleEntry(BookingRequest $request)
-    {
-        return response()->json($request->bookDoubleEntry($request->validated()), 200);
-    }
-
-    public function deleteDoubleEntry(Request $request)
-    {
-        if ($entry = LedgerJournal::find($request->id)) {
-            $entry->forceDelete();
-        }
-        return response()->json($entry, 200);
     }
 
     public function fetchStandardAccounts(Request $request)

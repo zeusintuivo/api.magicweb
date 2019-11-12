@@ -24,12 +24,11 @@ class LedgerJournalResource extends JsonResource
             'credit'               => $this->ledgerAccounts()->with(['skr04Account'])->whereDebit('0.00')->first()->skr04Account,
             'user'                 => new UserResource($this->user),
             'date'                 => date('d.m.Y', strtotime($this->date)),
-            'original_bill_number' => $this->original_bill_number,
-            'internal_bill_number' => $this->internal_bill_number,
             'amount'               => (string) $this->amount,
             'vat_code'             => $this->vat_code,
             'client_details'       => $this->client_details,
             'system_details'       => $this->system_details,
+            'original_bill_number' => $this->original_bill_number,
             'created_at'           => $this->created_at,
             'updated_at'           => $this->updated_at,
         ];

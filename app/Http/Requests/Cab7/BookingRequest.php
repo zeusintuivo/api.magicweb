@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Cab7;
 
+use App\Http\Resources\Cab7\LedgerJournalResource;
 use App\Models\Cab7\LedgerAccount;
 use App\Models\Cab7\LedgerJournal;
 use App\Models\Cab7\Skr04Account;
@@ -9,6 +10,8 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
+use function number_format;
+use function trans;
 
 class BookingRequest extends FormRequest
 {
@@ -42,25 +45,33 @@ class BookingRequest extends FormRequest
                     'details.label'        => 'required|string|max:255',
                     'original_bill_number' => 'nullable|string',
                 ];
+            case 'delete/double/entry':
+                return [
+                    'id' => 'required|integer|gt:0',
+                ];
             default:
-                return ['file_name' => 'required|string'];
+                return [
+                    'file_name' => 'required|string',
+                ];
         }
     }
 
+    /**
+     * Update or create double entry
+     *
+     * @param array $v
+     *
+     * @return mixed
+     */
     public function bookDoubleEntry(array $v)
     {
-        if ($record = LedgerJournal::find($v['id'])) {
-            $record->forceDelete();
-        }
+        // Prepare amounts and strings for double entries
+        $id = @$v['id'];
         $debitAccount = Skr04Account::find($v['debit']['value']);
-        // return $debitAccount;
         $creditAccount = Skr04Account::find($v['credit']['value']);
-        // return $creditAccount;
         $signedAmount = $this->sign($v['debit'], $v['credit']) . number_format($v['amount'], 2, ',', '.');
-        // return $signedAmount;
         $vatCode = $debitAccount->vat_code ?: $creditAccount->vat_code;
         $vatDividers = [0 => 1.00, 8 => 1.07, 9 => 1.19];
-        // dd($vatCodes[9]);
         $debitNetAmount = round($v['amount'] / $vatDividers[$debitAccount->vat_code], 2);
         $debitNetAmountStr = number_format($debitNetAmount, 2, ',', '.');
         $debitVatAmount = $v['amount'] - $debitNetAmount;
@@ -69,84 +80,79 @@ class BookingRequest extends FormRequest
         $creditNetAmountStr = number_format($creditNetAmount, 2, ',', '.');
         $creditVatAmount = $v['amount'] - $creditNetAmount;
         $creditVatAmountStr = number_format($creditVatAmount, 2, ',', '.');
-        // dd($debitVatAmount, $creditVatAmount, round(1.3554, 2));
         $debitDetails = $debitVatAmount ? " [EUR {$debitNetAmountStr}], {$debitAccount->pid} [EUR {$debitVatAmountStr}]" : " [EUR {$debitNetAmountStr}]";
         $creditDetails = $creditVatAmount ? " [EUR {$creditNetAmountStr}], {$creditAccount->pid} [EUR {$creditVatAmountStr}]" : " [EUR {$creditNetAmountStr}]";
         $systemDetails = "{$v['debit']['label']}{$debitDetails} <-- {$v['credit']['label']}{$creditDetails}";
-        // return $systemDetails;
+        // dd($systemDetails);
 
         // Use transaction to ensure completeness
         return DB::transaction(function () use (
-            $v, $debitAccount, $creditAccount, $signedAmount, $vatCode,
+            $v, $id, $debitAccount, $creditAccount, $signedAmount, $vatCode,
             $debitNetAmount, $debitVatAmount, $creditNetAmount, $creditVatAmount,
             $systemDetails
         ) {
-            if (!$journalEntry = LedgerJournal::whereOriginalBillNumber(@$v['original_bill_number'])->first()) {
-                $dayCounter = $this->_pad(LedgerJournal::whereDate('date', $v['date'])->count() + 1);
-                $dateArr = date_parse($v['date']);
-                $year = $dateArr['year'];
-                $month = $this->_pad($dateArr['month']);
-                $day = $this->_pad($dateArr['day']);
-                $internalBillNumber = "$year-$month$day$dayCounter";
-                $journalEntry = new LedgerJournal();
-                if (@$v['id']) $journalEntry->id = (int) $v['id'];
-                $journalEntry->original_bill_number = @$v['original_bill_number'];
-                $journalEntry->internal_bill_number = $internalBillNumber;
-                $journalEntry->user_id = $this->user()->id;
-                $journalEntry->date = $v['date'];
-                $journalEntry->amount = $signedAmount;
-                $journalEntry->vat_code = $vatCode;
-                $journalEntry->client_details = $v['details']['label'];
-                $journalEntry->system_details = $systemDetails;
-                $journalEntry->save();
+            // Destroy existing ledger journal entry [cascading]
+            if ($entryUpdate = LedgerJournal::find($id)) {
+                $entryUpdate->forceDelete();
             }
+
+            // Ledger journal entry
+            $journalEntry = new LedgerJournal();
+            if ($id) $journalEntry->id = $id;
+            $journalEntry->user_id = $this->user()->id;
+            $journalEntry->date = $v['date'];
+            $journalEntry->amount = $signedAmount;
+            $journalEntry->vat_code = $vatCode;
+            $journalEntry->client_details = $v['details']['label'];
+            $journalEntry->system_details = $systemDetails;
+            $journalEntry->original_bill_number = @$v['original_bill_number'];
+            $journalEntry->save();
             // return $journalEntry;
-            if (!$debitEntry = LedgerAccount::whereJournalId($journalEntry->id)->whereSkr04Id($debitAccount->id)->first()) {
-                $debitEntry = LedgerAccount::create([
+
+            // Ledger account in debit
+            $debitEntry = LedgerAccount::create([
+                'journal_id'   => $journalEntry->id,
+                'skr04_id'     => $debitAccount->id,
+                'date'         => $v['date'],
+                'skr04_ref_id' => $creditAccount->id,
+                'debit'        => $debitNetAmount,
+            ]);
+            // return $debitEntry;
+
+            // Ledger account in debit with VAT
+            if ($debitVatAmount) {
+                $debitVatEntry = LedgerAccount::create([
                     'journal_id'   => $journalEntry->id,
-                    'skr04_id'     => $debitAccount->id,
+                    'skr04_id'     => $debitAccount->pid,
                     'date'         => $v['date'],
                     'skr04_ref_id' => $creditAccount->id,
-                    'debit'        => $debitNetAmount,
+                    'debit'        => $debitVatAmount,
                 ]);
+                // return $debitVatEntry;
             }
-            // return $debitEntry;
-            $debitVatEntry = null;
-            if ($debitVatAmount) {
-                if (!$debitVatEntry = LedgerAccount::whereJournalId($journalEntry->id)->whereSkr04Id($debitAccount->pid)->first()) {
-                    $debitVatEntry = LedgerAccount::create([
-                        'journal_id'   => $journalEntry->id,
-                        'skr04_id'     => $debitAccount->pid,
-                        'date'         => $v['date'],
-                        'skr04_ref_id' => $creditAccount->id,
-                        'debit'        => $debitVatAmount,
-                    ]);
-                }
-            }
-            // return $debitVatEntry;
-            if (!$creditEntry = LedgerAccount::whereJournalId($journalEntry->id)->whereSkr04Id($creditAccount->id)->first()) {
-                $creditEntry = LedgerAccount::create([
+
+            // Ledger account in credit
+            $creditEntry = LedgerAccount::create([
+                'journal_id'   => $journalEntry->id,
+                'skr04_id'     => $creditAccount->id,
+                'date'         => $v['date'],
+                'skr04_ref_id' => $debitAccount->id,
+                'credit'       => $creditNetAmount,
+            ]);
+            // return $creditEntry;
+
+            // Ledger account in credit with VAT
+            if ($creditVatAmount) {
+                $creditVatEntry = LedgerAccount::create([
                     'journal_id'   => $journalEntry->id,
-                    'skr04_id'     => $creditAccount->id,
+                    'skr04_id'     => $creditAccount->pid,
                     'date'         => $v['date'],
                     'skr04_ref_id' => $debitAccount->id,
-                    'credit'       => $creditNetAmount,
+                    'credit'       => $creditVatAmount,
                 ]);
+                // return $creditVatEntry;
             }
-            // return $creditEntry;
-            $creditVatEntry = null;
-            if ($creditVatAmount) {
-                if (!$creditVatEntry = LedgerAccount::whereJournalId($journalEntry->id)->whereSkr04Id($creditAccount->pid)->first()) {
-                    $creditVatEntry = LedgerAccount::create([
-                        'journal_id'   => $journalEntry->id,
-                        'skr04_id'     => $creditAccount->pid,
-                        'date'         => $v['date'],
-                        'skr04_ref_id' => $debitAccount->id,
-                        'credit'       => $creditVatAmount,
-                    ]);
-                }
-            }
-            // return $creditVatEntry;
+            // dd($debitNetAmount + $debitVatAmount, $creditNetAmount + $creditVatAmount);
 
             // Break execution if trial balance failes
             $trialBalance = collect(DB::select('
@@ -159,17 +165,15 @@ class BookingRequest extends FormRequest
             ], [
                 'trial_balance' => 'in:0',
             ], [
-                'in' => trans('cab7.validation.error.trial_balance', compact('trialBalance')),
+                'in' => trans('cab7.validation.error.trial_balance', ['trialBalance' => number_format($trialBalance, 2, ',', '.')]),
             ])->validate();
 
             // Notify success, and pass all 4 entries to client
             return [
-                'success'    => trans('cab7.booking.notify.success', ['number' => 'all']),
-                'journal'    => $journalEntry,
-                'debit'      => $debitEntry,
-                'credit'     => $creditEntry,
-                'debit_vat'  => $debitVatEntry,
-                'credit_vat' => $creditVatEntry,
+                'notify' => [
+                    'success' => trans('cab7.booking.notify.success', ['number' => 'all']),
+                ],
+                'entry'  => new LedgerJournalResource($journalEntry),
             ];
         });
     }
