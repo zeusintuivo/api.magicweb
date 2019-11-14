@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Cab7\BookingRequest;
 use App\Http\Resources\Cab7\CashBookResource;
 use App\Http\Resources\Cab7\DriverLogResource;
+use App\Http\Resources\Cab7\LedgerBalanceResource;
 use App\Http\Resources\Cab7\LedgerJournalResource;
 use App\Models\Cab7\LedgerAccount;
 use App\Models\Cab7\LedgerAccountView;
@@ -38,6 +39,24 @@ class BookingController extends Controller
     {
         $accounts = LedgerAccountView::all();
         return response()->json($accounts, 200);
+    }
+
+    public function filterLedgerAccountsDateRange(Request $request)
+    {
+        $validated = $request->validate([
+            'begin' => 'required|date',
+            'end'   => 'required|date',
+        ]);
+
+        $accounts = collect(DB::select("
+            SELECT skr04_id, round(sum(debit) - sum(credit), 2) AS balance, pid, vat_code, private, de_DE, en_GB
+            FROM cab7_ledger_accounts parent, cab7_skr04_accounts node
+            WHERE parent.skr04_id = node.id AND date BETWEEN ? AND ?
+            GROUP BY skr04_id
+            ORDER BY skr04_id;
+        ", [$validated['begin'], $validated['end']]));
+
+        return response()->json(LedgerBalanceResource::collection($accounts), 200);
     }
 
     public function fetchCashBook(Request $request)

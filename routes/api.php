@@ -69,6 +69,7 @@ Route::prefix('{locale}')->group(function () {
             Route::post('/fetch/booking/details', 'Cab7\BookingController@fetchBookingDetails')->middleware('auth');
             Route::post('/fetch/ledger/journal', 'Cab7\BookingController@fetchLedgerJournal')->middleware('auth');
             Route::post('/fetch/ledger/accounts', 'Cab7\BookingController@fetchLedgerAccounts')->middleware('auth');
+            Route::post('/filter/ledger/accounts/date/range', 'Cab7\BookingController@filterLedgerAccountsDateRange')->middleware('auth');
             Route::post('/fetch/cash/book', 'Cab7\BookingController@fetchCashBook')->middleware('auth');
             Route::post('/fetch/driver/log', 'Cab7\BookingController@fetchDriverLog')->middleware('auth');
             Route::post('/read/hale/gdpdu/export', 'Cab7\FileController@readHaleGdpduExport')->middleware('auth');
