@@ -10,7 +10,9 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
+use function in_array;
 use function number_format;
+use function range;
 use function trans;
 
 class BookingRequest extends FormRequest
@@ -69,7 +71,7 @@ class BookingRequest extends FormRequest
         $id = @$v['id'];
         $debitAccount = Skr04Account::find($v['debit']['value']);
         $creditAccount = Skr04Account::find($v['credit']['value']);
-        $signedAmount = $this->sign($v['debit'], $v['credit']) . number_format($v['amount'], 2, ',', '.');
+        $signedAmount = $this->sign($v['debit']['value'], $v['credit']['value']) . number_format($v['amount'], 2, ',', '.');
         $vatCode = $debitAccount->vat_code ?: $creditAccount->vat_code;
         $vatDividers = [0 => 1.00, 8 => 1.07, 9 => 1.19];
         $debitNetAmount = round($v['amount'] / $vatDividers[$debitAccount->vat_code], 2);
@@ -185,20 +187,36 @@ class BookingRequest extends FormRequest
 
     /**
      * DEAD: (Debit + Expenses + Assets + Drawings) = CLIC: (Credit + Liabilities + Income/sales/revenue + Capital)
+     * SKR04 based
      *
-     * @param array $debit
-     * @param array $credit
+     * @param int $debit
+     * @param int $credit
      *
      * @return string
      */
-    private function sign(array $debit, array $credit)
+    private function sign(int $debit, int $credit)
     {
-        $debitValue = (int) $debit['value'];
-        $creditValue = (int) $credit['value'];
+        // When we pay or receive money
         $payments = [1600, 1800, 2180];
-        if (in_array($debitValue, $payments) && in_array($creditValue, $payments)) return '';
-        if (in_array($debitValue, $payments)) return '+';
-        if (in_array($creditValue, $payments)) return '-';
+        if (in_array($debit, $payments) && in_array($credit, $payments)) return '';// transit
+        if (in_array($debit, $payments)) return '+';// income
+        if (in_array($credit, $payments)) return '-';// expense
+
+        // DEAD/CLIC accounts
+        if (in_array($debit, range(5000, 7999))) return '-';
+        if (in_array($credit, range(4000, 4999))) return '+';
+
+        // SKR04 group of accounts
+        $capitalAssetsAccounts = range(0, 999);
+        $currentAssetsAccounts = range(1000, 1999);
+        $proprietaryCapitalAccounts = range(2000, 2999);
+        $outsideCapitalAccounts = range(3000, 3999);
+        $revenueIncomeAccounts = range(4000, 4999);
+        $operatingExpenditure = range(5000, 6999);
+        $otherRevenueAndExpenditure = range(7000, 7999);
+        $freeAvailableAccounts = range(8000, 8999);
+        $carryForwardAccounts = range(9000, 9999);
+
         return '';
     }
 

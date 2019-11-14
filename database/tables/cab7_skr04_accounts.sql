@@ -139,7 +139,10 @@ INSERT INTO cab7_skr04_accounts (id, en_GB, de_DE, pid, vat_code, private) VALUE
 (7300, 'Interest and similar expenses', 'Zinsen und ähnliche Aufwendungen', 0, 0, 0),
 (7326, 'Borrowing costs for fixed assets', 'Zinsen zur Finanzierung des Anlagevermögens', 0, 0, 0),
 (7685, 'Motor vehicle tax', 'Kfz-Steuer', 0, 0, 0),
-(9000, 'Balances brought forward, G/L accounts', 'Saldenvorträge, Sachkonten', 0, 0, 0);
+(7810, 'Order dispatcher fees, myTaxi', 'Auftragsvermittlung myTaxi', 1406, 9, 0),
+(9000, 'Balances brought forward, G/L accounts', 'Saldenvorträge, Sachkonten', 0, 0, 0),
+(26400, 'None cash payments, SumUp', 'Bargeldlose Zahlungen SumUp', 1200, 0, 0),
+(26401, 'None cash payments, myTaxi', 'Bargeldlose Zahlungen myTaxi', 1200, 0, 0);
 
 
 
