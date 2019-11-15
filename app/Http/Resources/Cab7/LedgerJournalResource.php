@@ -4,8 +4,6 @@ namespace App\Http\Resources\Cab7;
 
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
-use function date_format;
-use function strtotime;
 
 class LedgerJournalResource extends JsonResource
 {
@@ -23,11 +21,12 @@ class LedgerJournalResource extends JsonResource
             'debit'                => $this->ledgerAccounts()->with(['skr04Account'])->whereCredit('0.00')->first()->skr04Account,
             'credit'               => $this->ledgerAccounts()->with(['skr04Account'])->whereDebit('0.00')->first()->skr04Account,
             'user'                 => new UserResource($this->user),
-            'date'                 => date('d.m.Y', strtotime($this->date)),
+            'date'                 => $this->date,
             'amount'               => (string) $this->amount,
             'vat_code'             => $this->vat_code,
             'client_details'       => $this->client_details,
             'system_details'       => $this->system_details,
+            'internal_bill_number' => $this->internal_bill_number,
             'original_bill_number' => $this->original_bill_number,
             'created_at'           => $this->created_at,
             'updated_at'           => $this->updated_at,

@@ -10,9 +10,11 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
+use function date;
 use function in_array;
 use function number_format;
 use function range;
+use function strtotime;
 use function trans;
 
 class BookingRequest extends FormRequest
@@ -51,6 +53,11 @@ class BookingRequest extends FormRequest
                 return [
                     'id' => 'required|integer|gt:0',
                 ];
+            case 'rebook/money/transit':
+            case 'number/cashbook/entries':
+                return [
+                    'month' => 'required|string|size:7'
+                ];
             default:
                 return [
                     'file_name' => 'required|string',
@@ -69,44 +76,46 @@ class BookingRequest extends FormRequest
     {
         // Prepare amounts and strings for double entries
         $id = @$v['id'];
+        $amount = (float) str_replace(['-', '+'], [], $v['amount']);
         $debitAccount = Skr04Account::find($v['debit']['value']);
         $creditAccount = Skr04Account::find($v['credit']['value']);
-        $signedAmount = $this->sign($v['debit']['value'], $v['credit']['value']) . number_format($v['amount'], 2, ',', '.');
+        $signedAmountStr = $this->_sign($v['debit']['value'], $v['credit']['value']) . number_format($amount, 2, ',', '.');
         $vatCode = $debitAccount->vat_code ?: $creditAccount->vat_code;
         $vatDividers = [0 => 1.00, 8 => 1.07, 9 => 1.19];
-        $debitNetAmount = round($v['amount'] / $vatDividers[$debitAccount->vat_code], 2);
+        $debitNetAmount = round($amount / $vatDividers[$debitAccount->vat_code], 2);
         $debitNetAmountStr = number_format($debitNetAmount, 2, ',', '.');
-        $debitVatAmount = $v['amount'] - $debitNetAmount;
+        $debitVatAmount = $amount - $debitNetAmount;
         $debitVatAmountStr = number_format($debitVatAmount, 2, ',', '.');
-        $creditNetAmount = round($v['amount'] / $vatDividers[$creditAccount->vat_code], 2);
+        $creditNetAmount = round($amount / $vatDividers[$creditAccount->vat_code], 2);
         $creditNetAmountStr = number_format($creditNetAmount, 2, ',', '.');
-        $creditVatAmount = $v['amount'] - $creditNetAmount;
+        $creditVatAmount = $amount - $creditNetAmount;
         $creditVatAmountStr = number_format($creditVatAmount, 2, ',', '.');
         $debitDetails = $debitVatAmount ? " [EUR {$debitNetAmountStr}], {$debitAccount->pid} [EUR {$debitVatAmountStr}]" : " [EUR {$debitNetAmountStr}]";
         $creditDetails = $creditVatAmount ? " [EUR {$creditNetAmountStr}], {$creditAccount->pid} [EUR {$creditVatAmountStr}]" : " [EUR {$creditNetAmountStr}]";
         $systemDetails = "{$v['debit']['label']}{$debitDetails} <-- {$v['credit']['label']}{$creditDetails}";
         // dd($systemDetails);
+        $journalEntryUpdate = LedgerJournal::find($id);
+        $internalBillNumber = optional($journalEntryUpdate)->internal_bill_number ?: $this->_num($debitAccount, $creditAccount, $v['date']);
+        // return $internalBillNumber;
 
         // Use transaction to ensure completeness
         return DB::transaction(function () use (
-            $v, $id, $debitAccount, $creditAccount, $signedAmount, $vatCode,
+            $v, $id, $debitAccount, $creditAccount, $signedAmountStr, $vatCode,
             $debitNetAmount, $debitVatAmount, $creditNetAmount, $creditVatAmount,
-            $systemDetails
+            $systemDetails, $journalEntryUpdate, $internalBillNumber
         ) {
             // Destroy existing ledger journal entry [cascading]
-            if ($entryUpdate = LedgerJournal::find($id)) {
-                $entryUpdate->forceDelete();
-            }
-
+            if ($journalEntryUpdate) $journalEntryUpdate->forceDelete();
             // Ledger journal entry
             $journalEntry = new LedgerJournal();
             if ($id) $journalEntry->id = $id;
             $journalEntry->user_id = $this->user()->id;
             $journalEntry->date = $v['date'];
-            $journalEntry->amount = $signedAmount;
+            $journalEntry->amount = $signedAmountStr;
             $journalEntry->vat_code = $vatCode;
             $journalEntry->client_details = $v['details']['label'];
             $journalEntry->system_details = $systemDetails;
+            $journalEntry->internal_bill_number = $internalBillNumber;
             $journalEntry->original_bill_number = @$v['original_bill_number'];
             $journalEntry->save();
             // return $journalEntry;
@@ -185,6 +194,23 @@ class BookingRequest extends FormRequest
         return str_pad($input, $padLength, $padString, $padType);
     }
 
+    private function _num(Skr04Account $debit, Skr04Account $credit, string $date)
+    {
+        $month = date('Y-m', strtotime($date));
+
+        // 1600 Cash account
+        if ($debit->id === 1600 || $credit->id === 1600) {
+            return DB::select("
+                SELECT month(date) month, max(internal_bill_number) num_per_month FROM cab7_ledger_journal
+                WHERE system_details LIKE '%1600 Kasse%' AND date LIKE '{$month}%'
+                GROUP BY month
+                ORDER BY month;
+            ")[0]->num_per_month + 1;
+        }
+
+        return 0;
+    }
+
     /**
      * DEAD: (Debit + Expenses + Assets + Drawings) = CLIC: (Credit + Liabilities + Income/sales/revenue + Capital)
      * SKR04 based
@@ -194,7 +220,7 @@ class BookingRequest extends FormRequest
      *
      * @return string
      */
-    private function sign(int $debit, int $credit)
+    private function _sign(int $debit, int $credit)
     {
         // When we pay or receive money
         $payments = [1600, 1800, 2180];

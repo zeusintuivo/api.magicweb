@@ -72,13 +72,18 @@ Route::prefix('{locale}')->group(function () {
             Route::post('/filter/ledger/accounts/date/range', 'Cab7\BookingController@filterLedgerAccountsDateRange')->middleware('auth');
             Route::post('/fetch/cash/book', 'Cab7\BookingController@fetchCashBook')->middleware('auth');
             Route::post('/fetch/driver/log', 'Cab7\BookingController@fetchDriverLog')->middleware('auth');
-            Route::post('/read/hale/gdpdu/export', 'Cab7\FileController@readHaleGdpduExport')->middleware('auth');
             Route::post('/book/double/entry', 'Cab7\BookingController@bookDoubleEntry')->middleware('auth')->name('book/double/entry');
             Route::post('/delete/double/entry', 'Cab7\BookingController@deleteDoubleEntry')->middleware('auth')->name('delete/double/entry');
+            // Richard requirements
+            Route::prefix('richard')->group(function () {
+                Route::post('/rebook/money/transit', 'Cab7\RichardController@rebookMoneyTransit')->middleware('auth')->name('rebook/money/transit');
+                Route::post('/number/cashbook/entries', 'Cab7\RichardController@numberCashbookEntries')->middleware('auth')->name('number/cashbook/entries');
+            });
             // Hale DatenCenter
             Route::prefix('hdc')->group(function () {
                 Route::post('/read/shifts', 'Cab7\HaleDatenCenterController@readShifts')->middleware('auth')->name('hdc/read/shifts');
                 Route::post('/read/trips', 'Cab7\HaleDatenCenterController@readTrips')->middleware('auth')->name('hdc/read/trips');
+                Route::post('/read/gdpdu/export', 'Cab7\HaleDatenCenterController@readGdpduExport')->middleware('auth');
             });
         });
     });
