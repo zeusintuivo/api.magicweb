@@ -1,7 +1,4 @@
-- Belegnummern (sort appropriately):
-- Die Nummerierung in der Kasse habe ich pro Monat fortlaufend gestaltet und beginne jeden Monat wieder neu mit der Nummer 1.
 - Für die Bankbuchungen verwende bitte die Nummer des Kontoauszuges. So können wir an Hand der Kontoauszüge prüfen, ob wir alles richtig verbucht haben und der Kontostand immer stimmt.
-- Umlaute are wrong in database - utf broken
 
 # Cab7.eu
 DEAD: (Debit + Expenses + Assets + Drawings) = CLIC: (Credit + Liabilities + Income/sales/revenue + Capital)

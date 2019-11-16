@@ -18,12 +18,12 @@ class LedgerJournalResource extends JsonResource
     {
         return [
             'id'                   => $this->id,
-            'debit'                => $this->ledgerAccounts()->with(['skr04Account'])->whereCredit('0.00')->first()->skr04Account,
-            'credit'               => $this->ledgerAccounts()->with(['skr04Account'])->whereDebit('0.00')->first()->skr04Account,
             'user'                 => new UserResource($this->user),
             'date'                 => $this->date,
-            'amount'               => (string) $this->amount,
+            'amount'               => $this->amount,
             'vat_code'             => $this->vat_code,
+            'direct_account'       => $this->direct_account,
+            'offset_account'       => $this->offset_account,
             'client_details'       => $this->client_details,
             'system_details'       => $this->system_details,
             'internal_bill_number' => $this->internal_bill_number,

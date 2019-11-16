@@ -29,9 +29,19 @@ class BookingController extends Controller
         return response()->json(LedgerJournal::destroy($request['id']), 200);
     }
 
+    public function fetchLedgerJournalEntry(string $locale, LedgerJournal $journal)
+    {
+        $debit = $journal->ledgerAccounts()->first();
+        $journal->accounts = [
+            'debit' => $debit->skr04Account,
+            'credit' => $debit->skr04RefAccount
+        ];
+        return response()->json($journal, 200);
+    }
+
     public function fetchLedgerJournal(Request $request)
     {
-        $entries = LedgerJournal::with(['ledgerAccounts'])->orderBy('id', 'desc')->get();
+        $entries = LedgerJournal::with(['ledgerAccounts'])->orderBy('date')->orderBy('internal_bill_number')->get();
         return response()->json(LedgerJournalResource::collection($entries), 200);
     }
 

@@ -10,12 +10,16 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
+use function array_search;
+use function count;
 use function date;
+use function explode;
 use function in_array;
 use function number_format;
 use function range;
 use function strtotime;
 use function trans;
+use const STR_PAD_LEFT;
 
 class BookingRequest extends FormRequest
 {
@@ -42,9 +46,7 @@ class BookingRequest extends FormRequest
                     'lang'                 => 'required|string|size:5',
                     'date'                 => 'required|date',
                     'amount'               => 'required|string',
-                    'debit.label'          => 'required|string',
                     'debit.value'          => 'required|integer',
-                    'credit.label'         => 'required|string',
                     'credit.value'         => 'required|integer',
                     'details.label'        => 'required|string|max:255',
                     'original_bill_number' => 'nullable|string',
@@ -54,10 +56,16 @@ class BookingRequest extends FormRequest
                     'id' => 'required|integer|gt:0',
                 ];
             case 'rebook/money/transit':
-            case 'number/cashbook/entries':
                 return [
                     'month' => 'required|string|size:7'
                 ];
+            case 'number/group/entries':
+                return [
+                    'query' => 'required|string|min:5',
+                    'month' => 'required|string|size:7'
+                ];
+            case 'rebook/journal/entries':
+                return [];
             default:
                 return [
                     'file_name' => 'required|string',
@@ -75,11 +83,12 @@ class BookingRequest extends FormRequest
     public function bookDoubleEntry(array $v)
     {
         // Prepare amounts and strings for double entries
-        $id = @$v['id'];
+        $id = (int) @$v['id'];
+        $lang = (string) $v['lang'];
+        $date = (string) $v['date'];
         $amount = (float) str_replace(['-', '+'], [], $v['amount']);
         $debitAccount = Skr04Account::find($v['debit']['value']);
         $creditAccount = Skr04Account::find($v['credit']['value']);
-        $signedAmountStr = $this->_sign($v['debit']['value'], $v['credit']['value']) . number_format($amount, 2, ',', '.');
         $vatCode = $debitAccount->vat_code ?: $creditAccount->vat_code;
         $vatDividers = [0 => 1.00, 8 => 1.07, 9 => 1.19];
         $debitNetAmount = round($amount / $vatDividers[$debitAccount->vat_code], 2);
@@ -90,29 +99,32 @@ class BookingRequest extends FormRequest
         $creditNetAmountStr = number_format($creditNetAmount, 2, ',', '.');
         $creditVatAmount = $amount - $creditNetAmount;
         $creditVatAmountStr = number_format($creditVatAmount, 2, ',', '.');
-        $debitDetails = $debitVatAmount ? " [EUR {$debitNetAmountStr}], {$debitAccount->pid} [EUR {$debitVatAmountStr}]" : " [EUR {$debitNetAmountStr}]";
-        $creditDetails = $creditVatAmount ? " [EUR {$creditNetAmountStr}], {$creditAccount->pid} [EUR {$creditVatAmountStr}]" : " [EUR {$creditNetAmountStr}]";
-        $systemDetails = "{$v['debit']['label']}{$debitDetails} <-- {$v['credit']['label']}{$creditDetails}";
+        $debitDetails = $debitVatAmount ? "[EUR {$debitNetAmountStr}], {$debitAccount->pid} [EUR {$debitVatAmountStr}]" : " [EUR {$debitNetAmountStr}]";
+        $creditDetails = $creditVatAmount ? "[EUR {$creditNetAmountStr}], {$creditAccount->pid} [EUR {$creditVatAmountStr}]" : " [EUR {$creditNetAmountStr}]";
+        $systemDetails = "{$debitAccount->id} {$debitAccount->$lang} {$debitDetails} <-- {$creditAccount->id} {$creditAccount->$lang} {$creditDetails}";
         // dd($systemDetails);
-        $journalEntryUpdate = LedgerJournal::find($id);
-        $internalBillNumber = optional($journalEntryUpdate)->internal_bill_number ?: $this->_num($debitAccount, $creditAccount, $v['date']);
-        // return $internalBillNumber;
+        $internalBillNumber = $this->num($debitAccount, $creditAccount, $date, $id);// keep here
+        // dd($internalBillNumber);
 
         // Use transaction to ensure completeness
         return DB::transaction(function () use (
-            $v, $id, $debitAccount, $creditAccount, $signedAmountStr, $vatCode,
+            $v, $id, $date, $debitAccount, $creditAccount, $amount, $vatCode,
             $debitNetAmount, $debitVatAmount, $creditNetAmount, $creditVatAmount,
-            $systemDetails, $journalEntryUpdate, $internalBillNumber
+            $systemDetails, $internalBillNumber
         ) {
             // Destroy existing ledger journal entry [cascading]
-            if ($journalEntryUpdate) $journalEntryUpdate->forceDelete();
+            if ($journalEntryUpdate = LedgerJournal::find($id)) {
+                $journalEntryUpdate->forceDelete();
+            }
             // Ledger journal entry
             $journalEntry = new LedgerJournal();
             if ($id) $journalEntry->id = $id;
             $journalEntry->user_id = $this->user()->id;
-            $journalEntry->date = $v['date'];
-            $journalEntry->amount = $signedAmountStr;
+            $journalEntry->date = $date;
+            $journalEntry->amount = $this->swap($creditAccount->id) ? (-1 * $amount) : $amount;
             $journalEntry->vat_code = $vatCode;
+            $journalEntry->direct_account = $this->swap($creditAccount->id) ? $creditAccount->id : $debitAccount->id;
+            $journalEntry->offset_account = $this->swap($creditAccount->id) ? $debitAccount->id : $creditAccount->id;
             $journalEntry->client_details = $v['details']['label'];
             $journalEntry->system_details = $systemDetails;
             $journalEntry->internal_bill_number = $internalBillNumber;
@@ -124,7 +136,7 @@ class BookingRequest extends FormRequest
             $debitEntry = LedgerAccount::create([
                 'journal_id'   => $journalEntry->id,
                 'skr04_id'     => $debitAccount->id,
-                'date'         => $v['date'],
+                'date'         => $date,
                 'skr04_ref_id' => $creditAccount->id,
                 'debit'        => $debitNetAmount,
             ]);
@@ -135,7 +147,7 @@ class BookingRequest extends FormRequest
                 $debitVatEntry = LedgerAccount::create([
                     'journal_id'   => $journalEntry->id,
                     'skr04_id'     => $debitAccount->pid,
-                    'date'         => $v['date'],
+                    'date'         => $date,
                     'skr04_ref_id' => $creditAccount->id,
                     'debit'        => $debitVatAmount,
                 ]);
@@ -146,7 +158,7 @@ class BookingRequest extends FormRequest
             $creditEntry = LedgerAccount::create([
                 'journal_id'   => $journalEntry->id,
                 'skr04_id'     => $creditAccount->id,
-                'date'         => $v['date'],
+                'date'         => $date,
                 'skr04_ref_id' => $debitAccount->id,
                 'credit'       => $creditNetAmount,
             ]);
@@ -157,7 +169,7 @@ class BookingRequest extends FormRequest
                 $creditVatEntry = LedgerAccount::create([
                     'journal_id'   => $journalEntry->id,
                     'skr04_id'     => $creditAccount->pid,
-                    'date'         => $v['date'],
+                    'date'         => $date,
                     'skr04_ref_id' => $debitAccount->id,
                     'credit'       => $creditVatAmount,
                 ]);
@@ -189,59 +201,77 @@ class BookingRequest extends FormRequest
         });
     }
 
-    private function _pad(string $input, int $padLength = 2, $padString = '00', string $padType = STR_PAD_LEFT)
+    private function pad(string $input, int $padLength = 2, $padString = '00', string $padType = STR_PAD_LEFT)
     {
         return str_pad($input, $padLength, $padString, $padType);
     }
 
-    private function _num(Skr04Account $debit, Skr04Account $credit, string $date)
+    private function num(Skr04Account $debit, Skr04Account $credit, string $date, int $id)
     {
         $month = date('Y-m', strtotime($date));
+        $padString = '000000';// 6 numbers required
 
         // 1600 Cash account
-        if ($debit->id === 1600 || $credit->id === 1600) {
-            return DB::select("
-                SELECT month(date) month, max(internal_bill_number) num_per_month FROM cab7_ledger_journal
-                WHERE system_details LIKE '%1600 Kasse%' AND date LIKE '{$month}%'
-                GROUP BY month
-                ORDER BY month;
-            ")[0]->num_per_month + 1;
+        if ($debit->id === 1800 || $credit->id === 1800) {
+            $collection = DB::select("
+                SELECT month(date) month, GROUP_CONCAT(id ORDER BY date, id SEPARATOR ',') items FROM cab7_ledger_journal
+                WHERE system_details LIKE '%1800 Bank%' AND date LIKE '{$month}%' AND deleted_at IS NULL
+                GROUP BY month;
+            ")[0];
+            // dd($collection);
+            $month = $collection->month;
+            $ids = explode(',', $collection->items);
+            $index = array_search((string) $id, $ids);
+            // dd($collection, $index, $id);
+            $number = ($index === false ? count($ids) : $index) + 1;
+            return str_pad($number, 6, $padString, STR_PAD_LEFT);
         }
 
-        return 0;
+        return $padString;
+    }
+
+    /**
+     * Swap amount and direct/offset accounts
+     *
+     * @param int $creditAccountId
+     *
+     * @return bool
+     */
+    private function swap(int $creditAccountId)
+    {
+        return in_array($creditAccountId, [1600, 1800, 2180, 7000]);
     }
 
     /**
      * DEAD: (Debit + Expenses + Assets + Drawings) = CLIC: (Credit + Liabilities + Income/sales/revenue + Capital)
      * SKR04 based
      *
-     * @param int $debit
-     * @param int $credit
+     * @param Skr04Account $debit
+     * @param Skr04Account $credit
      *
      * @return string
      */
-    private function _sign(int $debit, int $credit)
+    private function sign(Skr04Account $debit, Skr04Account $credit)
     {
-        // When we pay or receive money
-        $payments = [1600, 1800, 2180];
-        if (in_array($debit, $payments) && in_array($credit, $payments)) return '';// transit
-        if (in_array($debit, $payments)) return '+';// income
-        if (in_array($credit, $payments)) return '-';// expense
+        // if ($debit->side === 'dead' && $credit->side === 'dead') return '-';
+        // if ($debit->side === 'dead' && $credit->side === 'clic') return '+';
+        // if ($debit->side === 'clic' && $credit->side === 'dead') return '';
+        // if ($debit->side === 'clic' && $credit->side === 'clic') return '-';
 
         // DEAD/CLIC accounts
-        if (in_array($debit, range(5000, 7999))) return '-';
-        if (in_array($credit, range(4000, 4999))) return '+';
+        // if (in_array($debit, range(5000, 7999))) return '-';
+        // if (in_array($credit, range(4000, 4999))) return '+';
 
         // SKR04 group of accounts
-        $capitalAssetsAccounts = range(0, 999);
-        $currentAssetsAccounts = range(1000, 1999);
-        $proprietaryCapitalAccounts = range(2000, 2999);
-        $outsideCapitalAccounts = range(3000, 3999);
-        $revenueIncomeAccounts = range(4000, 4999);
-        $operatingExpenditure = range(5000, 6999);
-        $otherRevenueAndExpenditure = range(7000, 7999);
-        $freeAvailableAccounts = range(8000, 8999);
-        $carryForwardAccounts = range(9000, 9999);
+        // $capitalAssetsAccounts = range(0, 999);
+        // $currentAssetsAccounts = range(1000, 1999);
+        // $proprietaryCapitalAccounts = range(2000, 2999);
+        // $outsideCapitalAccounts = range(3000, 3999);
+        // $revenueIncomeAccounts = range(4000, 4999);
+        // $operatingExpenditure = range(5000, 6999);
+        // $otherRevenueAndExpenditure = range(7000, 7999);
+        // $freeAvailableAccounts = range(8000, 8999);
+        // $carryForwardAccounts = range(9000, 9999);
 
         return '';
     }
