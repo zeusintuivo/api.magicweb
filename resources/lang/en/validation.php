@@ -97,7 +97,7 @@ return [
         "vehicle_chassis" => "",
         "vehicle_first_registration" => "",
         "vehicle_plate" => "",
-        "year" => "",
+        "year" => "year",
         "zip" => ""
     ],
     "auth" => [

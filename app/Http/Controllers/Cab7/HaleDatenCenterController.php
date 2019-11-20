@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Cab7\BookingRequest;
 use App\Models\Cab7\InsikaShift;
 use App\Models\Cab7\InsikaTrip;
+use App\Models\Cab7\LedgerJournal;
 use App\Models\Cab7\Skr04Account;
 use Exception;
 use Illuminate\Http\Request;
@@ -26,6 +27,8 @@ class HaleDatenCenterController extends Controller
         $handle = fopen($fpath, 'r');
         for ($count = 0; $line = fgets($handle); $count++) {
             if ($count) {
+                // if ($count > 2) break;
+
                 try {
                     $c = explode(';', $line);
                     $began = date_create($c[0]);
@@ -60,42 +63,38 @@ class HaleDatenCenterController extends Controller
                 // Book shift to the ledger
                 $debitAccount = Skr04Account::find(1600);
                 $creditAccount = Skr04Account::find(4300);
-                // Book shift revenue
-                $request->bookDoubleEntry([
-                    'id'              => $count,
-                    'skr'             => 'skr04',
-                    'date'            => explode(' ', $shift->began_at)[0],
-                    'amount'          => $shift->charge_total,
-                    'debit'           => [
-                        'label' => $debitAccount->de_DE,
-                        'value' => $debitAccount->id,
-                    ],
-                    'credit'          => [
-                        'label' => $creditAccount->de_DE,
-                        'value' => $creditAccount->id,
-                    ],
-                    'details'         => [
-                        'label' => "Taxischicht im Pflichtfahrgebiet",
-                    ],
-                    'bill_own_number' => $shift->id,
-                ]);
-                // Book shift's tip
-                $request->bookDoubleEntry([
-                    'skr'     => 'skr04',
-                    'date'    => explode(' ', $shift->began_at)[0],
-                    'amount'  => round($shift->charge_total * (rand(2, 4) / 100), 1),
-                    'debit'   => [
-                        'label' => $debitAccount->de_DE,
-                        'value' => $debitAccount->id,
-                    ],
-                    'credit'  => [
-                        'label' => $creditAccount->de_DE,
-                        'value' => $creditAccount->id,
-                    ],
-                    'details' => [
-                        'label' => "Trinkgeld aus einer Taxischicht",
-                    ],
-                ]);
+                $shiftDate = explode(' ', $shift->began_at)[0];
+                $clientDetails = "Taxischicht im Pflichtfahrgebiet";
+
+                // Update existing shift
+                if ($journal = LedgerJournal::whereClientDetails($clientDetails)->where('date', $shiftDate)->whereAmount((int) $shift->charge_total)->first()) {
+                    // Book shift revenue
+                    $request->bookDoubleEntry([
+                        'id'      => $journal->id,
+                        'skr'     => 'skr04',
+                        'lang'    => 'de_DE',
+                        'date'    => $shiftDate,
+                        'amount'  => $shift->charge_total,
+                        'debit'   => ['value' => $debitAccount->id],
+                        'credit'  => ['value' => $creditAccount->id],
+                        'details' => ['label' => $clientDetails],
+                    ]);
+                }
+
+                // Update existing tip
+                $clientDetails = "Trinkgeld aus einer Taxischicht";
+                if ($journal = LedgerJournal::whereClientDetails($clientDetails)->where('date', $shiftDate)->first()) {
+                    $request->bookDoubleEntry([
+                        'id'      => $journal->id,
+                        'skr'     => 'skr04',
+                        'lang'    => 'de_DE',
+                        'date'    => $shiftDate,
+                        'amount'  => (int) $journal->amount + (rand(0, 9) / 10),
+                        'debit'   => ['value' => $debitAccount->id],
+                        'credit'  => ['value' => $creditAccount->id],
+                        'details' => ['label' => "Trinkgeld aus einer Taxischicht"],
+                    ]);
+                }
             }
         }
         fclose($handle);

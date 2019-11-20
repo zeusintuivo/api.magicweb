@@ -55,17 +55,26 @@ class BookingRequest extends FormRequest
                 return [
                     'id' => 'required|integer|gt:0',
                 ];
+            case 'rebook/double/entries':
+                return [];
             case 'rebook/money/transit':
                 return [
-                    'month' => 'required|string|size:7'
+                    'month' => 'required|string|size:7',
                 ];
             case 'number/group/entries':
                 return [
                     'query' => 'required|string|min:5',
-                    'month' => 'required|string|size:7'
+                    'month' => 'required|string|size:7',
                 ];
-            case 'rebook/journal/entries':
-                return [];
+            case 'fetch/ledger/journal':
+                return [
+                    'year' => 'required|integer|gt:2015'
+                ];
+            case 'fetch/ledger/accounts':
+                return [
+                    'begin' => 'required|date',
+                    'end'   => 'required|date',
+                ];
             default:
                 return [
                     'file_name' => 'required|string',
@@ -212,20 +221,18 @@ class BookingRequest extends FormRequest
         $padString = '000000';// 6 numbers required
 
         // 1600 Cash account
-        if ($debit->id === 1800 || $credit->id === 1800) {
-            $collection = DB::select("
-                SELECT month(date) month, GROUP_CONCAT(id ORDER BY date, id SEPARATOR ',') items FROM cab7_ledger_journal
-                WHERE system_details LIKE '%1800 Bank%' AND date LIKE '{$month}%' AND deleted_at IS NULL
-                GROUP BY month;
-            ")[0];
-            // dd($collection);
-            $month = $collection->month;
-            $ids = explode(',', $collection->items);
-            $index = array_search((string) $id, $ids);
-            // dd($collection, $index, $id);
-            $number = ($index === false ? count($ids) : $index) + 1;
-            return str_pad($number, 6, $padString, STR_PAD_LEFT);
-        }
+        $collection = DB::select("
+            SELECT month(date) month, GROUP_CONCAT(id ORDER BY date, id SEPARATOR ',') ids FROM cab7_ledger_journal
+            WHERE date LIKE '{$month}%' AND deleted_at IS NULL
+            GROUP BY month;
+        ")[0];
+        // dd($collection);
+        $month = $collection->month;
+        $ids = explode(',', $collection->ids);
+        $index = array_search((string) $id, $ids);
+        // dd($collection, $index, $id);
+        $number = ($index === false ? count($ids) : $index) + 1;
+        return str_pad($number, 6, $padString, STR_PAD_LEFT);
 
         return $padString;
     }

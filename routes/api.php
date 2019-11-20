@@ -67,20 +67,19 @@ Route::prefix('{locale}')->group(function () {
         Route::prefix('amsr')->group(function () {
             Route::get('/fetch/standard/accounts', 'Cab7\BookingController@fetchStandardAccounts');
             Route::post('/fetch/booking/details', 'Cab7\BookingController@fetchBookingDetails')->middleware('auth');
-            Route::post('/fetch/ledger/journal', 'Cab7\BookingController@fetchLedgerJournal')->middleware('auth');
+            Route::post('/fetch/ledger/journal', 'Cab7\BookingController@fetchLedgerJournal')->middleware('auth')->name('fetch/ledger/journal');
             Route::post('/fetch/ledger/journal/{journal}', 'Cab7\BookingController@fetchLedgerJournalEntry')->middleware('auth');
-            Route::post('/fetch/ledger/accounts', 'Cab7\BookingController@fetchLedgerAccounts')->middleware('auth');
-            Route::post('/filter/ledger/accounts/date/range', 'Cab7\BookingController@filterLedgerAccountsDateRange')->middleware('auth');
+            Route::post('/fetch/ledger/accounts', 'Cab7\BookingController@fetchLedgerAccounts')->middleware('auth')->name('fetch/ledger/accounts');
             Route::post('/fetch/cash/book', 'Cab7\BookingController@fetchCashBook')->middleware('auth');
             Route::post('/fetch/driver/log', 'Cab7\BookingController@fetchDriverLog')->middleware('auth');
             Route::post('/book/double/entry', 'Cab7\BookingController@bookDoubleEntry')->middleware('auth')->name('book/double/entry');
             Route::post('/delete/double/entry', 'Cab7\BookingController@deleteDoubleEntry')->middleware('auth')->name('delete/double/entry');
             // Richard requirements
             Route::prefix('richard')->group(function () {
+                Route::post('/rebook/double/entries', 'Cab7\RichardController@rebookDoubleEntries')->middleware('auth')->name('rebook/double/entries');
                 Route::post('/rebook/money/transit', 'Cab7\RichardController@rebookMoneyTransit')->middleware('auth')->name('rebook/money/transit');
                 Route::post('/number/group/entries', 'Cab7\RichardController@numberGroupEntries')->middleware('auth')->name('number/group/entries');
                 Route::post('/update/amount/after/cast', 'Cab7\RichardController@updateAmountAfterCast')->middleware('auth')->name('update/amount/after/cast');
-                Route::post('/rebook/journal/entries', 'Cab7\RichardController@rebookJournalEntries')->middleware('auth')->name('rebook/journal/entries');
             });
             // Hale DatenCenter
             Route::prefix('hdc')->group(function () {

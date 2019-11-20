@@ -111,6 +111,7 @@ INSERT INTO cab7_skr04_accounts (id, en_GB, de_DE, pid, vat_code, private, side)
 (6260, 'Immediate write-off of lowvalue assets', 'Sofortabschreibungen geringwertiger Wirtschaftsgüter', 0, 0, 0, 'dead'),
 (6300, 'Other operating expenses', 'Sonstige betriebliche Aufwendungen', 0, 0, 0, 'dead'),
 (6305, 'Occupancy costs', 'Raumkosten', 0, 0, 0, 'dead'),
+(6306, 'Occupancy costs, 19% tax input', 'Raumkosten 19% Vorsteuer', 1406, 9, 0, 'dead'),
 (6310, 'Rent (immovable property)', 'Miete (unbewegliche Wirtschaftsgüter)', 0, 0, 0, 'dead'),
 (6311, 'Rent (immovable property), 19% input tax', 'Miete (unbewegliche Wirtschaftsgüter) 19% Vorsteuer', 1406, 9, 0, 'dead'),
 (6400, 'Insurance premiums', 'Versicherungen', 0, 0, 0, 'dead'),

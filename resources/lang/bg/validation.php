@@ -97,7 +97,7 @@ return [
         "vehicle_chassis" => "",
         "vehicle_first_registration" => "",
         "vehicle_plate" => "",
-        "year" => "Година",
+        "year" => "година",
         "zip" => ""
     ],
     "auth" => [
@@ -135,7 +135,12 @@ return [
     "file" => "The :attribute must be a file.",
     "filled" => "Полето :attribute е задължително.",
     "gdpr" => "",
-    "gt" => ["array" => "", "file" => "", "numeric" => "", "string" => ""],
+    "gt" => [
+        "array" => "",
+        "file" => "",
+        "numeric" => "Полето :attribute трябва да е по-голямо от :value.",
+        "string" => ""
+    ],
     "gte" => ["array" => "", "file" => "", "numeric" => "", "string" => ""],
     "image" => "Полето :attribute трябва да бъде изображение.",
     "in" => "Избраното поле :attribute е невалидно.",

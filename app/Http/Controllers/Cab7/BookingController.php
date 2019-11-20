@@ -41,30 +41,24 @@ class BookingController extends Controller
 
     public function fetchLedgerJournal(Request $request)
     {
-        $entries = LedgerJournal::with(['ledgerAccounts'])->orderBy('date')->orderBy('internal_bill_number')->get();
+        $entries = LedgerJournal::with(['ledgerAccounts'])
+            // ->onlyTrashed()
+            ->where('date', 'like', "{$request->year}%")
+            ->orderBy('date')
+            ->orderBy('internal_bill_number')
+            ->get();
         return response()->json(LedgerJournalResource::collection($entries), 200);
     }
 
-    public function fetchLedgerAccounts(Request $request)
+    public function fetchLedgerAccounts(BookingRequest $request)
     {
-        $accounts = LedgerAccountView::all();
-        return response()->json($accounts, 200);
-    }
-
-    public function filterLedgerAccountsDateRange(Request $request)
-    {
-        $validated = $request->validate([
-            'begin' => 'required|date',
-            'end'   => 'required|date',
-        ]);
-
         $accounts = collect(DB::select("
             SELECT skr04_id, round(sum(debit) - sum(credit), 2) AS balance, pid, vat_code, private, de_DE, en_GB
             FROM cab7_ledger_accounts parent, cab7_skr04_accounts node
             WHERE parent.skr04_id = node.id AND date BETWEEN ? AND ?
             GROUP BY skr04_id
             ORDER BY skr04_id;
-        ", [$validated['begin'], $validated['end']]));
+        ", [$request['begin'], $request['end']]));
 
         return response()->json(LedgerBalanceResource::collection($accounts), 200);
     }

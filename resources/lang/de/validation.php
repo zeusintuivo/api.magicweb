@@ -97,7 +97,7 @@ return [
         "vehicle_chassis" => "Die Fahrgestellnummer",
         "vehicle_first_registration" => "Die Erstzulassung",
         "vehicle_plate" => "Das Kennzeichen",
-        "year" => "",
+        "year" => "Jahr",
         "zip" => "Die Postleitzahl"
     ],
     "auth" => [
@@ -135,7 +135,12 @@ return [
     "file" => ":attribute muß eine Datei sein.",
     "filled" => ":attribute muß ausgefüllt sein.",
     "gdpr" => ":attribute muß akzeptiert werden.",
-    "gt" => ["array" => "", "file" => "", "numeric" => "", "string" => ""],
+    "gt" => [
+        "array" => "",
+        "file" => "",
+        "numeric" => ":Attribute muß größer als :value sein.",
+        "string" => ""
+    ],
     "gte" => ["array" => "", "file" => "", "numeric" => "", "string" => ""],
     "image" => ":attribute muß ein Bild sein.",
     "in" => ":attribute ist ungültig.",
@@ -178,7 +183,7 @@ return [
     "size" => [
         "array" => ":attribute muß genau :size Elemente haben.",
         "file" => ":attribute muß :size Kilobyte groß sein.",
-        "numeric" => ":attribute muß gleich :size sein.",
+        "numeric" => ":Attribute muß gleich :size sein.",
         "string" => ":attribute muß :size Zeichen lang sein."
     ],
     "starts_with" => "",

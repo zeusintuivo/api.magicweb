@@ -15,12 +15,12 @@ use function explode;
  */
 class RichardController extends Controller
 {
-    public function rebookJournalEntries(BookingRequest $request)
+    public function rebookDoubleEntries(BookingRequest $request)
     {
         $data = [];
         $count = 0;
         try {
-            $entries = LedgerJournal::where('client_details', 'like', 'taxiwäsche%')->orderBy('date')->get();
+            $entries = LedgerJournal::orderBy('date')->get();
             foreach ($entries as $journal) {
                 $debitAccount = $journal->ledgerAccounts()->whereJournalId($journal->id)->orderBy('id')->first();
                 $debitValue = $debitAccount->skr04_id;
@@ -32,11 +32,9 @@ class RichardController extends Controller
                     'lang'                 => 'de_DE',
                     'date'                 => $journal->date,
                     'amount'               => $journal->amount,
-                    'debit'                => ['value' => 6530],
+                    'debit'                => ['value' => $debitValue],
                     'credit'               => ['value' => $creditValue],
-                    'details'              => [
-                        'label' => $journal->client_details,
-                    ],
+                    'details'              => ['label' => $journal->client_details],
                     'original_bill_number' => $journal->original_bill_number,
                 ];
                 // dd($journal, $data);
@@ -47,7 +45,7 @@ class RichardController extends Controller
         } catch (Exception $e) {
             dd("Error occurred rebooking journal entries:", $e->getMessage(), $data);
         }
-        return response()->json("All journal entries successfully rebooked, $count entries have been updated", 200);
+        return response()->json("$count journal entries successfully rebooked", 200);
     }
 
     public function updateAmountAfterCast(BookingRequest $request)

@@ -28,7 +28,26 @@ DROP TABLE IF EXISTS back_ledger_journal;
 # ALTER TABLE cab7_ledger_journal AUTO_INCREMENT = 339;
 
 # Number 1600 Cash entries
-SELECT month(date) month, max(internal_bill_number) num_per_month FROM cab7_ledger_journal
+SELECT month(date) AS month, max(internal_bill_number) AS num_per_month FROM cab7_ledger_journal
 WHERE system_details LIKE '%1600 Kasse%' AND date LIKE '2018-01%'
 GROUP BY month
 ORDER BY month;
+
+# Search for dupplicates
+SELECT date, count, amount_floored
+FROM (
+    SELECT date, floor(abs(amount)) amount_floored, count(*) AS count
+    FROM cab7_ledger_journal
+    WHERE deleted_at IS NULL
+    GROUP BY date, amount_floored, client_details
+) duplicates
+WHERE count > 1 AND date > '2018-05-31'
+ORDER BY date, count DESC;
+
+SELECT floor(abs(-48.09));
+
+
+
+
+
+
