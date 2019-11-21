@@ -45,7 +45,7 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'api' => [
-            'throttle:60,1',
+            'throttle:360,1',
             'bindings',
             'locale',
             TokenAuth::class,

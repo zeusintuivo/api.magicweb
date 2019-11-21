@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS cab7_ledger_journal (
     date date NOT NULL COMMENT 'Date of booking',
     amount decimal(7,2) NOT NULL COMMENT 'Not editable booking amount as string',
     vat_code tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT '[0]: 0%, [8]: 7%, [9]: 19%',
-    direct_account smallint unsigned NULL DEFAULT NULL COMMENT 'Konto GuV',
-    offset_account smallint unsigned NULL DEFAULT NULL COMMENT 'Gegenkonto GuV',
+    direct_account int unsigned NULL DEFAULT NULL COMMENT 'Konto GuV',
+    offset_account int unsigned NULL DEFAULT NULL COMMENT 'Gegenkonto GuV',
     client_details varchar(255) NOT NULL COMMENT 'User comment about current booking entry',
     system_details varchar(255) NOT NULL COMMENT 'System log about internal booking details',
     internal_bill_number varchar(6) NOT NULL DEFAULT '000000',
@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS cab7_ledger_journal (
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE InnoDB DEFAULT CHARSET utf8mb4;
-INSERT INTO cab7_ledger_journal (id, user_id, date, amount, vat_code, client_details, system_details, internal_bill_number, original_bill_number, created_at, updated_at, deleted_at)
-    SELECT id, user_id, date, amount, vat_code, client_details, system_details, internal_bill_number, original_bill_number, created_at, updated_at, deleted_at FROM back_ledger_journal;
+INSERT INTO cab7_ledger_journal
+    SELECT * FROM back_ledger_journal;
 DROP TABLE IF EXISTS back_ledger_journal;
 
 # DELETE FROM cab7_ledger_journal WHERE id BETWEEN 1 AND 215;

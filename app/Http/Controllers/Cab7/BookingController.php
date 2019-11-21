@@ -53,11 +53,13 @@ class BookingController extends Controller
     public function fetchLedgerAccounts(BookingRequest $request)
     {
         $accounts = collect(DB::select("
-            SELECT skr04_id, round(sum(debit) - sum(credit), 2) AS balance, pid, vat_code, private, de_DE, en_GB
-            FROM cab7_ledger_accounts parent, cab7_skr04_accounts node
-            WHERE parent.skr04_id = node.id AND date BETWEEN ? AND ?
-            GROUP BY skr04_id
-            ORDER BY skr04_id;
+            SELECT skr04_id, round(sum(debit) - sum(credit), 2) balance,
+                skr04.de_DE, skr04.en_GB, skr04.pid, skr04.side, skr04.vat_code, skr04.private
+            FROM cab7_ledger_journal journal, cab7_ledger_accounts account, cab7_skr04_accounts skr04
+            WHERE journal.id = account.journal_id AND account.skr04_id = skr04.id
+              AND journal.deleted_at IS NULL AND journal.date BETWEEN ? AND ?
+            GROUP BY skr04.id
+            ORDER BY skr04.id;
         ", [$request['begin'], $request['end']]));
 
         return response()->json(LedgerBalanceResource::collection($accounts), 200);
@@ -65,7 +67,7 @@ class BookingController extends Controller
 
     public function fetchCashBook(Request $request)
     {
-        $rows = LedgerAccount::where('skr04_id', 1600)->with(['journal', 'skr04RefAccount'])->orderBy('date', 'desc')->get();
+        $rows = LedgerAccount::where('skr04_id', 1600)->with(['journal', 'skr04RefAccount'])->get();
         return response()->json(CashBookResource::collection($rows), 200);
     }
 

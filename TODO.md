@@ -1,4 +1,5 @@
 - Für die Bankbuchungen verwende bitte die Nummer des Kontoauszuges. So können wir an Hand der Kontoauszüge prüfen, ob wir alles richtig verbucht haben und der Kontostand immer stimmt.
+- Limit 2100 to debit and 2180 to credit
 
 # Cab7.eu
 DEAD: (Debit + Expenses + Assets + Drawings) = CLIC: (Credit + Liabilities + Income/sales/revenue + Capital)
