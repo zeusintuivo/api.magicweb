@@ -22,18 +22,16 @@ class RichardController extends Controller
         try {
             $entries = LedgerJournal::orderBy('date')->get();
             foreach ($entries as $journal) {
-                $debitAccount = $journal->ledgerAccounts()->whereJournalId($journal->id)->orderBy('id')->first();
-                $debitValue = $debitAccount->skr04_id;
-                $creditValue = $debitAccount->skr04_ref_id;
-
+                $debitAccount = $journal->ledgerAccounts()->whereCredit(0)->first();
+                $creditAccount = $journal->ledgerAccounts()->whereDebit(0)->first();
                 $data = [
                     'id'                   => $journal->id,
                     'skr'                  => 'skr04',
                     'lang'                 => 'de_DE',
                     'date'                 => $journal->date,
                     'amount'               => $journal->amount,
-                    'debit'                => ['value' => $debitValue],
-                    'credit'               => ['value' => $creditValue],
+                    'debit'                => ['value' => $debitAccount->skr04_id],
+                    'credit'               => ['value' => $creditAccount->skr04_id],
                     'details'              => ['label' => $journal->client_details],
                     'original_bill_number' => $journal->original_bill_number,
                 ];
@@ -100,7 +98,8 @@ class RichardController extends Controller
         $entries = LedgerJournal::where('date', 'like', "{$request->month}%")->where('system_details', 'like', "%{$request['query']}%")->orderBy('date')->orderBy('id')->get();
         $entriesMapped = $entries->map(function (LedgerJournal $journal) use ($request) {
 
-            $debitAccount = $journal->ledgerAccounts()->whereJournalId($journal->id)->orderBy('id')->first();
+            $debitAccount = $journal->ledgerAccounts()->whereCredit(0)->first();
+            $creditAccount = $journal->ledgerAccounts()->whereDebit(0)->first();
             $date = explode('-', $request->month);
             $month = array_pop($date);
             $details = explode(' ### ', $journal->client_details);
@@ -109,7 +108,7 @@ class RichardController extends Controller
             $journal->skr = 'skr04';
             $journal->lang = 'de_DE';
             $journal->debit = ['value' => $debitAccount->skr04_id];
-            $journal->credit = ['value' => $debitAccount->skr04_ref_id];
+            $journal->credit = ['value' => $creditAccount->skr04_id];
             $journal->details = ['label' => $clientDetails];
             $journal->internal_bill_number = null;
 

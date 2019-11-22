@@ -2,10 +2,9 @@
 
 namespace App\Http\Resources\Cab7;
 
-use App\Http\Resources\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class LedgerJournalResource extends JsonResource
+class NetIncomeResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -21,6 +20,8 @@ class LedgerJournalResource extends JsonResource
             'date'                 => $this->date,
             'amount'               => $this->amount,
             'vat_code'             => $this->vat_code,
+            'direct_account'       => $this->direct_account,
+            'offset_account'       => $this->offset_account,
             'client_details'       => $this->client_details,
             'system_details'       => $this->system_details,
             'internal_bill_number' => $this->internal_bill_number,

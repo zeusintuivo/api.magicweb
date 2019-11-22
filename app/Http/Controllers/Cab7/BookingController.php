@@ -8,7 +8,7 @@ use App\Http\Requests\Cab7\BookingRequest;
 use App\Http\Resources\Cab7\CashBookResource;
 use App\Http\Resources\Cab7\DriverLogResource;
 use App\Http\Resources\Cab7\LedgerBalanceResource;
-use App\Http\Resources\Cab7\LedgerJournalResource;
+use App\Http\Resources\Cab7\NetIncomeResource;
 use App\Models\Cab7\LedgerAccount;
 use App\Models\Cab7\LedgerAccountView;
 use App\Models\Cab7\LedgerJournal;
@@ -31,10 +31,11 @@ class BookingController extends Controller
 
     public function fetchLedgerJournalEntry(string $locale, LedgerJournal $journal)
     {
-        $debit = $journal->ledgerAccounts()->first();
+        $debitAccount = $journal->ledgerAccounts()->whereCredit(0)->first()->skr04;
+        $creditAccount = $journal->ledgerAccounts()->whereDebit(0)->first()->skr04;
         $journal->accounts = [
-            'debit' => $debit->skr04Account,
-            'credit' => $debit->skr04RefAccount
+            'debit' => $debitAccount,
+            'credit' => $debitAccount
         ];
         return response()->json($journal, 200);
     }
@@ -47,14 +48,14 @@ class BookingController extends Controller
             ->orderBy('date')
             ->orderBy('internal_bill_number')
             ->get();
-        return response()->json(LedgerJournalResource::collection($entries), 200);
+        return response()->json(NetIncomeResource::collection($entries), 200);
     }
 
     public function fetchLedgerAccounts(BookingRequest $request)
     {
         $accounts = collect(DB::select("
             SELECT skr04_id, round(sum(debit) - sum(credit), 2) balance,
-                skr04.de_DE, skr04.en_GB, skr04.pid, skr04.side, skr04.vat_code, skr04.private
+                skr04.de_DE, skr04.en_GB, skr04.pid, skr04.balance_side, skr04.vat_code, skr04.private
             FROM cab7_ledger_journal journal, cab7_ledger_accounts account, cab7_skr04_accounts skr04
             WHERE journal.id = account.journal_id AND account.skr04_id = skr04.id
               AND journal.deleted_at IS NULL AND journal.date BETWEEN ? AND ?
@@ -63,6 +64,24 @@ class BookingController extends Controller
         ", [$request['begin'], $request['end']]));
 
         return response()->json(LedgerBalanceResource::collection($accounts), 200);
+    }
+
+    public function fetchNetIncome(BookingRequest $request)
+    {
+        $dateLike = "{$request['year']}%";
+        $accounts = collect(DB::select("
+            SELECT j.id, j.internal_bill_number, j.date, IF(s.balance_side = 'dead', a.debit - a.credit, a.credit - a.debit) amount,
+                j.vat_code, o.skr04_id offset_account, s.id direct_account, j.client_details, j.system_details, j.original_bill_number, j.created_at, j.updated_at
+                FROM cab7_ledger_journal j, cab7_ledger_accounts a, cab7_skr04_accounts s, (
+                    SELECT acc.journal_id, acc.skr04_id FROM mweb.cab7_ledger_journal jrn, cab7_skr04_accounts skr, cab7_ledger_accounts acc
+                    WHERE jrn.id = acc.journal_id AND acc.skr04_id = skr.id AND jrn.deleted_at IS NULL
+                ) o
+            WHERE j.id = a.journal_id AND a.skr04_id = s.id AND j.deleted_at IS NULL AND s.id IN (1600, 1800)
+                AND o.journal_id = j.id AND s.id <> o.skr04_id AND o.skr04_id NOT IN (1401, 1406, 3801, 3806)
+                AND j.date LIKE '$dateLike'
+            ORDER BY j.date, j.id;
+        "));
+        return response()->json(NetIncomeResource::collection($accounts), 200);
     }
 
     public function fetchCashBook(Request $request)

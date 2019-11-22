@@ -19,7 +19,7 @@ class LedgerBalanceResource extends JsonResource
             'skr04_id' => $this->skr04_id,
             'balance'  => (float) $this->balance,
             'pid'      => (int) $this->pid,
-            'side'     => $this->side,
+            'side'     => $this->balance_side,
             'vat_code' => (int) $this->vat_code,
             'private'  => (int) $this->private,
             'de_DE'    => $this->de_DE,

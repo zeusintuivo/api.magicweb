@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Cab7;
 
-use App\Http\Resources\Cab7\LedgerJournalResource;
+use App\Http\Resources\Cab7\NetIncomeResource;
 use App\Models\Cab7\LedgerAccount;
 use App\Models\Cab7\LedgerJournal;
 use App\Models\Cab7\Skr04Account;
@@ -66,6 +66,7 @@ class BookingRequest extends FormRequest
                     'query' => 'required|string|min:5',
                     'month' => 'required|string|size:7',
                 ];
+            case 'fetch/net/income':
             case 'fetch/ledger/journal':
                 return [
                     'year' => 'required|integer|gt:2015'
@@ -95,7 +96,7 @@ class BookingRequest extends FormRequest
         $id = (int) @$v['id'];
         $lang = (string) $v['lang'];
         $date = (string) $v['date'];
-        $amount = (float) str_replace(['-', '+'], [], $v['amount']);
+        $amount = (float) abs($v['amount']);
 
         $debitAccount = Skr04Account::find($v['debit']['value']);
         $creditAccount = Skr04Account::find($v['credit']['value']);
@@ -111,17 +112,18 @@ class BookingRequest extends FormRequest
                 9 => 3806
             ]
         ];
-        $debitVatAccountId = $debitAccount->side ? $vatAccountIds[$debitAccount->side][$debitAccount->vat_code] : null;
-        $creditVatAccountId = $creditAccount->side ? $vatAccountIds[$creditAccount->side][$creditAccount->vat_code] : null;
+        $debitVatCode = (int) /* $clientDebitVatCode ?: */$debitAccount->vat_code;
+        $creditVatCode = (int) /* $clientCreditVatCode ?: */$creditAccount->vat_code;
+        $debitVatAccountId = $debitAccount->balance_side ? $vatAccountIds[$debitAccount->balance_side][$debitVatCode] : null;
+        $creditVatAccountId = $creditAccount->balance_side ? $vatAccountIds[$creditAccount->balance_side][$creditVatCode] : null;
         // dd($debitVatAccountId, $creditVatAccountId);
 
-        $vatCode = $debitAccount->vat_code ?: $creditAccount->vat_code;
         $vatDividers = [0 => 1.00, 8 => 1.07, 9 => 1.19];
-        $debitNetAmount = round($amount / $vatDividers[$debitAccount->vat_code], 2);
+        $debitNetAmount = round($amount / $vatDividers[$debitVatCode], 2);
         $debitNetAmountStr = number_format($debitNetAmount, 2, ',', '.');
         $debitVatAmount = $amount - $debitNetAmount;
         $debitVatAmountStr = number_format($debitVatAmount, 2, ',', '.');
-        $creditNetAmount = round($amount / $vatDividers[$creditAccount->vat_code], 2);
+        $creditNetAmount = round($amount / $vatDividers[$creditVatCode], 2);
         $creditNetAmountStr = number_format($creditNetAmount, 2, ',', '.');
         $creditVatAmount = $amount - $creditNetAmount;
         $creditVatAmountStr = number_format($creditVatAmount, 2, ',', '.');
@@ -135,7 +137,7 @@ class BookingRequest extends FormRequest
 
         // Use transaction to ensure completeness
         return DB::transaction(function () use (
-            $v, $id, $date, $debitAccount, $creditAccount, $amount, $vatCode,
+            $v, $id, $date, $debitAccount, $creditAccount, $amount, $debitVatCode, $creditVatCode,
             $debitNetAmount, $debitVatAmount, $creditNetAmount, $creditVatAmount,
             $debitVatAccountId, $creditVatAccountId, $systemDetails, $internalBillNumber
         ) {
@@ -148,10 +150,8 @@ class BookingRequest extends FormRequest
             if ($id) $journalEntry->id = $id;
             $journalEntry->user_id = $this->user()->id;
             $journalEntry->date = $date;
-            $journalEntry->amount = $this->swap($creditAccount->id) ? (-1 * $amount) : $amount;
-            $journalEntry->vat_code = $vatCode;
-            $journalEntry->direct_account = $this->swap($creditAccount->id) ? $creditAccount->id : $debitAccount->id;
-            $journalEntry->offset_account = $this->swap($creditAccount->id) ? $debitAccount->id : $creditAccount->id;
+            $journalEntry->amount = $amount;
+            $journalEntry->vat_code = $debitVatCode ?: $creditVatCode;
             $journalEntry->client_details = $v['details']['label'];
             $journalEntry->system_details = $systemDetails;
             $journalEntry->internal_bill_number = $internalBillNumber;
@@ -163,7 +163,6 @@ class BookingRequest extends FormRequest
             $debitEntry = LedgerAccount::create([
                 'journal_id'   => $journalEntry->id,
                 'skr04_id'     => $debitAccount->id,
-                'skr04_ref_id' => $creditAccount->id,
                 'debit'        => $debitNetAmount,
             ]);
             // return $debitEntry;
@@ -173,7 +172,6 @@ class BookingRequest extends FormRequest
                 $debitVatEntry = LedgerAccount::create([
                     'journal_id'   => $journalEntry->id,
                     'skr04_id'     => $debitVatAccountId,
-                    'skr04_ref_id' => $creditAccount->id,
                     'debit'        => $debitVatAmount,
                 ]);
                 // return $debitVatEntry;
@@ -183,7 +181,6 @@ class BookingRequest extends FormRequest
             $creditEntry = LedgerAccount::create([
                 'journal_id'   => $journalEntry->id,
                 'skr04_id'     => $creditAccount->id,
-                'skr04_ref_id' => $debitAccount->id,
                 'credit'       => $creditNetAmount,
             ]);
             // return $creditEntry;
@@ -193,7 +190,6 @@ class BookingRequest extends FormRequest
                 $creditVatEntry = LedgerAccount::create([
                     'journal_id'   => $journalEntry->id,
                     'skr04_id'     => $creditVatAccountId,
-                    'skr04_ref_id' => $debitAccount->id,
                     'credit'       => $creditVatAmount,
                 ]);
                 // return $creditVatEntry;
@@ -219,7 +215,7 @@ class BookingRequest extends FormRequest
                 'notify' => [
                     'success' => trans('cab7.booking.notify.success', ['number' => 'all']),
                 ],
-                'entry'  => new LedgerJournalResource($journalEntry),
+                'entry'  => new NetIncomeResource($journalEntry),
             ];
         });
     }
@@ -247,20 +243,6 @@ class BookingRequest extends FormRequest
         // dd($collection, $index, $id);
         $number = ($index === false ? count($ids) : $index) + 1;
         return str_pad($number, 6, $padString, STR_PAD_LEFT);
-
-        return $padString;
-    }
-
-    /**
-     * Swap amount and direct/offset accounts
-     *
-     * @param int $creditAccountId
-     *
-     * @return bool
-     */
-    private function swap(int $creditAccountId)
-    {
-        return in_array($creditAccountId, array_merge([1600, 1800], range(70000, 99999)));
     }
 
     /**
@@ -272,18 +254,9 @@ class BookingRequest extends FormRequest
      *
      * @return string
      */
-    private function sign(Skr04Account $debit, Skr04Account $credit)
+    private function skr04_groups()
     {
-        // if ($debit->side === 'dead' && $credit->side === 'dead') return '-';
-        // if ($debit->side === 'dead' && $credit->side === 'clic') return '+';
-        // if ($debit->side === 'clic' && $credit->side === 'dead') return '';
-        // if ($debit->side === 'clic' && $credit->side === 'clic') return '-';
-
-        // DEAD/CLIC accounts
-        // if (in_array($debit, range(5000, 7999))) return '-';
-        // if (in_array($credit, range(4000, 4999))) return '+';
-
-        // SKR04 group of accounts
+        // SKR04 groups of accounts
         // $capitalAssetsAccounts = range(0, 999);
         // $currentAssetsAccounts = range(1000, 1999);
         // $proprietaryCapitalAccounts = range(2000, 2999);
@@ -293,8 +266,6 @@ class BookingRequest extends FormRequest
         // $otherRevenueAndExpenditure = range(7000, 7999);
         // $freeAvailableAccounts = range(8000, 8999);
         // $carryForwardAccounts = range(9000, 9999);
-
-        return '';
     }
 
 }

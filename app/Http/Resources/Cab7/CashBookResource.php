@@ -18,7 +18,6 @@ class CashBookResource extends JsonResource
         return [
             'id'              => $this->id,
             'journal'         => $this->journal,
-            'skr04RefAccount' => $this->skr04RefAccount,
             'date'            => $this->date,
             'debit'           => (float) $this->debit,
             'credit'          => (float) $this->credit,

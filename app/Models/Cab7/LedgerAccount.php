@@ -14,14 +14,13 @@ class LedgerAccount extends Model
         return $this->belongsTo(LedgerJournal::class);
     }
 
-    public function skr04Account()
+    public function skr04()
     {
         return $this->belongsTo(Skr04Account::class, 'skr04_id');
     }
 
-    public function skr04RefAccount()
+    public function skr04Account()
     {
-        return $this->belongsTo(Skr04Account::class, 'skr04_ref_id');
+        return $this->belongsTo(Skr04Account::class, 'skr04_id');
     }
-
 }

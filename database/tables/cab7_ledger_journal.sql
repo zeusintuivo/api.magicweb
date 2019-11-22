@@ -6,10 +6,8 @@ CREATE TABLE IF NOT EXISTS cab7_ledger_journal (
     id int unsigned NOT NULL AUTO_INCREMENT,
     user_id int unsigned NOT NULL COMMENT 'Associated user',
     date date NOT NULL COMMENT 'Date of booking',
-    amount decimal(7,2) NOT NULL COMMENT 'Not editable booking amount as string',
+    amount decimal(7,2) unsigned NOT NULL COMMENT 'Not editable booking amount as string',
     vat_code tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT '[0]: 0%, [8]: 7%, [9]: 19%',
-    direct_account int unsigned NULL DEFAULT NULL COMMENT 'Konto GuV',
-    offset_account int unsigned NULL DEFAULT NULL COMMENT 'Gegenkonto GuV',
     client_details varchar(255) NOT NULL COMMENT 'User comment about current booking entry',
     system_details varchar(255) NOT NULL COMMENT 'System log about internal booking details',
     internal_bill_number varchar(6) NOT NULL DEFAULT '000000',
@@ -26,6 +24,8 @@ DROP TABLE IF EXISTS back_ledger_journal;
 
 # DELETE FROM cab7_ledger_journal WHERE id BETWEEN 1 AND 215;
 # ALTER TABLE cab7_ledger_journal AUTO_INCREMENT = 339;
+# ALTER TABLE cab7_ledger_journal DROP COLUMN direct_account;
+# ALTER TABLE cab7_ledger_journal DROP COLUMN offset_account;
 
 # Number 1600 Cash entries
 SELECT month(date) AS month, max(internal_bill_number) AS num_per_month FROM cab7_ledger_journal
