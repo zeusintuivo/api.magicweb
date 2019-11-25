@@ -66,8 +66,11 @@ class BookingRequest extends FormRequest
                     'query' => 'required|string|min:5',
                     'month' => 'required|string|size:7',
                 ];
-            case 'fetch/net/income':
             case 'fetch/ledger/journal':
+            case 'fetch/net/income':
+            case 'fetch/cash/book':
+            case 'fetch/bank/log':
+            case 'fetch/drive/log':
                 return [
                     'year' => 'required|integer|gt:2015'
                 ];

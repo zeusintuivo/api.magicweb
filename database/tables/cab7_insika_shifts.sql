@@ -32,6 +32,9 @@ SELECT * FROM (
 ) mileage
 ORDER BY began_at DESC;
 
+# Total-Km
+SELECT SUM(km_total) km FROM cab7_insika_shifts;
+
 
 
 

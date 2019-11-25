@@ -8,6 +8,7 @@ class LedgerAccount extends Model
 {
     protected $table = 'cab7_ledger_accounts';
     protected $guarded = ['created_at', 'updated_at', 'deleted_at'];
+    protected $with = ['journal'];
 
     public function journal()
     {

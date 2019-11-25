@@ -16,14 +16,15 @@ class CashBookResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'              => $this->id,
-            'journal'         => $this->journal,
-            'date'            => $this->date,
-            'debit'           => (float) $this->debit,
-            'credit'          => (float) $this->credit,
-            'amount'          => $this->debit - $this->credit,
-            'created_at'      => $this->created_at,
-            'updated_at'      => $this->updated_at,
+            'id'                   => $this->id,
+            'internal_bill_number' => $this->internal_bill_number,
+            'date'                 => $this->date,
+            'amount'               => $this->amount,
+            'vat_code'             => $this->vat_code,
+            'ref_account'          => $this->ref_account,
+            'client_details'       => $this->client_details,
+            'system_details'       => $this->system_details,
+            'created_at'           => $this->created_at,
         ];
     }
 }

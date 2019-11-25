@@ -4,7 +4,7 @@ namespace App\Http\Resources\Cab7;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class DriverLogResource extends JsonResource
+class DriveLogResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -20,7 +20,7 @@ class DriverLogResource extends JsonResource
             // "user"         => $this->user,
             "began_at"   => $this->began_at,
             "ended_at"   => $this->ended_at,
-            // "duration"     => $this->duration,
+            "duration"   => $this->duration,
             "driver"     => $this->driver,
             "vehicle"    => $this->vehicle,
             // "charge_total" => (float) $this->charge_total,

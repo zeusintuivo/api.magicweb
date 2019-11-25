@@ -30,16 +30,32 @@ INSERT INTO cab7_ledger_accounts SELECT id, journal_id, skr04_id, debit, credit,
 # SELECT journal_id, skr04_id FROM mweb.cab7_ledger_journal jrn, cab7_skr04_accounts skr, cab7_ledger_accounts acc
 # WHERE jrn.id = acc.journal_id AND acc.skr04_id = skr.id AND jrn.deleted_at IS NULL;
 # Net income method
-SELECT j.id, j.internal_bill_number, j.date, IF(s.balance_side = 'dead', a.debit - a.credit, a.credit - a.debit) amount,
-    j.vat_code, o.skr04_id offset_account, s.id direct_account, j.client_details, j.system_details, j.original_bill_number, j.created_at
+SELECT j.id, j.internal_bill_number, j.date, IF(s.balance_side = 'dead', a.debit - a.credit, a.credit - a.debit) AS amount, j.vat_code,
+    o.skr04_id AS offset_account, s.id AS direct_account, j.client_details, j.system_details, j.original_bill_number, j.created_at, j.updated_at
     FROM cab7_ledger_journal j, cab7_ledger_accounts a, cab7_skr04_accounts s, (
-        SELECT acc.journal_id, acc.skr04_id FROM mweb.cab7_ledger_journal jrn, cab7_skr04_accounts skr, cab7_ledger_accounts acc
-        WHERE jrn.id = acc.journal_id AND acc.skr04_id = skr.id AND jrn.deleted_at IS NULL
+        SELECT journal_id, skr04_id, surplus FROM mweb.cab7_ledger_journal j2, cab7_skr04_accounts s2, cab7_ledger_accounts a2
+        WHERE j2.id = a2.journal_id AND a2.skr04_id = s2.id
+#           AND s2.id NOT IN (1401, 1406, 3801, 3806)
+          AND s2.surplus = 0
+#         WHERE j2.id = a2.journal_id AND a2.skr04_id = s2.id AND j2.deleted_at IS NULL AND j2.date LIKE '2018%' AND s2.surplus = 0
     ) o
-WHERE j.id = a.journal_id AND a.skr04_id = s.id AND j.deleted_at IS NULL AND s.id IN (1600, 1800)
-    AND o.journal_id = j.id AND s.id <> o.skr04_id AND o.skr04_id NOT IN (1401, 1406, 3801, 3806)
-    AND j.date LIKE '2018%'
-ORDER BY j.date, j.id;
+WHERE j.id = a.journal_id AND a.skr04_id = s.id AND j.deleted_at IS NULL AND j.date LIKE '2018%' AND s.surplus = 1
+    AND o.journal_id = j.id AND o.skr04_id <> s.id
+ORDER BY j.date, j.id, amount;
+
+SELECT j.id, j.internal_bill_number, j.date, IF(s.balance_side = 'dead', a.debit - a.credit, a.credit - a.debit) AS amount, j.vat_code,
+    s.id AS direct_account, j.client_details, j.system_details, j.original_bill_number, j.created_at, j.updated_at
+FROM cab7_ledger_journal j, cab7_ledger_accounts a, cab7_skr04_accounts s
+WHERE j.id = a.journal_id AND a.skr04_id = s.id AND s.id AND s.surplus = 1
+    AND j.deleted_at IS NULL AND j.date LIKE '2018%'
+ORDER BY j.date, j.id, amount;
+
+SELECT * FROM cab7_skr04_accounts WHERE surplus = 1;
+
+
+
+
+
 
 # Ledger accounts' balance
 SELECT skr04.id, round(sum(debit) - sum(credit), 2) balance, skr04.de_DE, skr04.en_GB, skr04.pid, skr04.balance_side, skr04.vat_code

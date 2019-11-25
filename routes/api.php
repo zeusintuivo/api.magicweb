@@ -71,8 +71,9 @@ Route::prefix('{locale}')->group(function () {
             Route::post('/fetch/ledger/journal/{journal}', 'Cab7\BookingController@fetchLedgerJournalEntry')->middleware('auth');
             Route::post('/fetch/ledger/accounts', 'Cab7\BookingController@fetchLedgerAccounts')->middleware('auth')->name('fetch/ledger/accounts');
             Route::post('/fetch/net/income', 'Cab7\BookingController@fetchNetIncome')->middleware('auth')->name('fetch/net/income');
-            Route::post('/fetch/cash/book', 'Cab7\BookingController@fetchCashBook')->middleware('auth');
-            Route::post('/fetch/driver/log', 'Cab7\BookingController@fetchDriverLog')->middleware('auth');
+            Route::post('/fetch/cash/book', 'Cab7\BookingController@fetchCashBook')->middleware('auth')->name('fetch/cash/book');
+            Route::post('/fetch/bank/log', 'Cab7\BookingController@fetchBankLog')->middleware('auth')->name('fetch/bank/log');
+            Route::post('/fetch/drive/log', 'Cab7\BookingController@fetchDriveLog')->middleware('auth')->name('fetch/drive/log');
             Route::post('/book/double/entry', 'Cab7\BookingController@bookDoubleEntry')->middleware('auth')->name('book/double/entry');
             Route::post('/delete/double/entry', 'Cab7\BookingController@deleteDoubleEntry')->middleware('auth')->name('delete/double/entry');
             // Richard requirements
