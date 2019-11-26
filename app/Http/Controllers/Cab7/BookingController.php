@@ -146,13 +146,9 @@ class BookingController extends Controller
         return response()->json(DriveLogResource::collection($shifts), 200);
     }
 
-    public function fetchStandardAccounts(Request $request)
+    public function fetchStandardAccounts(BookingRequest $request)
     {
-        $v = $request->validate([
-            'skr'  => 'required|string|size:5',
-            'lang' => 'required|string|min:2|max:5',
-        ]);
-        return response()->json(Skr04Account::wherePrivate(0)->get(['id', $v['lang']]), 200);
+        return response()->json(Skr04Account::wherePrivate(0)->get(['id', $request['lang'], 'vat_code']), 200);
     }
 
     public function fetchBookingDetails(Request $request)

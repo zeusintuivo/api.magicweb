@@ -19,8 +19,8 @@ CREATE TABLE IF NOT EXISTS cab7_skr04_accounts (
 
 # Standard charts :: Sachkontenrhmen
 INSERT INTO cab7_skr04_accounts (id, en_GB, de_DE, pid, vat_code, private, surplus, balance_side) VALUES
-(135, 'Computer software (license)', 'EDV-Software (Lizenzen)', 0, 0, 0, 0, null),
-(144, 'Computer software (assets)', 'EDV-Software (Vermögen)', 0, 0, 0, 0, null),
+(135, 'Computer software (license)', 'EDV-Software (Lizenzen)', 0, null, 0, 0, null),
+(144, 'Computer software (assets)', 'EDV-Software (Vermögen)', 0, null, 0, 0, null),
 (400, 'Technical equipment and machinery', 'Technische Anlagen und Maschinen', 0, 0, 0, 0, null),
 (420, 'Technical equipment', 'Technische Anlagen', 0, 0, 0, 0, null),
 (440, 'Machinery', 'Maschinen', 0, 0, 0, 0, null),
@@ -116,7 +116,6 @@ INSERT INTO cab7_skr04_accounts (id, en_GB, de_DE, pid, vat_code, private, surpl
 (6300, 'Other operating expenses', 'Sonstige betriebliche Aufwendungen', 0, 0, 0, 0, 'dead'),
 (6305, 'Occupancy costs', 'Raumkosten', 0, 9, 0, 0, 'dead'),# 9 -x---> null
 (6310, 'Rent (immovable property)', 'Miete (unbewegliche Wirtschaftsgüter)', 0, null, 0, 0, 'dead'),
-(6311, 'Rent (immovable property), 19% input tax', 'Miete (unbewegliche Wirtschaftsgüter) 19% Vorsteuer', 0, 9, 0, 0, 'dead'),
 (6400, 'Insurance premiums', 'Versicherungen', 0, 0, 0, 0, 'dead'),
 (6420, 'Contributions', 'Beiträge', 0, 0, 0, 0, 'dead'),
 (6430, 'Other levies', 'Sonstige Abgaben', 0, 0, 0, 0, 'dead'),
